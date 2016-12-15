@@ -76,7 +76,7 @@ public class BoxAllocationPanel extends Panel {
 			}
 		};
 		gridBoxPanel = new GridBoxPanel("gridBoxPanel", containerForm.getModelObject(), modalWindow, false);
-		detailForm = new BoxAllocationDetailForm("detailForm", feedbackPanel, detailContainer, containerForm, tree, node, gridBoxPanel, modalWindow, this);
+		detailForm = new BoxAllocationDetailForm("detailForm", feedbackPanel, detailContainer, containerForm, tree, node, gridBoxPanel, modalWindow);
 		detailForm.initialiseDetailForm();
 		
 		add(detailForm);

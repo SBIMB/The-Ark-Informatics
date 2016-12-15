@@ -8,6 +8,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import au.org.theark.core.exception.ArkSystemException;
+import au.org.theark.core.model.lims.entity.Biospecimen;
 import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.web.component.button.ArkBusyAjaxButton;
 import au.org.theark.lims.model.vo.LimsVO;
@@ -92,6 +93,14 @@ public abstract class BioLocationPanel extends Panel {
 		catch (ArkSystemException e) {
 		}
 		refreshParentPanel(target);
+	}
+	
+	protected void unallocateBiospecimen(Biospecimen biospecimen) {
+		InvCell invCell = iInventoryService.getInvCellByBiospecimen(biospecimen);
+		invCell.setBiospecimen(null);
+		invCell.setStatus("Empty");
+		iInventoryService.updateInvCell(invCell);
+		
 	}
 
 	public abstract void refreshParentPanel(AjaxRequestTarget target);

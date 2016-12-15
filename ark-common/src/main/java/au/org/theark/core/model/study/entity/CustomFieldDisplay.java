@@ -36,15 +36,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
-import au.org.theark.core.audit.annotations.ArkAuditDisplay;
 import au.org.theark.core.model.Constants;
 import au.org.theark.core.model.lims.entity.BioCollectionCustomFieldData;
 import au.org.theark.core.model.lims.entity.BiospecimenCustomFieldData;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetData;
+import au.org.theark.core.model.pheno.entity.PhenoData;
 
 /**
  * @author nivedann
@@ -52,14 +47,13 @@ import au.org.theark.core.model.pheno.entity.PhenoDataSetData;
 
 @Entity
 @Table(name = "CUSTOM_FIELD_DISPLAY", schema = Constants.STUDY_SCHEMA)
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class CustomFieldDisplay implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
+	private Category category;
 	private CustomField customField;
-	//private Category category;
 	private CustomFieldGroup customFieldGroup;
 	private Boolean required;
 	private String requiredMessage;
@@ -68,8 +62,7 @@ public class CustomFieldDisplay implements Serializable {
 	private Set<SubjectCustomFieldData> subjectCustomFieldData = new HashSet<SubjectCustomFieldData>();
 	private Set<BioCollectionCustomFieldData> bioCollectionCustomFieldData = new HashSet<BioCollectionCustomFieldData>();
 	private Set<BiospecimenCustomFieldData> biospecimenCustomFieldData = new HashSet<BiospecimenCustomFieldData>();
-	//private Set<PhenoDataSetData> phenoData = new HashSet<PhenoDataSetData>();
-	private Set<FamilyCustomFieldData> familyCustomFieldData = new HashSet<FamilyCustomFieldData>();
+	private Set<PhenoData> phenoData = new HashSet<PhenoData>();
 	protected String descriptiveNameIncludingCFGName;
 
 	public CustomFieldDisplay() {
@@ -98,7 +91,7 @@ public class CustomFieldDisplay implements Serializable {
 		this.customField = customField;
 	}
 
-/*
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CATEGORY_ID", nullable = false)
 	public Category getCategory() {
@@ -108,7 +101,7 @@ public class CustomFieldDisplay implements Serializable {
 	public void setCategory(Category category) {
 		this.category = category;
 	}
-*/
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CUSTOM_FIELD_GROUP_ID")
 	public CustomFieldGroup getCustomFieldGroup() {
@@ -175,26 +168,15 @@ public class CustomFieldDisplay implements Serializable {
 			Set<BiospecimenCustomFieldData> biospecimenCustomFieldData) {
 		this.biospecimenCustomFieldData = biospecimenCustomFieldData;
 	}
-	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "customFieldDisplay")
-	public Set<FamilyCustomFieldData> getFamilyCustomFieldData() {
-		return familyCustomFieldData;
-	}
 
-	public void setFamilyCustomFieldData(Set<FamilyCustomFieldData> familyCustomFieldData) {
-		this.familyCustomFieldData = familyCustomFieldData;
-	}
-
-	//TODO: Remove NotAudited when pheno auditing is done
-	/*@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "customFieldDisplay")
-	public Set<PhenoDataSetData> getPhenoData() {
+	public Set<PhenoData> getPhenoData() {
 		return phenoData;
 	}
 
-	public void setPhenoData(Set<PhenoDataSetData> phenoData) {
+	public void setPhenoData(Set<PhenoData> phenoData) {
 		this.phenoData = phenoData;
-	}*/
+	}
 
 	@Column(name = "ALLOW_MULTIPLE_SELECTION", precision = 1, scale = 0)
 	public Boolean getAllowMultiselect() {
@@ -205,7 +187,6 @@ public class CustomFieldDisplay implements Serializable {
 		this.allowMultiselect = allowMultiselect;
 	}
 
-	@ArkAuditDisplay
 	@Transient
 	public String getDescriptiveNameIncludingCFGName() {
 		//descriptiveNameIncludingCFGName.charAt(1);

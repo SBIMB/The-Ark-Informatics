@@ -238,5 +238,9 @@ public class RowForm extends AbstractDetailForm<RowListVO>{
 		}
 		target.add(feedBackPanel);
 	}
+	
+	@Override
+	protected void onTest(Form<RowListVO> containerForm, AjaxRequestTarget target) {
+	}
 
 }

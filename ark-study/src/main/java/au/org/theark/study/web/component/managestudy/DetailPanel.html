@@ -124,8 +124,10 @@
 				</div>
 				<div class="fldControl">
 					<div class="label">
-						<textarea wicket:id="study.description" cols="25" maxLength="255">
+						<textarea wicket:id="study.description" cols="80" rows="10">
 						</textarea>
+						<br>
+						<span style="color:green" wicket:id="study.description.wordCount">To be replaced</span>
 					</div>
 				</div>
 
@@ -150,7 +152,7 @@
 								Active
 							</option>
 							<option>
-								EOI
+								Under Review
 							</option>
 						</select>
 					</div>
@@ -171,7 +173,7 @@
 					<div class="label">
 						<label for="dateOfApplication">
 							<wicket:message key="study.dateOfApplication">
-								Date Of Application:
+								Date Of Ethics Approval:
 							</wicket:message>
 						</label>
 					</div>
@@ -250,8 +252,96 @@
 				</div>
 
 				<!--	Row 4 Ends-->
+				
+				<!--	Row 5 Chief and Co-Investigators's phone numbers -->
 
-				<!--	Row 5 Contact Person and Phone -->
+				<div class="panelContentLeft">
+					&nbsp;
+				</div>
+				<div class="fldLabel">
+					<div class="label">
+						<label for="chiefInvestigatorPhone">
+							<wicket:message	key="study.chiefInvestigatorPhone">
+								Chief Investigator Phone:
+							</wicket:message>
+						</label>
+					</div>
+				</div>
+				<div class="fldControl">
+					<div class="label">
+						<input wicket:id="study.chiefInvestigatorPhone" type="text" maxLength="20"/>
+					</div>
+				</div>
+
+				<div class="panelMargin">
+					&nbsp;
+				</div>
+				<div class="fldLabel">
+					<div class="label">
+						<label for="coInvestigator">
+							<wicket:message	key="study.coInvestigatorPhone">
+								Co-Investigator Phone:
+							</wicket:message>
+						</label>
+					</div>
+				</div>
+				<div class="fldControl">
+					<div class="label">
+						<input wicket:id="study.coInvestigatorPhone" type="text" maxLength="20"/>
+					</div>
+				</div>
+
+				<div class="detailPanelBreaker">
+					&nbsp;
+				</div>
+
+				<!--	Row 5 Ends-->
+				
+				<!--	Row 6 Chief and Co-Investigators' email addresses -->
+
+				<div class="panelContentLeft">
+					&nbsp;
+				</div>
+				<div class="fldLabel">
+					<div class="label">
+						<label for="chiefInvestigatorEmail">
+							<wicket:message	key="study.chiefInvestigatorEmail">
+								Chief Investigator Email:
+							</wicket:message>
+						</label>
+					</div>
+				</div>
+				<div class="fldControl">
+					<div class="label">
+						<input wicket:id="study.chiefInvestigatorEmail" type="text" maxLength="45"/>
+					</div>
+				</div>
+
+				<div class="panelMargin">
+					&nbsp;
+				</div>
+				<div class="fldLabel">
+					<div class="label">
+						<label for="coInvestigatorEmail">
+							<wicket:message	key="study.coInvestigatorEmail">
+								Co-Investigator Email:
+							</wicket:message>
+						</label>
+					</div>
+				</div>
+				<div class="fldControl">
+					<div class="label">
+						<input wicket:id="study.coInvestigatorEmail" type="text" maxLength="45"/>
+					</div>
+				</div>
+
+				<div class="detailPanelBreaker">
+					&nbsp;
+				</div>
+
+				<!--	Row 6 Ends-->
+
+				<!--	Row 7 Contact Person and Phone -->
 
 				<div class="panelContentLeft">
 					&nbsp;
@@ -294,6 +384,48 @@
 				<div class="detailPanelBreaker">
 					&nbsp;
 				</div>
+				
+				<!--	Row 7 Ends-->
+				
+				<!--	Row 8 Chief and Co-Investigators -->
+
+				<div class="panelContentLeft">
+					&nbsp;
+				</div>
+				<div class="fldLabel">
+					<div class="label">
+						<label for="">
+							<wicket:message	key="study.contact.person.email">
+								Contact Person Email :
+							</wicket:message>
+						</label>
+					</div>
+				</div>
+				<div class="fldControl">
+					<div class="label">
+						<input wicket:id="study.contactPersonEmail" type="text" maxLength="45"/>
+					</div>
+				</div>
+
+				<div class="panelMargin">
+					&nbsp;
+				</div>
+				<div class="fldLabel">
+					<div class="label">
+						
+					</div>
+				</div>
+				<div class="fldControl">
+					<div class="label">
+						
+					</div>
+				</div>
+
+				<div class="detailPanelBreaker">
+					&nbsp;
+				</div>
+
+				<!--	Row 4 Ends-->
 
 				<div class="panelContentLeft">
 					&nbsp;
@@ -739,7 +871,6 @@
 					<input wicket:id="save" type="submit" wicket:message="value:page.save" />
 					<input wicket:id="cancel" type="submit"	wicket:message="value:page.cancel" />
 					<input wicket:id="newChildStudy" type="submit"	wicket:message="value:page.newChildStudy" />
-					<div wicket:id="history" class="historyPanel"></div>
 				</div>
 			</div>
 

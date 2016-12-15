@@ -141,13 +141,8 @@ public class DetailForm extends AbstractDetailForm<UploadVO> {
 
 			// Save
 			containerForm.getModelObject().getUpload().setArkFunction(arkFunction);
-			containerForm.getModelObject().getUpload().setUploadStatus(iArkCommonService.getUploadStatusFor(Constants.UPLOAD_STATUS_COMPLETED));		
-			try {
-				iArkCommonService.createUpload(containerForm.getModelObject().getUpload());
-			} catch (Exception e) {
-				error("There is a problem during the upload process.");
-				processErrors(target);
-			}
+			containerForm.getModelObject().getUpload().setUploadStatus(iArkCommonService.getUploadStatusForUploaded());		
+			iArkCommonService.createUpload(containerForm.getModelObject().getUpload());
 
 			this.info("Subject upload " + containerForm.getModelObject().getUpload().getFilename() + " was created successfully");
 			processErrors(target);
@@ -164,6 +159,10 @@ public class DetailForm extends AbstractDetailForm<UploadVO> {
 		/*
 		 * TODO:(CE) To handle Business and System Exceptions here
 		 */
+	}
+	
+	@Override
+	protected void onTest(Form<UploadVO> containerForm, AjaxRequestTarget target) {
 	}
 
 	static final String	HEXES	= "0123456789ABCDEF";

@@ -39,7 +39,6 @@ import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
@@ -190,11 +189,12 @@ public class LdapUserDao implements ILdapUserDao {
 		try {
 			LdapName ldapName = new LdapName(ldapDataContextSource.getBasePeopleDn());
 			ldapName.add(new Rdn("cn", username));
-			etaUserVO = (ArkUserVO) ldapDataContextSource.getLdapTemplate().lookup(ldapName, new PersonContextMapper());
+			Name nameObj = (Name) ldapName;
+			etaUserVO = (ArkUserVO) ldapDataContextSource.getLdapTemplate().lookup(nameObj, new PersonContextMapper());
 			log.debug("\n etauserVO " + etaUserVO);
 
 		}
-		catch (InvalidNameException | NameNotFoundException ne) {
+		catch (InvalidNameException ne) {
 			log.debug("\nGiven username or user does not exist." + username);
 			throw new EntityNotFoundException("Given username or user does not exist");
 

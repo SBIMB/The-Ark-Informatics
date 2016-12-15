@@ -111,6 +111,26 @@
 
 					<div class="fldLabel">
 						<div class="label">
+							<label for="bioCollection.patientAge">
+								<wicket:message key="bioCollection.patientAge">
+									Age at Collection:
+								</wicket:message>
+							</label>
+						</div>
+					</div>
+
+					<div class="fldControl">
+						<div class="label">
+							<input wicket:id="bioCollection.patientAge" type="text"/>
+						</div>
+					</div>
+
+					<div class="panelMargin">
+						&nbsp;
+					</div>
+					
+					<div class="fldLabel">
+						<div class="label">
 							<label for="bioCollection.comments">
 								<wicket:message key="bioCollection.comments">
 									Comments:
@@ -124,10 +144,6 @@
 							<textarea wicket:id="bioCollection.comments" cols="25">
 							</textarea>
 						</div>
-					</div>
-
-					<div class="panelMargin">
-						&nbsp;
 					</div>
 
 					<div class="detailPanelBreaker">

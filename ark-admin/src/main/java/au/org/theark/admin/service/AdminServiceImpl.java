@@ -20,10 +20,12 @@ package au.org.theark.admin.service;
 
 import java.util.List;
 
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import za.ac.theark.core.dao.IRedcapDao;
 import au.org.theark.admin.model.dao.IAdminDao;
 import au.org.theark.admin.model.vo.AdminVO;
 import au.org.theark.admin.model.vo.ArkRoleModuleFunctionVO;
@@ -47,6 +49,7 @@ import au.org.theark.core.model.study.entity.ArkRolePolicyTemplate;
 @Service(au.org.theark.admin.service.Constants.ARK_ADMIN_SERVICE)
 public class AdminServiceImpl<T> implements IAdminService<T> {
 	private IAdminDao	iAdminDao;
+	private IRedcapDao iRedcapDao;
 
 	public IAdminDao getAdminDao() {
 		return iAdminDao;
@@ -55,6 +58,15 @@ public class AdminServiceImpl<T> implements IAdminService<T> {
 	@Autowired
 	public void setAdminDao(IAdminDao adminDao) {
 		this.iAdminDao = adminDao;
+	}
+	
+	public IRedcapDao getiRedcapDao() {
+		return iRedcapDao;
+	}
+
+	@Autowired
+	public void setiRedcapDao(IRedcapDao iRedcapDao) {
+		this.iRedcapDao = iRedcapDao;
 	}
 
 	public void createArkRolePolicyTemplate(AdminVO adminVo) {
@@ -88,7 +100,7 @@ public class AdminServiceImpl<T> implements IAdminService<T> {
 	public List<ArkRole> getArkRoleList() {
 		return iAdminDao.getArkRoleList();
 	}
-
+		
 	public ArkRolePolicyTemplate getArkRolePolicyTemplate(Long id) {
 		return iAdminDao.getArkRolePolicyTemplate(id);
 	}
@@ -108,7 +120,7 @@ public class AdminServiceImpl<T> implements IAdminService<T> {
 	public void createOrUpdateArkFunction(AdminVO adminVo) {
 		iAdminDao.createOrUpdateArkFunction(adminVo.getArkFunction());
 	}
-
+	
 	public void createOrUpdateArkModule(AdminVO adminVo) {
 		iAdminDao.createOrUpdateArkModule(adminVo.getArkModule());
 	}
@@ -128,7 +140,7 @@ public class AdminServiceImpl<T> implements IAdminService<T> {
 	public List<ArkFunction> searchArkFunction(ArkFunction arkFunction) {
 		return iAdminDao.searchArkFunction(arkFunction);
 	}
-
+	
 	public List<ArkModule> searchArkModule(ArkModule arkModule) {
 		return iAdminDao.searchArkModule(arkModule);
 	}
@@ -136,7 +148,7 @@ public class AdminServiceImpl<T> implements IAdminService<T> {
 	public long getArkFunctionCount(ArkFunction arkFunctionCriteria) {
 		return iAdminDao.getArkFunctionCount(arkFunctionCriteria);
 	}
-
+	
 	public long getArkModuleCount(ArkModule arkModuleCriteria) {
 		return iAdminDao.getArkModuleCount(arkModuleCriteria);
 	}
@@ -144,7 +156,7 @@ public class AdminServiceImpl<T> implements IAdminService<T> {
 	public List<ArkFunction> searchPageableArkFunctions(ArkFunction arkFunctionCriteria, int first, int count) {
 		return iAdminDao.searchPageableArkFunctions(arkFunctionCriteria, first, count);
 	}
-
+	
 	public List<ArkModule> searchPageableArkModules(ArkModule arkModuleCriteria, int first, int count) {
 		return iAdminDao.searchPageableArkModules(arkModuleCriteria, first, count);
 	}
@@ -235,5 +247,15 @@ public class AdminServiceImpl<T> implements IAdminService<T> {
 
 	public List<ArkModuleRole> searchPageableArkModuleRoles(ArkModuleRole arkModulRoleCriteria, int first, int count) {
 		return iAdminDao.searchPageableArkModuleRoles(arkModulRoleCriteria, first, count);
+	}
+	
+	@Override
+	public void createOrUpdateArkRedcap(AdminVO adminVO) {
+		iRedcapDao.createOrUpdateArkRedcap(adminVO.getArkRedcap());		
+	}
+
+	@Override
+	public void deleteArkRedcap(AdminVO adminVO) {
+		iRedcapDao.deleteArkRedcap(adminVO.getArkRedcap());			
 	}
 }

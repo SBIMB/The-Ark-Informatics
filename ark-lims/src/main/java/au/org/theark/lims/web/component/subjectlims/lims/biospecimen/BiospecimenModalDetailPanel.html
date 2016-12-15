@@ -372,13 +372,13 @@
 					</div>
 
 					<div class="fldLabel">
-						<wicket:message key="biospecimen.purity">
-							Purity:
+						<wicket:message key="biospecimen.purity280">
+							Purity (260/280):
 						</wicket:message>
 					</div>
 
 					<div class="fldControl">
-						<input wicket:id="biospecimen.purity" type="text" />
+						<input wicket:id="biospecimen.purity280" type="text" />
 					</div>
 
 					<div class="detailPanelBreaker">
@@ -410,7 +410,16 @@
 						&nbsp;
 					</div>
 
-					<!-- Empty -->
+					<div class="fldLabel">
+						<wicket:message key="biospecimen.purity230">
+							Purity (260/230):
+						</wicket:message>
+					</div>
+
+					<div class="fldControl">
+						<input wicket:id="biospecimen.purity230" type="text" />
+					</div>
+
 
 					<div class="detailPanelBreaker">
 						&nbsp;
@@ -480,22 +489,7 @@
 								&nbsp;
 							</div>
 
-							<div class="fldLabel">
-								<wicket:message key="biospecimen.treatmentType">
-									Treatment:
-								</wicket:message>
-							</div>
-
-							<div class="fldControl">
-								<select wicket:id="biospecimen.treatmentType">
-									<option>
-										1
-									</option>
-									<option>
-										2
-									</option>
-								</select>
-							</div>
+							
 						
 						
 						<div class="detailPanelBreaker">
@@ -550,7 +544,6 @@
 				<!--	Row 2 Action Buttons -->
 				<div class="buttons">
 					<div wicket:id="buttonsPanelWMC">
-						<span style="display: none;" wicket:id="modal"></span>
 						<div wicket:id="buttonsPanel">
 						</div>
 					</div>

@@ -38,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import au.org.theark.core.dao.HibernateSessionDao;
-import au.org.theark.core.dao.IStudyDao;
 import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.EntityNotFoundException;
 import au.org.theark.core.model.lims.entity.BioCollection;
@@ -55,6 +54,7 @@ import au.org.theark.core.model.lims.entity.BiospecimenStatus;
 import au.org.theark.core.model.lims.entity.BiospecimenStorage;
 import au.org.theark.core.model.lims.entity.BiospecimenUidSequence;
 import au.org.theark.core.model.lims.entity.BiospecimenUidTemplate;
+import au.org.theark.core.model.lims.entity.InvBox;
 import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.model.lims.entity.TreatmentType;
 import au.org.theark.core.model.lims.entity.Unit;
@@ -73,7 +73,6 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 	
 	private BiospecimenUidGenerator		biospecimenUidGenerator;
 	private IBioTransactionDao	iBioTransactionDao;
-	private IStudyDao iStudyDao;
 	/**
 	 * @param iBioTransactionDao
 	 *           the iBioTransactionDao to set
@@ -81,11 +80,6 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 	@Autowired
 	public void setiBioTransactionDao(IBioTransactionDao iBioTransactionDao) {
 		this.iBioTransactionDao = iBioTransactionDao;
-	}
-	
-	@Autowired
-	public void setiStudyDao(IStudyDao iStudyDao) {
-		this.iStudyDao = iStudyDao;
 	}
 
 	/**
@@ -254,9 +248,6 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 		Criteria criteria = getSession().createCriteria(Biospecimen.class);
 		Biospecimen biospecimen = limsVo.getBiospecimen();
 		
-		criteria.createAlias("bioCollection", "bc");
-		criteria.createAlias("linkSubjectStudy", "lss");
-		
 		// If study chosen, restrict otherwise restrict on users' studyList
 		if(limsVo.getStudy() != null && limsVo.getStudy().getId() != null) {
 		//if(limsVo.getStudy().isParentStudy()) {
@@ -265,19 +256,14 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 					limsVo.getStudy().getParentStudy().getId().equals(limsVo.getStudy().getId())
 					) {
 				// If parent study, show all children as well
-				criteria.add(Restrictions.in("study", iStudyDao.getChildStudiesForStudy(limsVo.getStudy())));
+				criteria.add(Restrictions.in("study", limsVo.getStudyList()));	
 			}
 			else {
 				criteria.add(Restrictions.eq("study", limsVo.getStudy()));
 			}
 		}
 		else {
-			criteria.add(Restrictions.in("study", limsVo.getStudyList()));
-			criteria.createAlias("study", "st");
-			criteria.addOrder(Order.asc("st.name"));
-			criteria.addOrder(Order.asc("lss.subjectUID"));
-			criteria.addOrder(Order.asc("bc.biocollectionUid"));
-			criteria.addOrder(Order.asc("biospecimenUid"));
+			criteria.add(Restrictions.in("study", limsVo.getStudyList()));	
 		}
 		
 		// Restrict on linkSubjectStudy in the LimsVO (or biospecimen)
@@ -290,11 +276,13 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 		
 		if(limsVo.getLinkSubjectStudy() != null) {
 			if (limsVo.getLinkSubjectStudy().getSubjectUID() != null) {
+				criteria.createAlias("linkSubjectStudy", "lss");
 				criteria.add(Restrictions.ilike("lss.subjectUID", limsVo.getLinkSubjectStudy().getSubjectUID(), MatchMode.ANYWHERE));
 			}
 		}
 		
 		if(limsVo.getBioCollection() != null && limsVo.getBioCollection().getBiocollectionUid() != null) {
+			criteria.createAlias("bioCollection", "bc");
 			criteria.add(Restrictions.ilike("bc.biocollectionUid",  limsVo.getBioCollection().getBiocollectionUid(), MatchMode.ANYWHERE));
 		}
 		
@@ -451,17 +439,34 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 		Double sum = (Double) criteria.uniqueResult();
 		return sum;
 	}
-
+	
+	public BiospecimenAnticoagulant getBiospecimenAnticoagulantByName(String name) {
+		Criteria criteria = getSession().createCriteria(BiospecimenAnticoagulant.class);
+		criteria.add(Restrictions.eq("name", name));
+		return (BiospecimenAnticoagulant) criteria.uniqueResult();
+	}
+	
 	public List<BiospecimenAnticoagulant> getBiospecimenAnticoagulantList() {
 		Criteria criteria = getSession().createCriteria(BiospecimenAnticoagulant.class);
 		List<BiospecimenAnticoagulant> list = criteria.list();
 		return list;
 	}
-
+	
+	public BiospecimenGrade getBiospecimenGradeByName(String name) {
+		Criteria criteria = getSession().createCriteria(BiospecimenGrade.class);
+		criteria.add(Restrictions.eq("name", name));
+		return (BiospecimenGrade) criteria.uniqueResult();
+	}
 	public List<BiospecimenGrade> getBiospecimenGradeList() {
 		Criteria criteria = getSession().createCriteria(BiospecimenGrade.class);
 		List<BiospecimenGrade> list = criteria.list();
 		return list;
+	}
+	
+	public BiospecimenQuality getBiospecimenQualityByName(String name) {
+		Criteria criteria = getSession().createCriteria(BiospecimenQuality.class);
+		criteria.add(Restrictions.eq("name", name));
+		return (BiospecimenQuality) criteria.uniqueResult();
 	}
 
 	public List<BiospecimenQuality> getBiospecimenQualityList() {
@@ -469,11 +474,23 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 		List<BiospecimenQuality> list = criteria.list();
 		return list;
 	}
+	
+	public BiospecimenStatus getBiospecimenStatusByName(String name) {
+		Criteria criteria = getSession().createCriteria(BiospecimenStatus.class);
+		criteria.add(Restrictions.eq("name", name));
+		return (BiospecimenStatus) criteria.uniqueResult();
+	}
 
 	public List<BiospecimenStatus> getBiospecimenStatusList() {
 		Criteria criteria = getSession().createCriteria(BiospecimenStatus.class);
 		List<BiospecimenStatus> list = criteria.list();
 		return list;
+	}
+	
+	public BiospecimenStorage getBiospecimenStorageByName(String name) {
+		Criteria criteria = getSession().createCriteria(BiospecimenStorage.class);
+		criteria.add(Restrictions.eq("name", name));
+		return (BiospecimenStorage) criteria.uniqueResult();
 	}
 
 	public List<BiospecimenStorage> getBiospecimenStorageList() {
@@ -610,21 +627,27 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 		Long count = (Long) criteria.uniqueResult();
 		return count>0;
 	}
-	/**
-	 * 
-	 */
-	public void batchInsertBiospecimensAndUpdateInventoryCell(Collection<Biospecimen> insertBiospecimens) {
+
+	public void batchInsertBiospecimens(Collection<Biospecimen> insertBiospecimens) {
 		for (Biospecimen biospecimen : insertBiospecimens) {
+
 			getSession().save(biospecimen);
 			for(BioTransaction bioTransaction : biospecimen.getBioTransactions()){
 				getSession().save(bioTransaction);
 			}
+
 			InvCell invCell = biospecimen.getInvCell();
 			if(invCell!=null){
 				getSession().refresh(biospecimen);
 				invCell.setBiospecimen(biospecimen);
 				invCell.setStatus("Not Empty"); // TODO constants/enum
+				
 				getSession().saveOrUpdate(invCell);
+				InvBox invBox = invCell.getInvBox();
+				if(invBox!=null){
+					invBox.setAvailable(invBox.getAvailable()-1);
+				}
+				getSession().saveOrUpdate(invBox);
 			}
 		}
 	}
@@ -666,7 +689,8 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 		if(study!=null){
 			criteria.add(Restrictions.eq("study", study));
 		}
-		return  (Biospecimen) criteria.uniqueResult();
+		Biospecimen biospecimen = (Biospecimen) criteria.uniqueResult();
+		return biospecimen;
 	}
 
 	public List<String> getAllBiospecimenUIDs(Study study) {
@@ -736,7 +760,13 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 			}
 		}
 	}
-
+	
+	public BiospecimenProtocol getBiospecimenProtocolByName(String name) {
+		Criteria criteria = getSession().createCriteria(BiospecimenProtocol.class);
+		criteria.add(Restrictions.eq("name", name));
+		return (BiospecimenProtocol) criteria.uniqueResult();
+	}
+	
 	public List<BiospecimenProtocol> getBiospecimenProtocolList() {
 		Criteria criteria = getSession().createCriteria(BiospecimenProtocol.class);
 		List<BiospecimenProtocol> list = criteria.list();

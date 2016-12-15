@@ -33,7 +33,6 @@ import au.org.theark.core.exception.EntityNotFoundException;
 import au.org.theark.core.model.lims.entity.AccessRequest;
 import au.org.theark.core.model.lims.entity.BioTransaction;
 import au.org.theark.core.model.lims.entity.BioTransactionStatus;
-import au.org.theark.core.model.lims.entity.Biospecimen;
 import au.org.theark.core.model.lims.entity.TreatmentType;
 
 @SuppressWarnings("unchecked")
@@ -122,12 +121,5 @@ public class BioTransactionDao extends HibernateSessionDao implements IBioTransa
 	public List<AccessRequest> getAccessRequests() {
 		Criteria criteria = getSession().createCriteria(AccessRequest.class);
 		return criteria.list();
-	}
-
-	public List<BioTransaction> getAllBiotransactionForBiospecimen(Biospecimen biospecimen) {
-		Criteria criteria = getSession().createCriteria(BioTransaction.class);
-		criteria.add(Restrictions.eq("biospecimen", biospecimen));
-		List<BioTransaction> result = (List<BioTransaction>) criteria.list();
-		return result;
 	}
 }

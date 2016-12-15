@@ -19,9 +19,14 @@
 					Field Name:
 				</wicket:message>
 			</th>
-			<th width="15%">
+			<th width="10%">
 				<wicket:message	key="customField.fieldType">
 					Field Type:
+				</wicket:message>
+			</th>
+			<th width="25%">
+				<wicket:message	key="customField.description">
+					Description:
 				</wicket:message>
 			</th>
 			<th width="15%">
@@ -30,21 +35,20 @@
 				</wicket:message>
 			</th>
 			<th width="10%">
-				<wicket:message	key="customField.customFieldType">
-					Custom field Type:
+				<wicket:message	key="customField.unitType">
+					Units:
 				</wicket:message>
 			</th>
 			<th width="10%">
-				<wicket:message	key="customField.customFieldCategory">
-					Custom Field Category
+				<wicket:message	key="customField.min">
+					Min:
 				</wicket:message>
 			</th>
 			<th width="10%">
-				<wicket:message	key="customField.customFieldCategory.orderNumber">
-					Order Number:
+				<wicket:message	key="customField.max">
+					Max:
 				</wicket:message>
 			</th>
-			
 			<th width="2%">
 				&nbsp;
 			</th>
@@ -73,24 +77,29 @@
 					Field Type
 				</span>
 			</td>
+			<td width="25%">
+				<span wicket:id="description">
+					Description
+				</span>
+			</td>
 			<td width="10%">
 				<span wicket:id="fieldLabel">
 					Question/Label
 				</span>
 			</td>
 			<td width="10%">
-				<span wicket:id="customFieldType">
-					custom field type
+				<span wicket:id="unitType">
+					Units
 				</span>
 			</td>
 			<td width="10%">
-				<span wicket:id="customFieldCategory">
-					Category
+				<span wicket:id="minValue">
+					MinValue
 				</span>
 			</td>
 			<td width="10%">
-				<span wicket:id="customFieldCategory.orderNumber">
-					order Number
+				<span wicket:id="maxValue">
+					MaxValue
 				</span>
 			</td>
 			<td width="2%">
@@ -102,7 +111,7 @@
 				<td width="2%">
 					&nbsp;
 				</td>
-				<td width="96%" colspan="7">
+				<td width="96%" colspan="8">
 					<span wicket:id="navigator" class="a">
 					</span>
 				</td>

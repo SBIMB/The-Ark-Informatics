@@ -49,7 +49,6 @@ import au.org.theark.study.service.IStudyService;
 import au.org.theark.study.web.Constants;
 import au.org.theark.web.menu.AdminTabProviderImpl;
 import au.org.theark.web.menu.DiseaseTabProviderImpl;
-import au.org.theark.web.menu.GenomicsTabProviderImpl;
 import au.org.theark.web.menu.LimsTabProviderImpl;
 import au.org.theark.web.menu.MainTabProviderImpl;
 import au.org.theark.web.menu.PhenotypicTabProviderImpl;
@@ -172,7 +171,7 @@ public class HomePage extends BasePage {
 			ArkUser arkUser = iArkCommonService.getArkUser(ldapUserName);
 			arkModuleList = iArkCommonService.getArkModuleListByArkUser(arkUser);
 			
-			for (ArkModule arkModule: arkModuleList) {				
+			for (ArkModule arkModule: arkModuleList) {
 				//log.info("arkModule: " + arkModule.getName());
 				if (arkModule.getName().equalsIgnoreCase(au.org.theark.core.Constants.ARK_MODULE_STUDY)) {
 					// Study
@@ -233,20 +232,9 @@ public class HomePage extends BasePage {
 						moduleTabsList.add(tab);
 					}
 				}
-				
-				if(arkModule.getName().equalsIgnoreCase(au.org.theark.core.Constants.ARK_MODULE_GENOMICS)){
-					// Reporting always displayed, but data extraction function requires role/permisssion 
-					GenomicsTabProviderImpl genomicsTabProvider = new GenomicsTabProviderImpl((au.org.theark.core.Constants.ARK_MODULE_GENOMICS));
-					List<ITab> genomicsTabList = genomicsTabProvider.buildTabs();
-					for (ITab tab : genomicsTabList) {
-						moduleTabsList.add(tab);
-					}
-				}
 			}
 			
-			//Only add the global search tab once, at the end of the tabs
-			ITab globalSearchTab = studyMainTabProvider.createTab(au.org.theark.core.Constants.ARK_MODULE_GLOBAL_SEARCH);
-			moduleTabsList.add(globalSearchTab);
+			
 			
 			// Only display admin tab for the super user
 			ArkModule arkModule = iArkCommonService.getArkModuleByName(au.org.theark.core.Constants.ARK_MODULE_ADMIN);

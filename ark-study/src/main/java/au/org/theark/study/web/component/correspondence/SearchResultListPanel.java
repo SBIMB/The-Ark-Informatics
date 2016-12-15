@@ -70,7 +70,7 @@ public class SearchResultListPanel extends Panel {
 	@SuppressWarnings("unchecked")
 	public PageableListView<Correspondences> buildPageableListView(IModel iModel) {
 
-		PageableListView<Correspondences> pageableListView = new PageableListView<Correspondences>("correspondenceList", iModel, iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue()) {
+		PageableListView<Correspondences> pageableListView = new PageableListView<Correspondences>("correspondenceList", iModel, iArkCommonService.getRowsPerPage()) {
 
 			private static final long	serialVersionUID	= 9076367524574951367L;
 
@@ -191,8 +191,8 @@ public class SearchResultListPanel extends Panel {
 //				byte[] data = correspondences.getAttachmentPayload();
 				Long studyId =correspondences.getLss().getStudy().getId();
 				String subjectUID = correspondences.getLss().getSubjectUID();
-				String fileId = correspondences.getAttachmentFileId();
-				String checksum = correspondences.getAttachmentChecksum();
+				String fileId = correspondences.getAttachementFileId();
+				String checksum = correspondences.getAttachementChecksum();
 				
 				byte[] data = null;
 				

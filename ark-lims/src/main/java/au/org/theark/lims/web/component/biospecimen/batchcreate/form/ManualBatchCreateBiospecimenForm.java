@@ -161,10 +161,9 @@ public class ManualBatchCreateBiospecimenForm extends Form<BatchBiospecimenVO> {
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 				if(onSave(target)) {
-					target.add(feedbackPanel);
 					modalWindow.close(target);
 				}
-				
+				target.add(feedbackPanel);
 			}
 
 			@Override
@@ -458,7 +457,7 @@ public class ManualBatchCreateBiospecimenForm extends Form<BatchBiospecimenVO> {
 			getSession().info(message);
 			
 			log.info("Attempting to create " + biospecimenList.size() + " biospecimens");
-			iLimsService.batchInsertBiospecimensAndUpdateInventoryCell(biospecimenList);
+			iLimsService.batchInsertBiospecimens(biospecimenList);
 			return true;
 		}
 		else{

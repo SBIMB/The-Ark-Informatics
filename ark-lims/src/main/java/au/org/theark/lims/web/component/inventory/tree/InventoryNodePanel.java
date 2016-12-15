@@ -24,6 +24,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import au.org.theark.core.model.lims.entity.InvBox;
 import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.model.lims.entity.InvFreezer;
+import au.org.theark.core.model.lims.entity.InvShelf;
 import au.org.theark.core.model.lims.entity.InvRack;
 import au.org.theark.core.model.lims.entity.InvSite;
 import au.org.theark.core.session.ArkSession;
@@ -33,6 +34,7 @@ import au.org.theark.lims.web.Constants;
 import au.org.theark.lims.web.component.inventory.form.ContainerForm;
 import au.org.theark.lims.web.component.inventory.panel.box.BoxDetailPanel;
 import au.org.theark.lims.web.component.inventory.panel.freezer.FreezerDetailPanel;
+import au.org.theark.lims.web.component.inventory.panel.shelf.ShelfDetailPanel;
 import au.org.theark.lims.web.component.inventory.panel.rack.RackDetailPanel;
 import au.org.theark.lims.web.component.inventory.panel.site.SiteDetailPanel;
 
@@ -95,6 +97,13 @@ public class InventoryNodePanel extends LinkIconPanel {
 			stringBuffer.append("\t");
 			stringBuffer.append(percentUsed(nodeObject.getAvailable(), nodeObject.getCapacity()));
 		}
+		if (treeNode.getUserObject() instanceof InvShelf) {
+			InvShelf nodeObject = (InvShelf) treeNode.getUserObject();
+			nodeObject = iInventoryService.getInvShelf(nodeObject.getId());
+			stringBuffer.append(nodeObject.getName());
+			stringBuffer.append("\t");
+			stringBuffer.append(percentUsed(nodeObject.getAvailable(), nodeObject.getCapacity()));
+		}
 		if (treeNode.getUserObject() instanceof InvRack) {
 			InvRack nodeObject = (InvRack) treeNode.getUserObject();
 			nodeObject = iInventoryService.getInvRack(nodeObject.getId());
@@ -131,6 +140,11 @@ public class InventoryNodePanel extends LinkIconPanel {
 			InvFreezer invFreezer = (InvFreezer) treeNode.getUserObject();
 			invFreezer = iInventoryService.getInvFreezer(invFreezer.getId());
 			name = invFreezer.getName();
+		}
+		if (treeNode.getUserObject() instanceof InvShelf) {
+			InvShelf invShelf = (InvShelf) treeNode.getUserObject();
+			invShelf = iInventoryService.getInvShelf(invShelf.getId());
+			name = invShelf.getName();
 		}
 		if (treeNode.getUserObject() instanceof InvRack) {
 			InvRack invRack = (InvRack) treeNode.getUserObject();
@@ -219,6 +233,17 @@ public class InventoryNodePanel extends LinkIconPanel {
 			detailContainer.addOrReplace(detailPanel);
 			detailContainer.setVisible(true);
 		}
+		if (node.getUserObject() instanceof InvShelf) {
+			InvShelf invShelf = (InvShelf) node.getUserObject();
+
+			containerForm.getModelObject().setInvShelf(invShelf);
+
+			ShelfDetailPanel detailPanel = new ShelfDetailPanel("detailPanel", feedbackPanel, detailContainer, containerForm, this.tree, node);
+			detailPanel.initialisePanel();
+
+			detailContainer.addOrReplace(detailPanel);
+			detailContainer.setVisible(true);
+		}
 		if (node.getUserObject() instanceof InvRack) {
 			InvRack invRack = (InvRack) node.getUserObject();
 			// Get object from database again, to be sure of persistence
@@ -297,6 +322,13 @@ public class InventoryNodePanel extends LinkIconPanel {
 			invFreezer = iInventoryService.getInvFreezer(invFreezer.getId());
 			if(invFreezer.getId() != null) {
 				resourceReference = getFreezerIcon(invFreezer.getAvailable(), invFreezer.getCapacity());
+			}
+		}
+		if (node.getUserObject() instanceof InvShelf) {
+			InvShelf invShelf = (InvShelf) node.getUserObject();
+			invShelf = iInventoryService.getInvShelf(invShelf.getId());
+			if(invShelf.getId() != null) {
+				resourceReference = getFreezerIcon(invShelf.getAvailable(), invShelf.getCapacity());
 			}
 		}
 		if (node.getUserObject() instanceof InvRack) {

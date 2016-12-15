@@ -24,7 +24,7 @@ public class BiospecimenSummaryDataRow implements Serializable {
 	
 	public BiospecimenSummaryDataRow(String studyName, String subjectUId,
 			Long biospecimenId, String parentId, String sampleType,
-			Double quantity, String initialStatus, String biospecimenUid) {
+			Double quantity, String initialStatus, String biospecimenUid){
 		this.studyName = studyName;
 		this.subjectUId = subjectUId;
 		this.biospecimenId = biospecimenId;
@@ -98,5 +98,4 @@ public class BiospecimenSummaryDataRow implements Serializable {
 	public void setBiospecimenUid(String biospecimenUid) {
 		this.biospecimenUid = biospecimenUid;
 	}
-	
 }

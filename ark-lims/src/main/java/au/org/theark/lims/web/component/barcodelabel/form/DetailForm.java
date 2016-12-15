@@ -45,7 +45,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.string.StringValue;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,6 +151,7 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 		printerList = new PrinterListPanel("printerList", selected, isNew());
 		printerList.add(new AbstractDefaultAjaxBehavior() {
 			private static final long	serialVersionUID	= 1L;
+
 			@Override
 			public void renderHead(Component component, IHeaderResponse response) {
 				super.renderHead(component, response);
@@ -160,6 +160,7 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 				    + getCallbackUrl() + "&selectedPrinter='+selectedPrinter, function() { }, function() { } ) }";
 				response.renderJavaScript(js, "selectPrinter");
 			}
+
 			@Override
 			protected void respond(AjaxRequestTarget arg0) {
 				barcodePrinterName = RequestCycle.get().getRequest().getQueryParameters().getParameterValue("selectedPrinter");
@@ -310,6 +311,7 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 		}
 		else {
 			containerForm.getModelObject().setBarcodePrinterName(barcodePrinterName.toString());
+		
 			if (isNew()) {
 				if (barcodeLabelTemplateDdc.getModelObject() != null) {
 					List<BarcodeLabelData> cloneBarcodeLabelDataList = iLimsAdminService.getBarcodeLabelDataByBarcodeLabel(barcodeLabelTemplateDdc.getModelObject());
@@ -335,22 +337,20 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 					}
 					containerForm.getModelObject().setBarcodeLabelData(barcodeLabelDataList);
 				}
-
-				try {
-					iLimsAdminService.createBarcodeLabel(containerForm.getModelObject());
-					this.info("Barcode label: " + containerForm.getModelObject().getName() + " was created successfully.");
-				} catch (ConstraintViolationException e) {
-					e.printStackTrace();
-					this.error("A Barcode Label named \"" + containerForm.getModelObject().getName() + "\" already exists for this study.");
-				}
+				
+				iLimsAdminService.createBarcodeLabel(containerForm.getModelObject());
 			}
 			else {
 				iLimsAdminService.updateBarcodeLabel(containerForm.getModelObject());
-				this.info("Barcode label: " + containerForm.getModelObject().getName() + " was updated successfully.");
 			}
+			this.info("Barcode label: " + containerForm.getModelObject().getName() + " was created/updated successfully.");
 		}
 		target.add(feedBackPanel);
 		onSavePostProcess(target);
+	}
+	
+	@Override
+	protected void onTest(Form<BarcodeLabel> containerForm, AjaxRequestTarget target) {
 	}
 
 	/*

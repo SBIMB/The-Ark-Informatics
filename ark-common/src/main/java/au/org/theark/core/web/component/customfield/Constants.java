@@ -36,9 +36,8 @@ public class Constants {
 	public static final String ENCODED_VALUES_SEPARATOR = "=";
 	
 	public static final String		CHARACTER_FIELD_TYPE_NAME									= "CHARACTER";
-	public static final String		DATE_FIELD_TYPE_NAME										= "DATE";
+	public static final String		DATE_FIELD_TYPE_NAME											= "DATE";
 	public static final String		NUMBER_FIELD_TYPE_NAME										= "NUMBER";
-	public static final String		LOOKUP_FIELD_TYPE_NAME										= "LOOKUP";
 
 	public static final String		CUSTOMFIELD 													= "customField";
 	public static final String		CUSTOMFIELD_ID													= "id";
@@ -47,10 +46,6 @@ public class Constants {
 	public static final String		CUSTOMFIELD_NAME												= "name";
 	public static final String		CUSTOMFIELD_DESCRIPTION										= "description";
 	public static final String		CUSTOMFIELD_FIELD_LABEL										= "fieldLabel";
-	public static final String		CUSTOMFIELD_CUSTOME_FIELD_TYPE								= "customFieldType";
-	public static final String		CUSTOMFIELD_CATEGORY										= "customFieldCategory";
-	public static final String		CUSTOMFIELD_CATEGORY_ORDERNUMBER							= "customFieldCategory.orderNumber";
-	
 	public static final String		CUSTOMFIELD_UNIT_TYPE										= "unitType";
 	public static final String		CUSTOMFIELD_MIN_VALUE										= "minValue";
 	public static final String		CUSTOMFIELD_MAX_VALUE										= "maxValue";
@@ -82,20 +77,18 @@ public class Constants {
 	public static final String		FIELDVO_CUSTOMFIELD_ID										= "customField.id";
 	public static final String		FIELDVO_CUSTOMFIELD_STUDY									= "customField.study";
 	public static final String		FIELDVO_CUSTOMFIELD_FIELD_TYPE							= "customField.fieldType";
-	public static final String		FIELDVO_CUSTOMFIELD_NAME								= "customField.name";
+	public static final String		FIELDVO_CUSTOMFIELD_NAME									= "customField.name";
 	public static final String		FIELDVO_CUSTOMFIELD_DESCRIPTION							= "customField.description";
 	public static final String		FIELDVO_CUSTOMFIELD_FIELD_LABEL							= "customField.fieldLabel";
 	public static final String		FIELDVO_CUSTOMFIELD_UNIT_TYPE							= "customField.unitType";
-	public static final String		FIELDVO_CUSTOMFIELD_CUSTOM_FIELD_TYPE					= "customField.customFieldType";
 	//Add unit type as text
 	public static final String		FIELDVO_CUSTOMFIELD_UNIT_TYPE_TXT						= "customField.unitTypeInText";
 	public static final String		FIELDVO_CUSTOMFIELD_SEQ_NUM								= "customField.seqNum";
-	public static final String		FIELDVO_CUSTOMFIELD_MIN_VALUE							= "customField.minValue";
-	public static final String		FIELDVO_CUSTOMFIELD_MAX_VALUE							= "customField.maxValue";
+	public static final String		FIELDVO_CUSTOMFIELD_MIN_VALUE								= "customField.minValue";
+	public static final String		FIELDVO_CUSTOMFIELD_MAX_VALUE								= "customField.maxValue";
 	public static final String		FIELDVO_CUSTOMFIELD_ENCODED_VALUES						= "customField.encodedValues";
 	public static final String		FIELDVO_CUSTOMFIELD_MISSING_VALUE						= "customField.missingValue";
-	public static final String		FIELDVO_CUSTOMFIELD_DEFAULT_VALUE						= "customField.defaultValue";
-	public static final String		FIELDVO_CUSTOMFIELD_ALLOW_MULTISELECT					= "customFieldDisplay.allowMultiselect";
+	public static final String		FIELDVO_CUSTOMFIELD_ALLOW_MULTISELECT						= "customFieldDisplay.allowMultiselect";
 	
 	public static final String		FIELDVO_CUSTOMFIELDDISPLAY_ID								= "customFieldDisplay.id";
 	public static final String		FIELDVO_CUSTOMFIELDDISPLAY_CUSTOM_FIELD				= "customFieldDisplay.customField";
@@ -103,13 +96,6 @@ public class Constants {
 	public static final String		FIELDVO_CUSTOMFIELDDISPLAY_REQUIRED						= "customFieldDisplay.required";
 	public static final String		FIELDVO_CUSTOMFIELDDISPLAY_REQUIRED_MSG				= "customFieldDisplay.requiredMessage";
 	public static final String		FIELDVO_CUSTOMFIELDDISPLAY_FIELD_GROUP					= "customFieldDisplay.customFieldGroup";
-	//Add new variables-2015-07-20
-	public static final String      CUSTOM_FIELD_TYPE_NAME									="name";
-	public static final String		CUSTOM_FIELD_TYPE_ID									="id";
-	public static final String 		CUSTOMFIELDCATEGORY_NAME								="name";
-	public static final String 		CUSTOMFIELDCATEGORY_ID									="id";
-	public static final String		FIELDVO_CUSTOMFIELD_CUSTOEMFIELDCATEGORY				= "customField.customFieldCategory";
-	public static final String		FIELDVO_CUSTOMFIELD_CUSTOEMFIELDCATEGORY_ORDERNUMBER	= "customField.customFieldCategory.orderNumber";
-	public static final String		CUSTOM_FIELD_TYPE										= "customField.customFieldType.name";
+	
 
 }

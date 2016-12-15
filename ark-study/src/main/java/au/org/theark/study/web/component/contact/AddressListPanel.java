@@ -103,13 +103,10 @@ public class AddressListPanel extends Panel {
 					if (sessionPersonId != null) {
 						person = studyService.getPerson(sessionPersonId);
 						containerForm.getModelObject().getAddressVo().getAddress().setPerson(person);
-						listAddressForSize = studyService.getPersonAddressList(sessionPersonId, containerForm.getModelObject().getAddressVo().getAddress());
-						return listAddressForSize.size();
-						
-					}else{
-						return 0;
 					}
-					
+					listAddressForSize = studyService.getPersonAddressList(sessionPersonId, containerForm.getModelObject().getAddressVo().getAddress());
+					return listAddressForSize.size();
+
 				}
 				catch (ArkSystemException e) {
 					e.printStackTrace();
@@ -139,13 +136,10 @@ public class AddressListPanel extends Panel {
 					if (sessionPersonId != null) {
 						person = studyService.getPerson(sessionPersonId);
 						containerForm.getModelObject().getAddressVo().getAddress().setPerson(person);
-						listAddressForSize = studyService.getPersonAddressList(sessionPersonId, containerForm.getModelObject().getAddressVo().getAddress());
-						return listAddressForSize.size();
-					}else{
-						
-						return 0;
 					}
-	
+					listAddressForSize = studyService.getPersonAddressList(sessionPersonId, containerForm.getModelObject().getAddressVo().getAddress());
+					return listAddressForSize.size();
+
 				}
 				catch (ArkSystemException e) {
 					e.printStackTrace();
@@ -170,7 +164,7 @@ public class AddressListPanel extends Panel {
 
 		addressProvider.setModel(Model.of(containerForm.getModelObject().getAddressVo().getAddress()));
 		dataViewAddress = buildDataView(addressProvider);
-		dataViewAddress.setItemsPerPage(iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue());
+		dataViewAddress.setItemsPerPage(iArkCommonService.getRowsPerPage());
 		dataViewAddressSubjectVO = buildDataViewWithSubjectStudyID(addressSubjectProvider);
 		AjaxPagingNavigator pageNavigator = new AjaxPagingNavigator("addressNavigator", dataViewAddress);
 		add(pageNavigator);
@@ -186,7 +180,7 @@ public class AddressListPanel extends Panel {
 		columns.add(new ExportableTextColumn<AddressSubjectVO>(Model.of("DateReceived"), "dateReceived"));
 		columns.add(new ExportableTextColumn<AddressSubjectVO>(Model.of("Preferred Mailing Address"), "preferredMailingAddress"));
 
-		DataTable table = new DataTable("datatable", columns, dataViewAddressSubjectVO.getDataProvider(), iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue());
+		DataTable table = new DataTable("datatable", columns, dataViewAddressSubjectVO.getDataProvider(), iArkCommonService.getRowsPerPage());
 		List<String> headers = new ArrayList<String>(0);
 		headers.add("Subject UID:");
 		headers.add("Street Address:");
@@ -200,8 +194,6 @@ public class AddressListPanel extends Panel {
 
 		String filename = sessionPersonId != null ? String.valueOf(sessionPersonId) + "_addressList" : "unknown" + "_addressList";
 		RepeatingView toolbars = new RepeatingView("toolbars");
-		//Disable the tool bar if session person not exsists.
-		if(sessionPersonId==null){toolbars.setEnabled(false);}else{toolbars.setEnabled(true);}
 		ExportToolbar<String> exportToolBar = new ExportToolbar<String>(table, headers, filename);
 		toolbars.add(new Component[] { exportToolBar });
 		add(toolbars);

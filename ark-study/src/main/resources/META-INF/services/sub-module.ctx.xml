@@ -15,6 +15,7 @@
     <context:component-scan base-package="au.org.theark.study.service"/>
     <context:component-scan base-package="au.org.theark.study.web.component.site"/>
     <context:component-scan base-package="au.org.theark.study.util"/>
+    <context:component-scan base-package="za.ac.theark.study.util"/>
     
 	<!-- All LDAP configurations have been centralised into application-context.xml -->
 

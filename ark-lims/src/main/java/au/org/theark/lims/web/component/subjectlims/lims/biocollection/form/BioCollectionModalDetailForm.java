@@ -32,7 +32,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,9 +71,10 @@ public class BioCollectionModalDetailForm extends AbstractModalDetailForm<LimsVO
 	private TextField<String>			biocollectionUidTxtFld;
 	private TextField<String>			nameTxtFld;
 	private TextArea<String>			commentsTxtAreaFld;
+	private TextField<Integer>			patientAgeTxtFld;
 	private DateTextField				collectionDateTxtFld;
 	private ModalWindow					modalWindow;
-	private Panel 							bioCollectionCFDataEntryPanel;
+	private Panel 						bioCollectionCFDataEntryPanel;
 	private AjaxButton					printBioCollectionLabelButton;
 	private AjaxButton					printBiospecimensForBioCollectionButton;
 	private AjaxButton					printStrawBiospecimensForBioCollectionButton;
@@ -130,8 +130,7 @@ public class BioCollectionModalDetailForm extends AbstractModalDetailForm<LimsVO
 		if (!(bioCollectionCFDataEntryPanel instanceof BioCollectionCustomDataDataViewPanel)) {
 			CompoundPropertyModel<BioCollectionCustomDataVO> bioCFDataCpModel = new CompoundPropertyModel<BioCollectionCustomDataVO>(new BioCollectionCustomDataVO());		
 			bioCFDataCpModel.getObject().setBioCollection(bioCollection);
-			//bioCFDataCpModel.getObject().setArkFunction(iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_LIMS_COLLECTION));
-			bioCFDataCpModel.getObject().setArkFunction(iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_LIMS_CUSTOM_FIELD));
+			bioCFDataCpModel.getObject().setArkFunction(iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_LIMS_COLLECTION));
 			bioCollectionCFDataEntryPanel = new BioCollectionCustomDataDataViewPanel("bioCollectionCFDataEntryPanel", bioCFDataCpModel).initialisePanel(null);
 			replacePanel = true;
 		}
@@ -144,6 +143,7 @@ public class BioCollectionModalDetailForm extends AbstractModalDetailForm<LimsVO
 		nameTxtFld = new TextField<String>("bioCollection.name");
 		
 		commentsTxtAreaFld = new TextArea<String>("bioCollection.comments");
+		patientAgeTxtFld = new TextField<Integer>("bioCollection.patientAge");
 		collectionDateTxtFld = new DateTextField("bioCollection.collectionDate", au.org.theark.core.Constants.DD_MM_YYYY);
 		ArkDatePicker datePicker = new ArkDatePicker();
 		datePicker.bind(collectionDateTxtFld);
@@ -195,7 +195,6 @@ public class BioCollectionModalDetailForm extends AbstractModalDetailForm<LimsVO
 	protected void attachValidators() {
 		idTxtFld.setRequired(true);
 		biocollectionUidTxtFld.setRequired(true).setLabel(new StringResourceModel("error.bioCollection.biocollectionUid.required", this, new Model<String>("BioCollectionUid")));
-		nameTxtFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_NAME_MAX_LENGTH_50));
 	}
 
 	private void addComponents() {
@@ -203,6 +202,7 @@ public class BioCollectionModalDetailForm extends AbstractModalDetailForm<LimsVO
 		arkCrudContainerVo.getDetailPanelFormContainer().add(biocollectionUidTxtFld);
 		arkCrudContainerVo.getDetailPanelFormContainer().add(nameTxtFld);
 		arkCrudContainerVo.getDetailPanelFormContainer().add(commentsTxtAreaFld);
+		arkCrudContainerVo.getDetailPanelFormContainer().add(patientAgeTxtFld);
 		arkCrudContainerVo.getDetailPanelFormContainer().add(collectionDateTxtFld);
 		arkCrudContainerVo.getDetailPanelFormContainer().add(bioCollectionCFDataEntryPanel);
 		
@@ -262,23 +262,16 @@ public class BioCollectionModalDetailForm extends AbstractModalDetailForm<LimsVO
 
 	@Override
 	protected void onDeleteConfirmed(AjaxRequestTarget target, Form<?> form) {
-		BioCollection bioCollection=cpModel.getObject().getBioCollection();
-		//Ark-1606 bug fix for deleting bio-collection which has already data.  
-		if(iLimsService.hasBiocllectionGotCustomFieldData(bioCollection)){
-			this.error("Biospecimen collection " + bioCollection.getBiocollectionUid() + " can not be deleted because it has biocollection custom field data attached.");
-			target.add(feedbackPanel);
-		}
-		if(iLimsService.hasBiospecimens(bioCollection)) {
-			this.error("Biospecimen collection " + bioCollection.getBiocollectionUid() + " can not be deleted because there are biospecimens attached.");
-			target.add(feedbackPanel);
-		}
-		if(!iLimsService.hasBiospecimens(bioCollection) &&(!iLimsService.hasBiocllectionGotCustomFieldData(bioCollection)))
-		{
+		if (!iLimsService.hasBiospecimens(cpModel.getObject().getBioCollection())) {
+
 			iLimsService.deleteBioCollection(cpModel.getObject());
-			this.info("Biospecimen collection " + bioCollection.getBiocollectionUid() + " was deleted successfully.");
+			this.info("Biospecimen collection " + cpModel.getObject().getBioCollection().getBiocollectionUid() + " was deleted successfully");
 			onClose(target);
 		}
-		
+		else {
+			this.error("Biospecimen collection " + cpModel.getObject().getBioCollection().getBiocollectionUid() + " can not be deleted because there are biospecimens attached");
+			target.add(feedbackPanel);
+		}
 	}
 
 	@Override

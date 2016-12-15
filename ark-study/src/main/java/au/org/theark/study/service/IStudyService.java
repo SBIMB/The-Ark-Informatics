@@ -23,11 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import au.org.theark.core.model.study.entity.*;
-
 import org.apache.wicket.util.file.File;
-
-import com.csvreader.CsvReader;
 
 import au.org.theark.core.exception.ArkSubjectInsertException;
 import au.org.theark.core.exception.ArkSystemException;
@@ -40,6 +36,44 @@ import au.org.theark.core.exception.StatusNotAvailableException;
 import au.org.theark.core.exception.UnAuthorizedOperation;
 import au.org.theark.core.model.audit.entity.ConsentHistory;
 import au.org.theark.core.model.audit.entity.LssConsentHistory;
+import au.org.theark.core.model.study.entity.Address;
+import au.org.theark.core.model.study.entity.AddressStatus;
+import au.org.theark.core.model.study.entity.AddressType;
+import au.org.theark.core.model.study.entity.ArkFunction;
+import au.org.theark.core.model.study.entity.ArkUser;
+import au.org.theark.core.model.study.entity.Consent;
+import au.org.theark.core.model.study.entity.ConsentFile;
+import au.org.theark.core.model.study.entity.ConsentOption;
+import au.org.theark.core.model.study.entity.ConsentStatus;
+import au.org.theark.core.model.study.entity.ConsentType;
+import au.org.theark.core.model.study.entity.CorrespondenceDirectionType;
+import au.org.theark.core.model.study.entity.CorrespondenceModeType;
+import au.org.theark.core.model.study.entity.CorrespondenceOutcomeType;
+import au.org.theark.core.model.study.entity.Correspondences;
+import au.org.theark.core.model.study.entity.CustomField;
+import au.org.theark.core.model.study.entity.EmailStatus;
+import au.org.theark.core.model.study.entity.EthnicityType;
+import au.org.theark.core.model.study.entity.GenderType;
+import au.org.theark.core.model.study.entity.LinkStudySubstudy;
+import au.org.theark.core.model.study.entity.LinkSubjectPedigree;
+import au.org.theark.core.model.study.entity.LinkSubjectStudy;
+import au.org.theark.core.model.study.entity.LinkSubjectTwin;
+import au.org.theark.core.model.study.entity.MaritalStatus;
+import au.org.theark.core.model.study.entity.Person;
+import au.org.theark.core.model.study.entity.PersonLastnameHistory;
+import au.org.theark.core.model.study.entity.Phone;
+import au.org.theark.core.model.study.entity.PhoneStatus;
+import au.org.theark.core.model.study.entity.PhoneType;
+import au.org.theark.core.model.study.entity.Study;
+import au.org.theark.core.model.study.entity.StudyComp;
+import au.org.theark.core.model.study.entity.StudyPedigreeConfiguration;
+import au.org.theark.core.model.study.entity.SubjectCustomFieldData;
+import au.org.theark.core.model.study.entity.SubjectFile;
+import au.org.theark.core.model.study.entity.SubjectStatus;
+import au.org.theark.core.model.study.entity.TitleType;
+import au.org.theark.core.model.study.entity.TwinType;
+import au.org.theark.core.model.study.entity.Upload;
+import au.org.theark.core.model.study.entity.VitalStatus;
 import au.org.theark.core.vo.ArkUserVO;
 import au.org.theark.core.vo.ConsentVO;
 import au.org.theark.core.vo.StudyModelVO;
@@ -48,7 +82,6 @@ import au.org.theark.core.vo.UploadVO;
 import au.org.theark.study.model.capsule.ArkRelativeCapsule;
 import au.org.theark.study.model.capsule.RelativeCapsule;
 import au.org.theark.study.model.vo.RelationshipVo;
-import au.org.theark.study.model.vo.StudyCalendarVo;
 import au.org.theark.study.util.SubjectUploadValidator;
 
 public interface IStudyService {
@@ -92,6 +125,8 @@ public interface IStudyService {
 	public void update(Phone phone) throws ArkSystemException, ArkUniqueException;
 
 	public void delete(Phone phone) throws ArkSystemException;
+	
+	public void update(LinkSubjectStudy linkSubjectStudy) throws EntityNotFoundException;
 
 	/**
 	 * A method to create a Subject.
@@ -254,8 +289,7 @@ public interface IStudyService {
 
 	public StringBuffer uploadAndReportMatrixSubjectFile(InputStream inputStream, long size, String fileFormat, char delimChar, long studyId,  List<String> listOfUIDsToUpdate);
 
-	public StringBuffer uploadAndReportCustomDataFile(InputStream inputStream, long size, String fileFormat, char delimChar, long studyId, 
-			List<String> listOfUIDsToUpdate,String customFieldType,UploadVO uploadVO);
+	public StringBuffer uploadAndReportCustomDataFile(InputStream inputStream, long size, String fileFormat, char delimChar, long studyId,  List<String> listOfUIDsToUpdate);
 	
 
 //TODO Trav Deprecated	public void batchInsertSubjects(Collection<SubjectVO> subjectVoCollection) throws ArkUniqueException, ArkSubjectInsertException;
@@ -273,11 +307,9 @@ public interface IStudyService {
 
 	public LinkSubjectStudy getSubjectLinkedToStudy(Long personId, Study study) throws EntityNotFoundException, ArkSystemException;
 
-	//public List<SubjectCustomFieldData> getSubjectCustomFieldDataList(LinkSubjectStudy linkSubjectStudyCriteria, ArkFunction arkFunction, int first, int count);
+	public List<SubjectCustomFieldData> getSubjectCustomFieldDataList(LinkSubjectStudy linkSubjectStudyCriteria, ArkFunction arkFunction, int first, int count);
 
 	public long getSubjectCustomFieldDataCount(LinkSubjectStudy criteria, ArkFunction arkFunction);
-	
-	public long getFamilyCustomFieldDataCount(LinkSubjectStudy linkSubjectStudyCriteria, ArkFunction arkFunction);
 
 	/**
 	 * Allows to Save(Insert) or Update SubjectCustomFieldData. If there are SubjectCustomFieldData with no data value then it will discard it from the
@@ -286,8 +318,6 @@ public interface IStudyService {
 	 * @param subjectCustomFieldDataList
 	 */
 	public List<SubjectCustomFieldData> createOrUpdateSubjectCustomFieldData(List<SubjectCustomFieldData> subjectCustomFieldDataList);
-	
-	public List<FamilyCustomFieldData> createOrUpdateFamilyCustomFieldData(List<FamilyCustomFieldData> familyCustomFieldDataList);
 
 	/**
 	 * Checks if the given component(study) is or has attachments linked to it
@@ -346,6 +376,8 @@ public interface IStudyService {
 	public SubjectStatus getDefaultSubjectStatus();
 
 	public TitleType getDefaultTitleType();
+	
+	public EthnicityType getDefaultEthnicityType();
 
 	public GenderType getDefaultGenderType();
 
@@ -361,7 +393,7 @@ public interface IStudyService {
 	
 	public void processBatch(List<LinkSubjectStudy> subjectsToInsert, Study study, List<LinkSubjectStudy> subjectsToUpdate);
 
-	public void processFieldsBatch(List<? extends ICustomFieldData> fieldDataList, Study study, List<? extends ICustomFieldData> fieldDataToInsert);
+	public void processFieldsBatch(List<SubjectCustomFieldData> fieldDataList, Study study, List<SubjectCustomFieldData> fieldDataToInsert);
 	
 	/**
 	 * Process the given {@link Consent} lists separately and persist the changes to the table. 
@@ -409,7 +441,7 @@ public interface IStudyService {
 	
 	public StringBuffer uploadAndReportPedigreeDataFile(InputStream inputStream, long size, String fileFormat, char delimChar, long studyId);
 	
-	public StringBuffer uploadAndReportSubjectAttachmentDataFile(InputStream inputStream, long size, String fileFormat, char delimChar, long studyId, String user_id);
+	public StringBuffer uploadAndReportSubjectAttachmentDataFile(InputStream inputStream, long size, String fileFormat, char delimChar, long studyId);
 	
 	public RelativeCapsule[] generateSubjectPedigreeImageList(final String subjectUID,final Long studyId);
 	
@@ -442,31 +474,5 @@ public interface IStudyService {
 	public List<Phone> pageablePersonPhoneList(Long personId,Phone phoneCriteria, int first, int count);
 	
 	public List<Address> pageablePersonAddressList(Long personId,Address addressCriteria, int first, int count);
-	
-	public List<CustomField> getFamilyUIdCustomFieldsForPedigreeRelativesList(Long studyId);
-	
-	public List<FamilyCustomFieldData> getFamilyCustomFieldDataList(LinkSubjectStudy linkSubjectStudyCriteria, ArkFunction arkFunction,CustomFieldCategory customFieldCategory,CustomFieldType customFieldType, int first, int count);
 
-	public String getSubjectFamilyId(Long studyId, String subjectUID);
-	
-	public List<SubjectCustomFieldData> getSubjectCustomFieldDataList(LinkSubjectStudy linkSubjectStudyCriteria, ArkFunction arkFunction,CustomFieldCategory customFieldCategory,CustomFieldType customFieldType, int first, int count);
-	
-	public void setPreferredPhoneNumberToFalse(Person person);
-
-	public void saveOrUpdate(StudyCalendar studyCalendar);
-
-	public void delete(StudyCalendar studyCalendar);
-	
-	public List<StudyCalendar> searchStudyCalenderList(StudyCalendar studyCalendar);
-	
-	public List<CustomField> getStudySubjectCustomFieldList(Long studyId);
-	
-	public void saveOrUpdate(StudyCalendarVo studyCalendarVo);
-	
-	public List<CustomField> getSelectedCalendarCustomFieldList(StudyCalendar studyCalendar);
-	
-	public List<RelationshipVo> getSubjectChildren(String subjectUID, long studyId);
-	public void delete(OtherID otherID);
-	public boolean isStudyComponentBeingUsedInConsent(StudyComp studyComp);
-	public List<CorrespondenceOutcomeType> getCorrespondenceOutcomeTypesForModeAndDirection(CorrespondenceModeType correspondenceModeType,CorrespondenceDirectionType correspondenceDirectionType);
 }

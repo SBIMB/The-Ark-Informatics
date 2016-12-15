@@ -48,7 +48,7 @@ public abstract class BaseApplication extends WebApplication {
 		
 		settings.setPageExpiredErrorPage(LoginPage.class);
 		
-		// Alow wicket-source for development debugging
+		// Allow wicket-source for development debugging
 		if(getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)){
 			WicketSource.configure(this);
 			getDebugSettings().setOutputComponentPath(true);

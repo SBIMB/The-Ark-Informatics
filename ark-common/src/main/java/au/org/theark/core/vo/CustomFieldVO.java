@@ -19,12 +19,8 @@
 package au.org.theark.core.vo;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import au.org.theark.core.model.study.entity.CustomField;
-import au.org.theark.core.model.study.entity.CustomFieldCategory;
 import au.org.theark.core.model.study.entity.CustomFieldDisplay;
 
 /**
@@ -38,15 +34,13 @@ public class CustomFieldVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private CustomField customField;
 	private CustomFieldDisplay customFieldDisplay;
-	protected List<CustomFieldCategory>			customFieldCategoryLst;
+	
 	protected boolean useCustomFieldDisplay;	// Flags whether or not CustomFieldDisplay should be saved, etc
 	
-
 	public CustomFieldVO() {
 		super();
 		customField = new CustomField();
 		customFieldDisplay = new CustomFieldDisplay();
-		customFieldCategoryLst=new ArrayList<CustomFieldCategory>(0);
 		useCustomFieldDisplay = false;
 	}
 
@@ -73,15 +67,5 @@ public class CustomFieldVO implements Serializable {
 	public void setUseCustomFieldDisplay(boolean useCustomFieldDisplay) {
 		this.useCustomFieldDisplay = useCustomFieldDisplay;
 	}
-
-	public List<CustomFieldCategory> getCustomFieldCategoryLst() {
-		return customFieldCategoryLst;
-	}
-
-	public void setCustomFieldCategoryLst(
-			List<CustomFieldCategory> customFieldCategoryLst) {
-		this.customFieldCategoryLst = customFieldCategoryLst;
-	}
-	
 
 }

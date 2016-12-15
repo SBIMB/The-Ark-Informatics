@@ -132,8 +132,7 @@ public class MainTabProviderImpl extends Panel implements IMainTabProvider {
 	}
 
 	public ITab createTab(final String tabName) {
-		//Global Search Tab created in HomePage.java to move to end of tabs.
-		if (tabName.equalsIgnoreCase(au.org.theark.core.Constants.ARK_MODULE_STUDY) || tabName.equalsIgnoreCase(au.org.theark.core.Constants.ARK_MODULE_GLOBAL_SEARCH)) {
+		if (tabName.equalsIgnoreCase(au.org.theark.core.Constants.ARK_MODULE_STUDY)) {
 			return new ArkMainTab(new Model<String>(tabName)) {
 				/**
 				 * 
@@ -208,9 +207,6 @@ public class MainTabProviderImpl extends Panel implements IMainTabProvider {
 		}
 		else if (tabName.equalsIgnoreCase(au.org.theark.core.Constants.ARK_MODULE_SUBJECT)) {
 			panelToReturn = new SubjectSubMenuTab(pid, arkContextMarkup, studyNameMarkup, studyLogoMarkup);
-		}
-		else if (tabName.equalsIgnoreCase(au.org.theark.core.Constants.ARK_MODULE_GLOBAL_SEARCH)) {
-			panelToReturn = new GlobalSearchSubMenuTab(pid, arkContextMarkup, studyNameMarkup, studyLogoMarkup, getModuleTabbedPanel());
 		}
 		return panelToReturn;
 	}

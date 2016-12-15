@@ -219,6 +219,10 @@ public class DetailForm extends AbstractDetailForm<AdminVO> {
 		this.info("Ark Role Policy for Function: " + containerForm.getModelObject().getArkRolePolicyTemplate().getArkFunction().getName() + " was created/updated successfully.");
 		target.add(feedBackPanel);
 	}
+	
+	protected void onTest(Form<AdminVO> containerForm, AjaxRequestTarget target) {
+		
+	}
 
 	protected void onCancel(AjaxRequestTarget target) {
 		containerForm.setModelObject(new AdminVO());

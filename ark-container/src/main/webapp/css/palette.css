@@ -1,5 +1,5 @@
 table.palette td.header {
-background-color:#EEE;
+background-color:#85B6FF;
 border-bottom:1px solid #6F6F6F;
 border-top:1px solid #6F6F6F;
 font-size:10pt;
@@ -80,7 +80,7 @@ padding-bottom:5px;
 }
 
 #paletteAvailableLabel {
-background-color:#EEE;
+background-color:#85B6FF;
 border-bottom:1px solid #6F6F6F;
 border-top:1px solid #6F6F6F;
 font-size:10pt;
@@ -92,7 +92,7 @@ width:100%;
 }
 
 #paletteSelectedLabel {
-background-color:#EEE;
+background-color:#85B6FF;
 border-bottom:1px solid #6F6F6F;
 border-top:1px solid #6F6F6F;
 font-size:10pt;

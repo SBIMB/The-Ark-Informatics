@@ -40,17 +40,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
 import au.org.theark.core.Constants;
 import au.org.theark.core.model.geno.entity.Pipeline;
 
 /**
  * Study entity. @author MyEclipse Persistence Tools
  */
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Entity
 @Table(name = "STUDY", schema = Constants.STUDY_SCHEMA, uniqueConstraints = @UniqueConstraint(columnNames = "NAME"))
 public class Study implements java.io.Serializable {
@@ -64,10 +59,15 @@ public class Study implements java.io.Serializable {
 	private Date dateOfApplication;
 	private Long estimatedYearOfCompletion;
 	private String chiefInvestigator;
+	private String chiefInvestigatorPhone;
+	private String chiefInvestigatorEmail;
 	private String coInvestigator;
+	private String coInvestigatorPhone;
+	private String coInvestigatorEmail;
 
 	private String contactPerson;
 	private String contactPersonPhone;
+	private String contactPersonEmail;
 	private String ldapGroupName;
 	private Boolean autoConsent;
 	private String subStudyBiospecimenPrefix;
@@ -117,9 +117,11 @@ public class Study implements java.io.Serializable {
 	public Study(Long id, StudyStatus studyStatus, String name,
 			String description, Date dateOfApplication,
 			Long estimatedYearOfCompletion, String chiefInvestigator,
-			String coInvestigator, Boolean autoGenerateSubjectUid,
+			String chiefInvestigatorPhone, String chiefInvestigatorEmail,
+			String coInvestigator, String coInvestigatorPhone, 
+			String coInvestigatorEmail,Boolean autoGenerateSubjectUid,
 			Long subjectUIdStart, String subjectIdPrefix, String contactPerson,
-			String contactPersonPhone, String ldapGroupName,
+			String contactPersonPhone, String contactPersonEmail, String ldapGroupName,
 			Boolean autoConsent, String subStudyBiospecimenPrefix,
 			String filename, SubjectUidToken subjectIdToken,
 			SubjectUidPadChar subjectUIdPadChar,
@@ -139,12 +141,17 @@ public class Study implements java.io.Serializable {
 		this.dateOfApplication = dateOfApplication;
 		this.estimatedYearOfCompletion = estimatedYearOfCompletion;
 		this.chiefInvestigator = chiefInvestigator;
+		this.chiefInvestigatorPhone = chiefInvestigatorPhone;
+		this.chiefInvestigatorEmail = chiefInvestigatorEmail;
 		this.coInvestigator = coInvestigator;
+		this.coInvestigatorPhone = coInvestigatorPhone;
+		this.coInvestigatorEmail = coInvestigatorEmail;
 		this.autoGenerateSubjectUid = autoGenerateSubjectUid;
 		this.subjectUidStart = subjectUIdStart;
 		this.subjectUidPrefix = subjectIdPrefix;
 		this.contactPerson = contactPerson;
 		this.contactPersonPhone = contactPersonPhone;
+		this.contactPersonEmail = contactPersonEmail;
 		this.ldapGroupName = ldapGroupName;
 		this.autoConsent = autoConsent;
 		this.subStudyBiospecimenPrefix = subStudyBiospecimenPrefix;
@@ -229,6 +236,24 @@ public class Study implements java.io.Serializable {
 	public void setChiefInvestigator(String chiefInvestigator) {
 		this.chiefInvestigator = chiefInvestigator;
 	}
+	
+	@Column(name = "CHIEF_INVESTIGATOR_PHONE")
+	public String getChiefInvestigatorPhone() {
+		return chiefInvestigatorPhone;
+	}
+
+	public void setChiefInvestigatorPhone(String chiefInvestigatorPhone) {
+		this.chiefInvestigatorPhone = chiefInvestigatorPhone;
+	}
+
+	@Column(name = "CHIEF_INVESTIGATOR_EMAIL")
+	public String getChiefInvestigatorEmail() {
+		return chiefInvestigatorEmail;
+	}
+
+	public void setChiefInvestigatorEmail(String chiefInvestigatorEmail) {
+		this.chiefInvestigatorEmail = chiefInvestigatorEmail;
+	}
 
 	@Column(name = "CO_INVESTIGATOR", length = 50)
 	public String getCoInvestigator() {
@@ -237,6 +262,24 @@ public class Study implements java.io.Serializable {
 
 	public void setCoInvestigator(String coInvestigator) {
 		this.coInvestigator = coInvestigator;
+	}
+
+	@Column(name = "CO_INVESTIGATOR_PHONE")
+	public String getCoInvestigatorPhone() {
+		return coInvestigatorPhone;
+	}
+
+	public void setCoInvestigatorPhone(String coInvestigatorPhone) {
+		this.coInvestigatorPhone = coInvestigatorPhone;
+	}
+
+	@Column(name = "CO_INVESTIGATOR_EMAIL")
+	public String getCoInvestigatorEmail() {
+		return coInvestigatorEmail;
+	}
+
+	public void setCoInvestigatorEmail(String coInvestigatorEmail) {
+		this.coInvestigatorEmail = coInvestigatorEmail;
 	}
 
 	@Column(name = "SUBJECTUID_START", precision = 22, scale = 0)
@@ -273,6 +316,15 @@ public class Study implements java.io.Serializable {
 
 	public void setContactPersonPhone(String contactPersonPhone) {
 		this.contactPersonPhone = contactPersonPhone;
+	}
+
+	@Column(name = "CONTACT_PERSON_EMAIL")
+	public String getContactPersonEmail() {
+		return contactPersonEmail;
+	}
+
+	public void setContactPersonEmail(String contactPersonEmail) {
+		this.contactPersonEmail = contactPersonEmail;
 	}
 
 	@Column(name = "LDAP_GROUP_NAME", length = 100)
@@ -320,7 +372,6 @@ public class Study implements java.io.Serializable {
 		this.subStudyBiospecimenPrefix = subStudyBiospecimenPrefix;
 	}
 
-//	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "subStudy")
 	public Set<LinkStudySubstudy> getLinkStudySubstudiesForid() {
 		return this.linkStudySubstudiesForid;
@@ -331,7 +382,6 @@ public class Study implements java.io.Serializable {
 		this.linkStudySubstudiesForid = linkStudySubstudiesForid;
 	}
 
-//	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "study")
 	public Set<LinkStudyStudysite> getLinkStudyStudysites() {
 		return this.linkStudyStudysites;
@@ -341,8 +391,7 @@ public class Study implements java.io.Serializable {
 			Set<LinkStudyStudysite> linkStudyStudysites) {
 		this.linkStudyStudysites = linkStudyStudysites;
 	}
-	
-//	@NotAudited
+
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "study")
 	public Set<StudyComp> getStudyComps() {
 		return this.studyComps;
@@ -352,7 +401,6 @@ public class Study implements java.io.Serializable {
 		this.studyComps = studyComps;
 	}
 
-//	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "study")
 	public Set<LinkSubjectStudycomp> getLinkSubjectStudycomps() {
 		return this.linkSubjectStudycomps;
@@ -363,7 +411,6 @@ public class Study implements java.io.Serializable {
 		this.linkSubjectStudycomps = linkSubjectStudycomps;
 	}
 
-//	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "study")
 	public Set<LinkSubjectStudy> getLinkSubjectStudies() {
 		return this.linkSubjectStudies;
@@ -373,7 +420,6 @@ public class Study implements java.io.Serializable {
 		this.linkSubjectStudies = linkSubjectStudies;
 	}
 
-//	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "study")
 	public Set<LinkSubjectContact> getLinkSubjectContacts() {
 		return this.linkSubjectContacts;
@@ -384,7 +430,6 @@ public class Study implements java.io.Serializable {
 		this.linkSubjectContacts = linkSubjectContacts;
 	}
 
-//	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "study")
 	public Set<LinkStudyStudycomp> getLinkStudyStudycomps() {
 		return this.linkStudyStudycomps;
@@ -395,7 +440,6 @@ public class Study implements java.io.Serializable {
 		this.linkStudyStudycomps = linkStudyStudycomps;
 	}
 
-//	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "mainStudy")
 	public Set<LinkStudySubstudy> getLinkStudySubstudiesForSubid() {
 		return this.linkStudySubstudiesForSubid;
@@ -406,7 +450,6 @@ public class Study implements java.io.Serializable {
 		this.linkStudySubstudiesForSubid = linkStudySubstudiesForSubid;
 	}
 
-//	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "study")
 	public Set<Pipeline> getPipelines() {
 		return this.pipelines;
@@ -467,11 +510,11 @@ public class Study implements java.io.Serializable {
 	public void setParentStudy(Study parentStudy) {
 		this.parentStudy = parentStudy;
 	}
-	
+
 	/**
 	 * @return the parentStudy
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "PARENT_ID")
 	public Study getParentStudy() {
 		return parentStudy;

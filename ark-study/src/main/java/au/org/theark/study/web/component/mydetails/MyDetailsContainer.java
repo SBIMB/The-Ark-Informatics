@@ -61,10 +61,9 @@ public class MyDetailsContainer extends Panel {
 	public MyDetailsContainer(String id, ArkUserVO userVO, Subject subject, ModalWindow modalWindow) {
 		super(id);
 		// Create a Form instance and send in the currently logged in user details
-		//userVO.setUserName(subject.getPrincipal().toString());
+		userVO.setUserName(subject.getPrincipal().toString());
 		try {
-			userVO = userService.getCurrentUser(subject.getPrincipal().toString());
-			userVO.setArkUserEntity(userService.getArkUser(subject.getPrincipal().toString()));
+			userVO = userService.getCurrentUser(userVO.getUserName());
 		}
 		catch (EntityNotFoundException e) {
 			log.error("Exception occured :" + e.getMessage());

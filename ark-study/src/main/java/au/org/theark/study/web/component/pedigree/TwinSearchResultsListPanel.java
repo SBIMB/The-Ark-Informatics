@@ -15,7 +15,6 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import au.org.theark.core.security.ArkPermissionHelper;
 import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.vo.ArkCrudContainerVO;
 import au.org.theark.study.model.vo.RelationshipVo;
@@ -51,7 +50,7 @@ public class TwinSearchResultsListPanel extends Panel {
 
 	public PageableListView<RelationshipVo> buildPageableListView(IModel iModel) {
 
-		twinPageableListView = new PageableListView<RelationshipVo>("relationshipList", iModel, iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue()) {
+		twinPageableListView = new PageableListView<RelationshipVo>("relationshipList", iModel, iArkCommonService.getRowsPerPage()) {
 
 			private static final long	serialVersionUID	= 1L;
 
@@ -134,13 +133,12 @@ public class TwinSearchResultsListPanel extends Panel {
 			protected void onError(AjaxRequestTarget target, Form<?> form) {
 
 			};
-						
 		};
 
 		ajaxButton.setDefaultFormProcessing(false);
 
 //		if ("NT".equalsIgnoreCase(relationshipVo.getTwin())) {
-		if (!ArkPermissionHelper.isActionPermitted(Constants.SAVE) || relationshipVo.getTwin()==null) {
+		if (relationshipVo.getTwin()==null) {
 			ajaxButton.setEnabled(false);
 		}
 		else {
@@ -173,7 +171,7 @@ public class TwinSearchResultsListPanel extends Panel {
 		ajaxButton.setEnabled(true);
 		ajaxButton.setDefaultFormProcessing(false);
 
-		if (!ArkPermissionHelper.isActionPermitted(Constants.SAVE) || "MZ".equalsIgnoreCase(relationshipVo.getTwin())) {
+		if ("MZ".equalsIgnoreCase(relationshipVo.getTwin())) {
 			ajaxButton.setEnabled(false);
 		}
 		else {
@@ -206,7 +204,7 @@ public class TwinSearchResultsListPanel extends Panel {
 		ajaxButton.setEnabled(true);
 		ajaxButton.setDefaultFormProcessing(false);
 
-		if (!ArkPermissionHelper.isActionPermitted(Constants.SAVE) || "DZ".equalsIgnoreCase(relationshipVo.getTwin())) {
+		if ("DZ".equalsIgnoreCase(relationshipVo.getTwin())) {
 			ajaxButton.setEnabled(false);
 		}
 		else {

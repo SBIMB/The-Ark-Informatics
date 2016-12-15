@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -56,7 +55,6 @@ public class SubjectUploadStep3 extends AbstractWizardStepPanel {
 	private Form<UploadVO>					containerForm;
 	private String								validationMessage;
 	public java.util.Collection<String>	validationMessages	= null;
-	public java.util.Collection<String>	warningMessages	= null;
 	private WizardForm						wizardForm;
 	private WebMarkupContainer				updateExistingDataContainer;
 	private CheckBox							updateChkBox;
@@ -174,8 +172,10 @@ public class SubjectUploadStep3 extends AbstractWizardStepPanel {
 				insertRows = subjectUploadValidator.getInsertRows();
 				updateRows = subjectUploadValidator.getUpdateRows();
 				errorCells = subjectUploadValidator.getErrorCells();
+				log.error("insert " + insertRows.size());
+				log.error("update " + updateRows.size());
+				log.error("error " + errorCells.size());
 			}
-			// custom field data two types of validation subject type or family type.
 			else if(containerForm.getModelObject().getUpload().getUploadType().getName().equalsIgnoreCase(Constants.STUDY_SPECIFIC_CUSTOM_DATA)){
 				CustomFieldUploadValidator customFieldUploadValidator = new CustomFieldUploadValidator(iArkCommonService);
 				validationMessages = customFieldUploadValidator.validateCustomFieldFileData(containerForm.getModelObject(), listOfUidsToUpdate);
@@ -197,7 +197,6 @@ public class SubjectUploadStep3 extends AbstractWizardStepPanel {
 			else if(containerForm.getModelObject().getUpload().getUploadType().getName().equalsIgnoreCase(Constants.PEDIGREE_DATA)){
 				PedigreeUploadValidator pedigreeUploadValidator=new PedigreeUploadValidator(iArkCommonService,iStudyService);
 				validationMessages = pedigreeUploadValidator.validatePedigreeFileData(containerForm.getModelObject(), listOfUidsToUpdate);
-				warningMessages =  pedigreeUploadValidator.getDataWarningMessages();
 				containerForm.getModelObject().setUidsToUpload(listOfUidsToUpdate);
 				insertRows = pedigreeUploadValidator.getInsertRows();
 				updateRows = pedigreeUploadValidator.getUpdateRows();
@@ -223,29 +222,21 @@ public class SubjectUploadStep3 extends AbstractWizardStepPanel {
 			// Show file data (and key reference)
 //			ArkExcelWorkSheetAsGrid arkExcelWorkSheetAsGrid = new ArkExcelWorkSheetAsGrid("gridView", inputStream, fileFormat, delimiterChar, 
 //																		containerForm.getModelObject().getFileUpload(), insertRows, updateRows, errorCells, containerForm.getModelObject().getUpload().getUploadType());
-		
 			
-			//Sanjaya comment on 2016-07-18 : 
-			//I suspect due to this changes in the display the per page rows. There is a negligence on the coding of  insertRows, updateRows, errorCells.
 			ArkExcelWorkSheetAsGrid arkExcelWorkSheetAsGrid=null; 
-			/*if(Constants.PEDIGREE_DATA.equalsIgnoreCase(containerForm.getModelObject().getUpload().getUploadType().getName())){
-				arkExcelWorkSheetAsGrid= new ArkExcelWorkSheetAsGrid("gridView", inputStream, fileFormat, delimiterChar, 
-						containerForm.getModelObject().getFileUpload(), iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue(), containerForm.getModelObject().getUpload().getUploadType(),false);
-			}else{
-				arkExcelWorkSheetAsGrid = new ArkExcelWorkSheetAsGrid("gridView", inputStream, fileFormat, delimiterChar, 
-						containerForm.getModelObject().getFileUpload(), iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue(), containerForm.getModelObject().getUpload().getUploadType());
-			}*/
 			if(Constants.PEDIGREE_DATA.equalsIgnoreCase(containerForm.getModelObject().getUpload().getUploadType().getName())){
 				arkExcelWorkSheetAsGrid= new ArkExcelWorkSheetAsGrid("gridView", inputStream, fileFormat, delimiterChar, 
-					containerForm.getModelObject().getFileUpload(), insertRows, updateRows, errorCells, iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue(), containerForm.getModelObject().getUpload().getUploadType(), false);
+						containerForm.getModelObject().getFileUpload(), iArkCommonService.getRowsPerPage(), containerForm.getModelObject().getUpload().getUploadType(),false);
 			}else{
-				arkExcelWorkSheetAsGrid = new ArkExcelWorkSheetAsGrid("gridView", inputStream, fileFormat, delimiterChar, 
-					containerForm.getModelObject().getFileUpload(),insertRows, updateRows, errorCells, iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue(), containerForm.getModelObject().getUpload().getUploadType());
+				//arkExcelWorkSheetAsGrid = new ArkExcelWorkSheetAsGrid("gridView", inputStream, fileFormat, delimiterChar, 
+					//	containerForm.getModelObject().getFileUpload(), iArkCommonService.getRowsPerPage(), containerForm.getModelObject().getUpload().getUploadType());
+				arkExcelWorkSheetAsGrid = new ArkExcelWorkSheetAsGrid("gridView", inputStream, fileFormat, delimiterChar, containerForm.getModelObject().getFileUpload(), insertRows, updateRows, errorCells);
 			}
 			arkExcelWorkSheetAsGrid.setOutputMarkupId(true);
 			arkExcelWorkSheetAsGrid.getWizardDataGridKeyContainer().setVisible(true);
 			form.setArkExcelWorkSheetAsGrid(arkExcelWorkSheetAsGrid);
 			form.getWizardPanelFormContainer().addOrReplace(arkExcelWorkSheetAsGrid);
+
 			// Repaint
 			target.add(arkExcelWorkSheetAsGrid.getWizardDataGridKeyContainer());
 			target.add(form.getWizardPanelFormContainer());
@@ -254,9 +245,6 @@ public class SubjectUploadStep3 extends AbstractWizardStepPanel {
 				updateExistingDataContainer.setVisible(false);
 				target.add(updateExistingDataContainer);
 				
-			}else{
-				updateExistingDataContainer.setVisible(true);
-				target.add(updateExistingDataContainer);
 			}
 
 			if (!errorCells.isEmpty()) {
@@ -310,28 +298,6 @@ public class SubjectUploadStep3 extends AbstractWizardStepPanel {
 			addOrReplace(downloadValMsgButton);
 			target.add(downloadValMsgButton);
 		}
-		
-		String warningMessage=getWarningMessagesAsString();
-		
-		if(warningMessage !=null && warningMessage.length()>0){
-			addOrReplace(new MultiLineLabel("multiLineLabel", validationMessage+"\n "+warningMessage));
-			
-			downloadValMsgButton = new ArkDownloadAjaxButton("downloadValMsg", "ValidationMessage", validationMessage+"\n"+warningMessage, "txt") {
-
-				/**
-				 * 
-				 */
-				private static final long	serialVersionUID	= 343293022422099247L;
-
-				@Override
-				protected void onError(AjaxRequestTarget target, Form<?> form) {
-					this.error("Unexpected Error: Download request could not be processed");
-				}
-
-			};
-			addOrReplace(downloadValMsgButton);
-			target.add(downloadValMsgButton);
-		}
 	}
 
 	public void setUpdateChkBox(CheckBox updateChkBox) {
@@ -348,19 +314,5 @@ public class SubjectUploadStep3 extends AbstractWizardStepPanel {
 
 	public WebMarkupContainer getUpdateExistingDataContainer() {
 		return updateExistingDataContainer;
-	}
-	
-	public String getWarningMessagesAsString() {
-		StringBuffer stringBuffer = new StringBuffer("");
-		java.util.Collection<String> msgs = this.warningMessages;
-
-		if (msgs != null) {
-			for (Iterator<String> iterator = msgs.iterator(); iterator.hasNext();) {
-				String string = (String) iterator.next();
-				stringBuffer.append(string);
-				stringBuffer.append("\n");
-			}
-		}
-		return stringBuffer.toString();
 	}
 }

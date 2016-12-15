@@ -95,13 +95,14 @@ public abstract class ArkDownloadTemplateButton extends AjaxButton {
 		WritableFont normalFont = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD);
 		WritableFont boldFont = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
 		WritableCellFormat cellFormat = null;
-
+StringBuilder s = new StringBuilder();
 		try {
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			WritableWorkbook w = Workbook.createWorkbook(output);
 			WritableSheet writableSheet = w.createSheet("Sheet", 0);
-
+			
 			for (int row = 0; row < getTemplateCells().length; row++) {
+				
 				for (int col = 0; col < sheetMetaData.getCols(); col++) {
 					String cellData = getTemplateCells()[row][col];
 					jxl.write.Label label = new jxl.write.Label(col, row, cellData);
@@ -116,7 +117,7 @@ public abstract class ArkDownloadTemplateButton extends AjaxButton {
 
 					label.setCellFormat(cellFormat);
 					writableSheet.addCell(label);
-				}
+				}s.append(row);
 			}
 
 			w.write();
@@ -125,7 +126,8 @@ public abstract class ArkDownloadTemplateButton extends AjaxButton {
 			output.close();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			throw new IllegalStateException(s.toString());
+			//e.printStackTrace();
 		}
 		return bytes;
 	}

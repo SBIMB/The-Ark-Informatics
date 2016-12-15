@@ -25,25 +25,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import au.org.theark.core.model.pheno.entity.PhenoDataSetGroup;
-import au.org.theark.report.model.vo.*;
-import au.org.theark.report.model.vo.report.*;
+//import mx4j.log.Log;
+
+
+
+
+
+
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import au.org.theark.core.dao.IStudyDao;
 import au.org.theark.core.exception.EntityNotFoundException;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetCollection;
+import au.org.theark.core.model.lims.entity.BioSampletype;
+import au.org.theark.core.model.pheno.entity.PhenoCollection;
 import au.org.theark.core.model.report.entity.ReportOutputFormat;
 import au.org.theark.core.model.report.entity.ReportTemplate;
 import au.org.theark.core.model.study.entity.Address;
 import au.org.theark.core.model.study.entity.ArkUser;
 import au.org.theark.core.model.study.entity.Consent;
+import au.org.theark.core.model.study.entity.ConsentOption;
 import au.org.theark.core.model.study.entity.ConsentStatus;
 import au.org.theark.core.model.study.entity.CustomFieldGroup;
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
 import au.org.theark.core.model.study.entity.OtherID;
 import au.org.theark.core.model.study.entity.Person;
@@ -53,16 +63,34 @@ import au.org.theark.core.model.study.entity.StudyComp;
 import au.org.theark.core.model.worktracking.entity.Researcher;
 import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.vo.ArkUserVO;
+import au.org.theark.lims.service.ILimsService;
 import au.org.theark.report.model.dao.IReportDao;
+import au.org.theark.report.model.vo.BiospecimenDetailsReportVO;
+import au.org.theark.report.model.vo.BiospecimenNucleicAcidSummaryReportVO;
+import au.org.theark.report.model.vo.BiospecimenSummaryReportVO;
+import au.org.theark.report.model.vo.ConsentDetailsReportVO;
+import au.org.theark.report.model.vo.CustomFieldDetailsReportVO;
+import au.org.theark.report.model.vo.FieldDetailsReportVO;
+import au.org.theark.report.model.vo.ResearcherCostResportVO;
+import au.org.theark.report.model.vo.report.BiospecimenDetailsDataRow;
+import au.org.theark.report.model.vo.report.BiospecimenNucleicAcidSummaryDataRow;
+import au.org.theark.report.model.vo.report.BiospecimenSummaryDataRow;
+import au.org.theark.report.model.vo.report.ConsentDetailsDataRow;
+import au.org.theark.report.model.vo.report.CustomFieldDetailsDataRow;
+import au.org.theark.report.model.vo.report.FieldDetailsDataRow;
+import au.org.theark.report.model.vo.report.ResearcherCostDataRow;
+import au.org.theark.report.model.vo.report.ResearcherDetailCostDataRow;
+import au.org.theark.report.model.vo.report.StudyUserRolePermissionsDataRow;
 
 @Transactional
 @Service(Constants.REPORT_SERVICE)
 public class ReportServiceImpl implements IReportService {
 
-//	private static Logger		log	= LoggerFactory.getLogger(ReportServiceImpl.class);
+	private static Logger		log	= LoggerFactory.getLogger(ReportServiceImpl.class);
 
 	private IArkCommonService	arkCommonService;
-	private IStudyDao				studyDao;
+	private ILimsService		iLimsService;
+	private IStudyDao			studyDao;
 	private IReportDao			reportDao;
 
 	public IReportDao getReportDao() {
@@ -91,6 +119,15 @@ public class ReportServiceImpl implements IReportService {
 	@Autowired
 	public void setArkCommonService(IArkCommonService arkCommonService) {
 		this.arkCommonService = arkCommonService;
+	}
+	
+	public ILimsService getiLimsService() {
+		return iLimsService;
+	}
+
+	@Autowired
+	public void setiLimsService(ILimsService iLimsService) {
+		this.iLimsService = iLimsService;
 	}
 
 	/* Service methods */
@@ -144,51 +181,45 @@ public class ReportServiceImpl implements IReportService {
 				consentStatus = studyConsent.getName();
 			}
 			String subjectStatus = subject.getSubjectStatus().getName();
+			Date dateOfEnrollment = subject.getDateOfEnrollment();
+			Integer ageAtEnrollment = subject.getAgeAtEnrollment();
+			
 			Person p = subject.getPerson();
-			String title = p.getTitleType().getName();
-			String firstName = p.getFirstName();
-			String lastName = p.getLastName();
-			// TODO: Fix this so that there are not subsequent queries after getStudyLevelConsentDetailsList(..)
-			Address a = reportDao.getBestAddress(subject);
-			String streetAddress = "-NA-";
-			String suburb = "-NA-";
-			String state = "-NA-";
-			String postcode = "-NA-";
-			String country = "-NA-";
-			if (a != null) {
-				streetAddress = a.getStreetAddress();
-				suburb = a.getCity();
-				if (a.getOtherState() != null) {
-					state = a.getOtherState();
-				}
-				else if (a.getState() != null) {
-					state = a.getState().getName();
-				}
-				postcode = a.getPostCode();
-				country = a.getCountry().getCountryCode();
+			EthnicityType ethnicityType = p.getEthnicityType();
+			String ethnicity = Constants.UNKNOWN;
+			if (ethnicityType!=null){
+				ethnicity = ethnicityType.getName();
 			}
-			StringBuilder workPhone = new StringBuilder("-NA-");
-			StringBuilder homePhone = new StringBuilder("-NA-");
-			// TODO: Fix this so that there are not subsequent queries after getStudyLevelConsentDetailsList(..)
-			Phone aPhone = reportDao.getWorkPhone(subject);
-			if (aPhone != null) {
-				workPhone.append(aPhone.getAreaCode());
-				workPhone.append(aPhone.getPhoneNumber());
+			
+			ConsentOption consentToUseDataOption = subject.getConsentToUseData(); 
+			String consentToUseData = Constants.UNAVAILABLE;
+			if(consentToUseDataOption!=null){
+				consentToUseData = subject.getConsentToUseData().getName();
 			}
-			// TODO: Fix this so that there are not subsequent queries after getStudyLevelConsentDetailsList(..)
-			aPhone = reportDao.getHomePhone(subject);
-			if (aPhone != null) {
-				homePhone.append(aPhone.getAreaCode());
-				homePhone.append(aPhone.getPhoneNumber());
+			
+			ConsentOption consentToShareDataOption = subject.getConsentToShareData(); 
+			String consentToShareData = Constants.UNAVAILABLE;
+			if(consentToShareDataOption!=null){
+				consentToShareData = subject.getConsentToShareData().getName();
 			}
-			String email = "-NA-";
-			if (p.getPreferredEmail() != null) {
-				email = p.getPreferredEmail();
+			
+			ConsentOption consentToUseBiospecimenOption = subject.getConsentToUseBiospecimen(); 
+			String consentToUseBiospecimen = Constants.UNAVAILABLE;
+			if(consentToUseBiospecimenOption!=null){
+				consentToUseBiospecimen = subject.getConsentToUseBiospecimen().getName();
 			}
+			
+			ConsentOption consentToShareBiospecimenOption = subject.getConsentToShareBiospecimen(); 
+			String consentToShareBiospecimen = Constants.UNAVAILABLE;
+			if(consentToShareBiospecimenOption!=null){
+				consentToShareBiospecimen = subject.getConsentToShareBiospecimen().getName();
+			}
+			
 			String sex = p.getGenderType().getName().substring(0, 1);
 			Date consentDate = subject.getConsentDate();
-			consentDetailsList.add(new ConsentDetailsDataRow(subjectUID, otherID_Source, otherID, consentStatus, subjectStatus, title, firstName, lastName, streetAddress, suburb, state, postcode, country, workPhone.toString(), homePhone.toString(),
-					email, sex, consentDate));
+			
+			consentDetailsList.add(new ConsentDetailsDataRow(subjectUID, otherID_Source, otherID, subjectStatus, sex, dateOfEnrollment, ageAtEnrollment, ethnicity, consentDate, consentStatus, consentToUseData, consentToShareData, consentToUseBiospecimen,
+					consentToShareBiospecimen));
 		}
 
 		return consentDetailsList;
@@ -258,6 +289,7 @@ public class ReportServiceImpl implements IReportService {
 					}
 					consentDetailsMap.get(key).add(cddr);
 				}
+				log.info("Subject: " + subject.getSubjectUID());
 			}
 			for (Long key : consentDetailsMap.keySet()) {
 				results.addAll(consentDetailsMap.get(key));
@@ -283,23 +315,39 @@ public class ReportServiceImpl implements IReportService {
 
 	protected void populateConsentDetailsDataRow(ConsentDetailsDataRow consentRow, Study study, LinkSubjectStudy subject, Consent consent) {
 		String consentStatus = Constants.NOT_CONSENTED;
+		consentRow.setConsentToUseData(Constants.UNAVAILABLE);
+		consentRow.setConsentToShareData(Constants.UNAVAILABLE);
+		consentRow.setConsentToUseBiospecimen(Constants.UNAVAILABLE);
+		consentRow.setConsentToShareBiospecimen(Constants.UNAVAILABLE);
+		
 		if (consent != null && consent.getConsentStatus() != null) {
 			consentStatus = consent.getConsentStatus().getName();
 			consentRow.setConsentStatus(consentStatus); // set ConsentStatus with override from Consent arg
 			consentRow.setConsentDate(consent.getConsentDate()); // set ConsentDate with override from Consent arg
+			
+			ConsentOption consentToUseData = subject.getConsentToUseData();
+			if (consentToUseData != null){
+				consentRow.setConsentToUseData(consentToUseData.getName());
+			}
+			
+			ConsentOption consentToShareData = subject.getConsentToShareData();
+			if (consentToShareData != null){
+				consentRow.setConsentToShareData(consentToShareData.getName());
+			}
+						
+			ConsentOption consentToUseBiospecimen = subject.getConsentToUseBiospecimen();
+			if (consentToUseBiospecimen != null){
+				consentRow.setConsentToUseBiospecimen(consentToUseBiospecimen.getName());
+			}
+						
+			ConsentOption consentToShareBiospecimen = subject.getConsentToShareBiospecimen();
+			if (consentToShareBiospecimen != null){
+				consentRow.setConsentToShareBiospecimen(consentToShareBiospecimen.getName());
+			}
 		}
 		else if (consentRow.getConsentStatus() == null || consentRow.getConsentStatus().isEmpty()) {
 			consentRow.setConsentStatus(consentStatus); // set ConsentStatus to Not Consented if not set
 		}
-
-		String streetAddress = "";//Please use uids with data extract module for further contact info";
-		String suburb = "";
-		String state = "";
-		String postcode = "";
-		String country = "";
-		String workPhone = "";
-		String homePhone = "";
-		String email = "";
 
 		try {
 			if (subject == null) {
@@ -319,59 +367,21 @@ public class ReportServiceImpl implements IReportService {
 			consentRow.setSubjectStatus(subjectStatus); // set SubjectStatus
 			Person p = subject.getPerson();
 			
-			String title = p.getTitleType().getName();
-			consentRow.setTitle(title); // set Title
+			Date dateOfEnrollment = subject.getDateOfEnrollment();
+			consentRow.setDateOfEnrollment(dateOfEnrollment); // set Date of Enrollment
 			
-			String firstName = p.getFirstName();
-			consentRow.setFirstName(firstName); // set FirstName
-			String lastName = p.getLastName();
-			consentRow.setLastName(lastName); // set LastName
-			//Address a = reportDao.getBestAddress(subject);
-			Address a = reportDao.getBestAddressWithOutNewQueries(subject);
-/*  */
-			if (p.getPreferredEmail() != null) {
-				email = p.getPreferredEmail();
-			}
-			String sex = p.getGenderType().getName().substring(0, 1);
-			consentRow.setSex(sex); 
-
-			if (a != null) {
-				streetAddress = a.getStreetAddress();
-				suburb = a.getCity();
-				if (a.getOtherState() != null) {
-					state = a.getOtherState();
-				}
-				else if (a.getState() != null) {
-					state = a.getState().getName();
-				}
-				postcode = a.getPostCode();
-				country = a.getCountry() == null ? country : a.getCountry().getCountryCode();
-			}
-
-//			Phone aPhone = reportDao.getWorkPhone(subject);
-			Phone aPhone = reportDao.getWorkPhoneWithoutExponentialQueries(subject);
-			if (aPhone != null) {
-				workPhone = aPhone.getAreaCode() + " " + aPhone.getPhoneNumber();
-			}
-//			aPhone = reportDao.getHomePhone(subject);
-			Phone hPhone= reportDao.getHomePhoneWithoutExponentialQueries(subject);
-			if (hPhone != null) {
-				homePhone = hPhone.getAreaCode() + " " +hPhone.getPhoneNumber();
-			}
+			Integer ageAtEnrollment = subject.getAgeAtEnrollment();
+			consentRow.setAgeAtEnrollment(ageAtEnrollment); // set Age at enrollment
+			
+			String ethnicity = p.getEthnicityType().getName();
+			consentRow.setEthnicity(ethnicity);; // set Ethnicity
+			
+			Date consentDate = subject.getConsentDate();
+			consentRow.setConsentDate(consentDate);	// set Consent Date	
 		}
 		catch (EntityNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		finally {
-			consentRow.setStreetAddress(streetAddress);
-			consentRow.setSuburb(suburb);
-			consentRow.setCountry(country);
-			consentRow.setState(state);
-			consentRow.setPostcode(postcode);
-			consentRow.setWorkPhone(workPhone);
-			consentRow.setHomePhone(homePhone);
-			consentRow.setEmail(email);
 		}
 	}
 
@@ -379,11 +389,11 @@ public class ReportServiceImpl implements IReportService {
 		return reportDao.getPhenoFieldDetailsList(fdrVO);
 	}
 
-	public List<PhenoDataSetFieldDetailsDataRow> getPhenoDataSetFieldDetailsList(PhenoDataSetFieldDetailsReportVO pdfdrVO) {
-		return reportDao.getPhenoDataSetFieldDetailsList(pdfdrVO);
+	public List<CustomFieldDetailsDataRow> getPhenoCustomFieldDetailsList(CustomFieldDetailsReportVO fdrVO) {
+		return reportDao.getPhenoCustomFieldDetailsList(fdrVO);
 	}
 
-	public List<PhenoDataSetCollection> getPhenoCollectionList(Study study) {
+	public List<PhenoCollection> getPhenoCollectionList(Study study) {
 		return reportDao.getPhenoCollectionList(study);
 	}
 
@@ -391,7 +401,7 @@ public class ReportServiceImpl implements IReportService {
 		return reportDao.getStudyUserRolePermissions(study);
 	}
 
-	public List<PhenoDataSetGroup> getQuestionnaireList(Study study) {
+	public List<CustomFieldGroup> getQuestionnaireList(Study study) {
 		return reportDao.getQuestionnaireList(study);
 	}
 
@@ -430,11 +440,21 @@ public class ReportServiceImpl implements IReportService {
 		arkUserVo.setStudy(searchStudyCriteria);
 		return arkCommonService.getStudyListForUser(arkUserVo);
 	}
+	
+	public List<BioSampletype> getBiospecimenTypeList() throws EntityNotFoundException {
+		return iLimsService.getBioSampleTypes();
+	}
 
 	public List<BiospecimenSummaryDataRow> getBiospecimenSummaryData(
 			BiospecimenSummaryReportVO biospecimenSummaryReportVO) {
 		// TODO Auto-generated method stub
 		return reportDao.getBiospecimenSummaryData(biospecimenSummaryReportVO);
+	}
+	
+	public List<BiospecimenNucleicAcidSummaryDataRow> getBiospecimenNucleicAcidSummaryData(
+			BiospecimenNucleicAcidSummaryReportVO biospecimenNucleicAcidSummaryReportVO) {
+		// TODO Auto-generated method stub
+		return reportDao.getBiospecimenNucleicAcidSummaryData(biospecimenNucleicAcidSummaryReportVO);
 	}
 
 	public List<BiospecimenDetailsDataRow> getBiospecimenDetailsData(

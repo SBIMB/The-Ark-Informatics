@@ -20,26 +20,28 @@ package au.org.theark.study.model.vo;
 
 import java.io.Serializable;
 
+import au.org.theark.core.model.study.entity.LinkSubjectStudy;
 import au.org.theark.core.model.study.entity.SubjectCustomFieldData;
+import au.org.theark.core.web.component.customfield.dataentry.CustomDataVO;
 
-public class SubjectCustomDataVO extends StudyCustomDataVo<SubjectCustomFieldData> implements Serializable {
+public class SubjectCustomDataVO extends CustomDataVO<SubjectCustomFieldData> implements Serializable {
+
 
 	private static final long	serialVersionUID	= 1L;
 
-	private SubjectCustomFieldData subjectCustomFieldData;
-	
+	protected LinkSubjectStudy	linkSubjectStudy;
+
 	public SubjectCustomDataVO() {
 		super();
-		subjectCustomFieldData=new SubjectCustomFieldData();
+		linkSubjectStudy = new LinkSubjectStudy();
 	}
 
-	public SubjectCustomFieldData getSubjectCustomFieldData() {
-		return subjectCustomFieldData;
+	public LinkSubjectStudy getLinkSubjectStudy() {
+		return linkSubjectStudy;
 	}
 
-	public void setSubjectCustomFieldData(
-			SubjectCustomFieldData subjectCustomFieldData) {
-		this.subjectCustomFieldData = subjectCustomFieldData;
+	public void setLinkSubjectStudy(LinkSubjectStudy linkSubjectStudy) {
+		this.linkSubjectStudy = linkSubjectStudy;
 	}
 
 }

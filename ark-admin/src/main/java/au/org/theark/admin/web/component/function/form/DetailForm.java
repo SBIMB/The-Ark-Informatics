@@ -143,6 +143,10 @@ public class DetailForm extends AbstractDetailForm<AdminVO> {
 		this.info("Ark Function: " + containerForm.getModelObject().getArkFunction().getName() + " was created/updated successfully.");
 		target.add(feedBackPanel);
 	}
+	
+	protected void onTest(Form<AdminVO> containerForm, AjaxRequestTarget target) {
+		
+	}
 
 	protected void onCancel(AjaxRequestTarget target) {
 		containerForm.setModelObject(new AdminVO());

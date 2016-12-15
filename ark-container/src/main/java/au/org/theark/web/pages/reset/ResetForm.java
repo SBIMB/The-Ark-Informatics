@@ -208,7 +208,7 @@ public class ResetForm extends Form<ArkUserVO> implements Serializable {
 	private void sendNotificationEmail(AjaxRequestTarget target) throws MailSendException {
 		SimpleMailMessage mail = new SimpleMailMessage();
 		mail.setTo(getModelObject().getUserName());
-		mail.setSubject("Your ARK password has been reset");
+		mail.setSubject("Your ARK INFORMATICS password has been reset");
 		
 		try {
 			String text = iArkCommonService.setResetPasswordMessage(getFullName(), getModelObject().getPassword());

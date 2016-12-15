@@ -39,6 +39,7 @@ import au.org.theark.core.model.study.entity.SubjectStatus;
  */
 @SuppressWarnings("serial")
 public class SubjectVO implements Serializable {
+
 	protected String										subjectFullName;
 	protected SubjectStatus								subjectStatus;
 	protected LinkSubjectStudy							linkSubjectStudy;
@@ -70,8 +71,6 @@ public class SubjectVO implements Serializable {
 	protected boolean enableNewButton =true;
 	
 	private String parentType;
-	
-	private String message;
 
 	
 	public SubjectVO() {
@@ -291,18 +290,6 @@ public class SubjectVO implements Serializable {
 
 	public void setParentType(String parentType) {
 		this.parentType = parentType;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	@Override
-	public String toString() {
-		return "SubjectVO [subjectUID=" + subjectUID + "]";
 	}
 
 }

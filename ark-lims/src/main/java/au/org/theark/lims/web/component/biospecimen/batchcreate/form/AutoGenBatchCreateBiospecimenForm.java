@@ -160,9 +160,9 @@ public class AutoGenBatchCreateBiospecimenForm extends Form<BatchBiospecimenVO> 
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 				if(onSave(target)) {
-					target.add(feedbackPanel);
 					modalWindow.close(target);
 				}
+				target.add(feedbackPanel);
 			}
 
 			@Override
@@ -217,8 +217,6 @@ public class AutoGenBatchCreateBiospecimenForm extends Form<BatchBiospecimenVO> 
 
 		super.onBeforeRender();
 		visitChildren(formVisitor);
-		
-		feedbackPanel.clearOriginalDestination();
 	}
 
 	/**
@@ -459,7 +457,7 @@ public class AutoGenBatchCreateBiospecimenForm extends Form<BatchBiospecimenVO> 
 			}
 			
 			log.info("Attempting to create " + biospecimenList.size() + " biospecimens");
-			iLimsService.batchInsertBiospecimensAndUpdateInventoryCell(biospecimenList);
+			iLimsService.batchInsertBiospecimens(biospecimenList);
 			return true;
 		}
 		else{

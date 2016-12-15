@@ -77,8 +77,7 @@ public class WizardForm extends AbstractWizardForm<UploadVO> {
 
 	@Override
 	public void onFinish(AjaxRequestTarget target, Form form) {
-		
-		this.info("Data upload of file: " + containerForm.getModelObject().getUpload().getFilename() + " commenced.");
+		this.info("Data upload of file: " + containerForm.getModelObject().getUpload().getFilename() + " was uploaded successfully");
 		onCancel(target);
 	}
 

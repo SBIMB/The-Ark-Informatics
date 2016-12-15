@@ -70,6 +70,8 @@ public class StudySummaryReportDataSource implements Serializable, JRDataSource 
 			}
 		}
 		data.add(new StudySummaryDataRow("Subjects Without Study Components", "", reportService.getWithoutStudyCompCount(study)));
+		if (false)
+			throw new IllegalStateException("WoW");
 	}
 
 	/**

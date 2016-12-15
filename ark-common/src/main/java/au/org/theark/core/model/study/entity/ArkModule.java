@@ -28,9 +28,6 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.apache.velocity.app.event.ReferenceInsertionEventHandler.referenceInsertExecutor;
-import org.hibernate.envers.Audited;
-
 import au.org.theark.core.Constants;
 
 /**
@@ -45,7 +42,6 @@ public class ArkModule implements Serializable {
 	private Long id;
 	private String name;
 	private String description;
-	private Boolean enabled;
 
 	public ArkModule() {
 	}
@@ -78,20 +74,6 @@ public class ArkModule implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-	
-	@Column(name = "ENABLED")
-	public Boolean getEnabled() {
-		return enabled;
-	}
-	
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
-	
-	//Added for niceness
-	public Boolean isEnabled() {
-		return enabled;
 	}
 
 	@Override

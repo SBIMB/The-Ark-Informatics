@@ -21,15 +21,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
 import au.org.theark.core.Constants;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
 import au.org.theark.core.model.study.entity.Study;
 
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Entity
 @Table(name = "AFFECTION", schema = Constants.DISEASE_SCHEMA)
 public class Affection implements Serializable {
@@ -67,7 +62,7 @@ public class Affection implements Serializable {
 		this.study = study;
 	}
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "affection")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "affection")
 	public Set<AffectionCustomFieldData> getAffectionCustomFieldDataSets() {
 		return this.affectionCustomFieldDataSet;
 	}
@@ -76,7 +71,7 @@ public class Affection implements Serializable {
 		this.affectionCustomFieldDataSet = affectionCustomFieldDataSet;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "DISEASE_ID")
 	public Disease getDisease() {
 		return disease;

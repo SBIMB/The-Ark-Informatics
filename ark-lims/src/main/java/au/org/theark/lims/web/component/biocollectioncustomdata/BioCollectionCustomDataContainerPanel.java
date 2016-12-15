@@ -89,6 +89,7 @@ public class BioCollectionCustomDataContainerPanel extends Panel {
 		boolean contextLoaded = prerenderContextCheck();
 		if (contextLoaded && isActionPermitted()) {
 			dataEditorPanel = new BioCollectionCustomDataEditorPanel("customDataEditorPanel", cpModel, feedbackPanel).initialisePanel();
+			;
 		}
 		else if (!contextLoaded) {
 			dataEditorPanel = new EmptyPanel("customDataEditorPanel");
@@ -142,8 +143,7 @@ public class BioCollectionCustomDataContainerPanel extends Panel {
 				// cpModel.getObject().setArkModule(arkModule);
 				if (study != null && bioCollection != null && arkModule != null) {
 					contextLoaded = true;
-					//cpModel.getObject().setArkFunction(iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_LIMS_COLLECTION));
-					cpModel.getObject().setArkFunction(iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_LIMS_CUSTOM_FIELD));
+					cpModel.getObject().setArkFunction(iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_LIMS_COLLECTION));
 				}
 			}
 			catch (EntityNotFoundException e) {

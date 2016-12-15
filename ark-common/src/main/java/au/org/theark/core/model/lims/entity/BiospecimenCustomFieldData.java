@@ -34,9 +34,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
 import au.org.theark.core.model.Constants;
 import au.org.theark.core.model.study.entity.CustomFieldDisplay;
 import au.org.theark.core.model.study.entity.ICustomFieldData;
@@ -48,7 +45,6 @@ import au.org.theark.core.model.study.entity.ICustomFieldData;
 
 @Entity
 @Table(name = "biospecimen_custom_field_data", schema = Constants.LIMS_TABLE_SCHEMA)
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class BiospecimenCustomFieldData implements Serializable, ICustomFieldData {
 	
 

@@ -47,7 +47,6 @@ import org.wicketstuff.jasperreports.JRResource;
 import org.wicketstuff.jasperreports.handlers.CsvResourceHandler;
 import org.wicketstuff.jasperreports.handlers.PdfResourceHandler;
 
-import au.org.theark.core.dao.StudyDao;
 import au.org.theark.core.model.report.entity.ReportOutputFormat;
 import au.org.theark.core.model.report.entity.ReportTemplate;
 import au.org.theark.core.model.study.entity.ConsentStatus;
@@ -120,7 +119,7 @@ public class StudyLevelConsentDetailsFilterForm extends AbstractReportFilterForm
 			reportFile = null;
 			e.printStackTrace();
 		}
-		log.info(""+ reportFile.getAbsoluteFile());
+		//log.info(""+ reportFile.getAbsoluteFile());
 		// templateIS = getClass().getResourceAsStream("/reportTemplates/WebappReport.jrxml");
 		final Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("BaseDir", new File(context.getRealPath("/reportTemplates")));
@@ -202,6 +201,7 @@ public class StudyLevelConsentDetailsFilterForm extends AbstractReportFilterForm
 			pdfResource.setJasperReport(report);
 			pdfResource.setReportParameters(parameters).setReportDataSource(reportDS);
 			reportResource = pdfResource;
+			log.info(" "+pdfResource.getFileName());
 		}
 		else if (reportOutputFormat.getName().equals(au.org.theark.report.service.Constants.CSV_REPORT_FORMAT)) {
 			final JRResource csvResource = new JRConcreteResource<CsvResourceHandler>(new CsvResourceHandler());

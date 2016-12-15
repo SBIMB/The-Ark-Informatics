@@ -16,14 +16,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
 import au.org.theark.core.Constants;
-import au.org.theark.core.audit.annotations.ArkAuditDisplay;
 import au.org.theark.core.model.study.entity.TitleType;
 
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Entity
 @Table(name = "RESEARCHER", schema = Constants.ADMIN_SCHEMA)
 public class Researcher implements Serializable {
@@ -111,7 +106,6 @@ public class Researcher implements Serializable {
 		this.firstName = firstName;
 	}
 
-	@ArkAuditDisplay
 	@Column(name = "LAST_NAME", length = 45)
 	public String getLastName() {
 		return lastName;

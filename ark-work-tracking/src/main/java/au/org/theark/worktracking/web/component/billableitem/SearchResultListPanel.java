@@ -44,7 +44,7 @@ public class SearchResultListPanel extends Panel {
 
 	public PageableListView<BillableItem> buildPageableListView(IModel iModel) {
 
-		PageableListView<BillableItem> sitePageableListView = new PageableListView<BillableItem>("billableItemList", iModel, iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue()) {
+		PageableListView<BillableItem> sitePageableListView = new PageableListView<BillableItem>("billableItemList", iModel, iArkCommonService.getRowsPerPage()) {
 
 			private static final long	serialVersionUID	= 1L;
 
@@ -53,21 +53,17 @@ public class SearchResultListPanel extends Panel {
 
 				BillableItem billableItem = item.getModelObject();
 
-				//ARK-1392
-//				if (billableItem.getId() != null) {
-//					item.add(new Label(Constants.BILLABLE_ITEM_ID, billableItem.getId().toString()));
-//				}
-//				else {
-//					item.add(new Label(Constants.BILLABLE_ITEM_ID, ""));
-//				}
-				
-				item.add(buildLink(billableItem));
-				
+				if (billableItem.getId() != null) {
+					item.add(new Label(Constants.BILLABLE_ITEM_ID, billableItem.getId().toString()));
+				}
+				else {
+					item.add(new Label(Constants.BILLABLE_ITEM_ID, ""));
+				}
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(au.org.theark.core.Constants.DD_MM_YYYY);	
 				String commenceDate = "";
 				if (billableItem.getCommenceDate() != null) {
 					commenceDate = simpleDateFormat.format(billableItem.getCommenceDate());
-					item.add(new Label(Constants.BILLABLE_ITEM_COMMENCE_DATE, commenceDate));
+					item.add(new Label(Constants.BILLABLE_ITEM_COMMENCE_DATE	, commenceDate));
 				}
 				else {
 					item.add(new Label(Constants.BILLABLE_ITEM_COMMENCE_DATE, commenceDate));
@@ -87,15 +83,8 @@ public class SearchResultListPanel extends Panel {
 				else {
 					item.add(new Label(Constants.BILLABLE_ITEM_WORK_REQUEST, ""));
 				}
-				//ARK-1653
-				if (billableItem.getBillableItemType() != null) {
-					item.add(new Label(Constants.BILLABLE_ITEM_BILLABLE_ITEM_TYPE, billableItem.getBillableItemType().getItemName()));
-				}
-				else {
-					item.add(new Label(Constants.BILLABLE_ITEM_BILLABLE_ITEM_TYPE, ""));
-				}
-				//ARK-1392
-				//item.add(buildLink(billableItem));
+				
+				item.add(buildLink(billableItem));
 				
 				if (billableItem.getQuantity() != null) {
 					DecimalFormat qunatityFormat = new DecimalFormat("#0.##");
@@ -112,14 +101,13 @@ public class SearchResultListPanel extends Panel {
 				else {
 					item.add(new Label(Constants.BILLABLE_ITEM_ITEM_COST, ""));
 				}
-				//ARK-1392
-//				if (billableItem.getWorkRequest()!=null && billableItem.getWorkRequest().getGstAllow() != null) {
-//					
-//					item.add(new Label(Constants.BILLABLE_ITEM_WORK_REQUEST_GST_ALLOW, billableItem.getWorkRequest().getGstAllow()?"Yes":"No"));
-//				}
-//				else {
-//					item.add(new Label(Constants.BILLABLE_ITEM_WORK_REQUEST_GST_ALLOW, "No"));
-//				}
+				if (billableItem.getWorkRequest()!=null && billableItem.getWorkRequest().getGstAllow() != null) {
+					
+					item.add(new Label(Constants.BILLABLE_ITEM_WORK_REQUEST_GST_ALLOW, billableItem.getWorkRequest().getGstAllow()?"Yes":"No"));
+				}
+				else {
+					item.add(new Label(Constants.BILLABLE_ITEM_WORK_REQUEST_GST_ALLOW, "No"));
+				}
 				if (billableItem.getWorkRequest()!=null && billableItem.getWorkRequest().getGst() != null) {
 					
 					item.add(new Label(Constants.BILLABLE_ITEM_WORK_REQUEST_GST, df.format(billableItem.getWorkRequest().getGst())));
@@ -175,10 +163,7 @@ public class SearchResultListPanel extends Panel {
 
 	@SuppressWarnings( { "serial" })
 	private AjaxLink buildLink(final BillableItem billableItem) {
-		
-		//ARK-1392
-//		ArkBusyAjaxLink link = new ArkBusyAjaxLink(Constants.BILLABLE_ITEM_DESCRIPTION) {
-		ArkBusyAjaxLink link = new ArkBusyAjaxLink(Constants.BILLABLE_ITEM_ID) {
+		ArkBusyAjaxLink link = new ArkBusyAjaxLink(Constants.BILLABLE_ITEM_DESCRIPTION) {
 			@Override
 			public void onClick(AjaxRequestTarget target) {
 
@@ -210,9 +195,7 @@ public class SearchResultListPanel extends Panel {
 				}
 			}
 		};
-		//ARK-1392
-//		Label nameLinkLabel = new Label("nameLbl", billableItem.getDescription());
-		Label nameLinkLabel = new Label("nameLbl", billableItem.getId().toString());
+		Label nameLinkLabel = new Label("nameLbl", billableItem.getDescription());
 		link.add(nameLinkLabel);
 		return link;
 	}

@@ -50,7 +50,6 @@ import au.org.theark.core.vo.ArkCrudContainerVO;
 import au.org.theark.core.vo.PhoneVO;
 import au.org.theark.core.web.behavior.ArkDefaultFormFocusBehavior;
 import au.org.theark.core.web.component.ArkDatePicker;
-import au.org.theark.core.web.component.audit.button.HistoryButtonPanel;
 import au.org.theark.core.web.form.AbstractDetailForm;
 import au.org.theark.study.service.IStudyService;
 import au.org.theark.study.web.Constants;
@@ -81,7 +80,6 @@ public class DetailForm extends AbstractDetailForm<PhoneVO> {
 	private DropDownChoice<PhoneType>	phoneTypeChoice;
 	private DropDownChoice<PhoneStatus>	phoneStatusChoice;
 	private DropDownChoice<YesNo>			silentModeChoice;
-	private HistoryButtonPanel				historyButtonPanel;
 
 	/**
 	 * /**
@@ -95,12 +93,6 @@ public class DetailForm extends AbstractDetailForm<PhoneVO> {
 
 		super(id, feedBackPanel, containerForm, arkCrudContainerVO);
 		this.feedBackPanel = feedBackPanel;
-	}
-
-	@Override
-	public void onBeforeRender() {
-		historyButtonPanel.setVisible(!isNew());
-		super.onBeforeRender();
 	}
 
 	public void initialiseDetailForm() {
@@ -130,7 +122,6 @@ public class DetailForm extends AbstractDetailForm<PhoneVO> {
 		phoneTypeChoice.add(new ArkDefaultFormFocusBehavior());
 		addDetailFormComponents();
 		attachValidators();
-		historyButtonPanel = new HistoryButtonPanel(containerForm, arkCrudContainerVO.getEditButtonContainer(), arkCrudContainerVO.getDetailPanelFormContainer());
 	}
 
 	public void addDetailFormComponents() {
@@ -260,6 +251,10 @@ public class DetailForm extends AbstractDetailForm<PhoneVO> {
 		catch (ArkSystemException e) {
 			this.error("A System Exception has occured please contact Support.");
 		}
+	}
+	
+	@Override
+	protected void onTest(Form<PhoneVO> containerForm, AjaxRequestTarget target) {
 	}
 
 	/*

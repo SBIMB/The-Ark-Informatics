@@ -381,6 +381,10 @@ public class DetailForm extends AbstractDetailForm<ResearcherVo> {
 		}
 	}
 	
+	@Override
+	protected void onTest(Form<ResearcherVo> containerForm, AjaxRequestTarget target) {
+	}
+	
 	private int checkBillingDetails(){
 		int  count=0;
 		Researcher researcher=getFormModel().getResearcher();

@@ -36,15 +36,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
 import au.org.theark.core.Constants;
 import au.org.theark.core.model.worktracking.entity.BillableItem;
 
 @Entity
 @Table(name = "correspondences", schema = Constants.STUDY_SCHEMA)
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class Correspondences implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -63,8 +59,8 @@ public class Correspondences implements Serializable {
 	private String attachmentFilename;
 	private byte[] attachmentPayload;
 	
-	private String attachmentChecksum;
-	private String attachmentFileId;
+	private String attachementChecksum;
+	private String attachementFileId;
 	
 	private BillableItem billableItem; 
 
@@ -209,20 +205,20 @@ public class Correspondences implements Serializable {
 	}
 
 	@Column(name = "ATTACHMENT_CHECKSUM")
-	public String getAttachmentChecksum() {
-		return attachmentChecksum;
+	public String getAttachementChecksum() {
+		return attachementChecksum;
 	}
 
-	public void setAttachmentChecksum(String attachmentChecksum) {
-		this.attachmentChecksum = attachmentChecksum;
+	public void setAttachementChecksum(String attachementChecksum) {
+		this.attachementChecksum = attachementChecksum;
 	}
 
 	@Column(name = "ATTACHMENT_FILE_ID")
-	public String getAttachmentFileId() {
-		return attachmentFileId;
+	public String getAttachementFileId() {
+		return attachementFileId;
 	}
 
-	public void setAttachmentFileId(String attachmentFileId) {
-		this.attachmentFileId = attachmentFileId;
+	public void setAttachementFileId(String attachementFileId) {
+		this.attachementFileId = attachementFileId;
 	}
 }

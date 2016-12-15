@@ -32,6 +32,110 @@ import au.org.theark.core.model.study.entity.ArkRole;
 import au.org.theark.core.model.study.entity.ArkRolePolicyTemplate;
 
 public interface IAdminService<T> {
+	
+	//ArkRoleModuleFunctionVO
+	
+	public long getArkRoleModuleFunctionVOCount(ArkRoleModuleFunctionVO arkRoleModuleFunctionVO);
+	
+	public List<ArkRoleModuleFunctionVO> searchPageableArkRoleModuleFunctionVO(ArkRoleModuleFunctionVO arkRoleModuleFunctionVo, int first, int count);
+	
+	public List<ArkRoleModuleFunctionVO> getArkRoleModuleFunctionVoList(ArkRole arkRole);
+	
+	
+	//Ark Function
+	
+	public ArkFunction getArkFunction(Long id);
+	
+	public List<ArkFunction> getArkFunctionList();
+	
+	public List<ArkFunction> getArkFunctionListByArkModule(ArkModule arkModule);
+	
+	public void createOrUpdateArkFunction(AdminVO adminVo);
+	
+	public void deleteArkFunction(AdminVO adminVo);
+	
+	public long getArkFunctionCount(ArkFunction arkFunctionCriteria);
+	
+	
+	
+	//ArkFunctionType
+	
+	public List<ArkFunctionType> getArkFunctionTypeList();
+	
+	
+	//ArkModule
+	
+	public ArkModule getArkModule(Long id);
+	
+	public List<ArkModule> getArkModuleList(ArkRole arkRole);
+	
+	public List<ArkModule> getArkModuleList();
+	
+	public void createOrUpdateArkModule(AdminVO adminVo);
+
+	public void deleteArkModule(AdminVO adminVo);
+
+	public List<ArkModule> searchArkModule(ArkModule arkModule);
+
+	public long getArkModuleCount(ArkModule arkModuleCriteria);
+
+	public List<ArkModule> searchPageableArkModules(ArkModule arkModuleCriteria, int first, int count);	
+	
+		
+	//ArkModuleFunction
+		
+	public ArkModuleFunction getArkModuleFunction(Long id);
+	
+	public long getArkModuleFunctionCount(ArkModuleFunction arkModuleFunction);
+	
+	public void createOrUpdateArkModuleFunction(AdminVO modelObject);
+	
+	public List<ArkFunction> searchArkFunction(ArkFunction arkFunction);
+	
+	public List<ArkModuleFunction> searchPageableArkModuleFunctions(ArkModuleFunction arkModuleFunctionCriteria, int first, int count);
+	
+	public List<ArkFunction> searchPageableArkFunctions(ArkFunction arkFunctionCriteria, int first, int count);
+	
+	
+	//ArkModuleRole
+	
+	public ArkModuleRole getArkModuleRole(Long id);
+	
+	public long getArkModuleRoleCount(ArkModuleRole arkModuleRole);
+	
+	public List<ArkModuleRole> searchPageableArkModuleRoles(ArkModuleRole arkModulRoleCriteria, int first, int count);
+	
+	public void createArkModuleRole(AdminVO modelObject);
+	
+	public void updateArkModuleRole(AdminVO modelObject);
+	
+	public List<ArkModule> getArkModuleListByArkRole(ArkRole arkRole);
+	
+	
+	//ArkPermission
+	
+	public ArkPermission getArkPermissionByName(String name);
+	
+	
+	//ArkRole
+	
+	public ArkRole getArkRole(Long id);
+	
+	public ArkRole getArkRoleByName(String name);
+	
+	public long getArkRoleCount(ArkRole arkRoleCriteria);
+	
+	public List<ArkRole> getArkRoleList();
+	
+	public void createOrUpdateArkRole(AdminVO modelObject);
+	
+	public List<ArkRole> searchPageableArkRoles(ArkRole arkRoleCriteria, int first, int count);
+	
+	public List<ArkRole> getArkRoleListByArkModule(ArkModule arkModule);
+	
+	
+	//ArkRolePolicyTemplate
+	
 	/**
 	 * Create a new arkRolePolicyTemplate, via the reference AdminVO object
 	 * 
@@ -60,83 +164,12 @@ public interface IAdminService<T> {
 	 */
 	public void createOrUpdateArkRolePolicyTemplate(AdminVO adminVo);
 
-	public List<ArkRole> getArkRoleList();
-
-	public List<ArkModule> getArkModuleList();
-
-	public List<ArkFunction> getArkFunctionList();
-
 	public ArkRolePolicyTemplate getArkRolePolicyTemplate(Long id);
 	
 	public List<ArkRolePolicyTemplate> getArkRolePolicyTemplateList(ArkRolePolicyTemplate arkRolePolicyTemplate);
-
-	public ArkPermission getArkPermissionByName(String name);
-
-	public ArkModule getArkModule(Long id);
-
-	public ArkFunction getArkFunction(Long id);
-
-	public List<ArkFunction> searchArkFunction(ArkFunction arkFunction);
-
-	public List<ArkFunctionType> getArkFunctionTypeList();
-
-	public void createOrUpdateArkFunction(AdminVO adminVo);
-
-	public void deleteArkFunction(AdminVO adminVo);
-
-	public void createOrUpdateArkModule(AdminVO adminVo);
-
-	public void deleteArkModule(AdminVO adminVo);
-
-	public List<ArkModule> searchArkModule(ArkModule arkModule);
-
-	public long getArkModuleCount(ArkModule arkModuleCriteria);
-
-	public List<ArkModule> searchPageableArkModules(ArkModule arkModuleCriteria, int first, int count);
-
-	public long getArkFunctionCount(ArkFunction arkFunctionCriteria);
-
-	public List<ArkFunction> searchPageableArkFunctions(ArkFunction arkFunctionCriteria, int first, int count);
-
-	public long getArkRoleModuleFunctionVOCount(ArkRoleModuleFunctionVO arkRoleModuleFunctionVO);
 	
-	public List<ArkRoleModuleFunctionVO> searchPageableArkRoleModuleFunctionVO(ArkRoleModuleFunctionVO arkRoleModuleFunctionVo, int first, int count);
 	
-	public ArkRole getArkRoleByName(String name);
-
-	public List<ArkRoleModuleFunctionVO> getArkRoleModuleFunctionVoList(ArkRole arkRole);
-
-	public List<ArkModule> getArkModuleList(ArkRole arkRole);
-
-	public long getArkModuleFunctionCount(ArkModuleFunction arkModuleFunction);
+	public void createOrUpdateArkRedcap(AdminVO adminVO);
 	
-	public List<ArkModuleFunction> searchPageableArkModuleFunctions(ArkModuleFunction arkModuleFunctionCriteria, int first, int count);
-
-	public ArkModuleFunction getArkModuleFunction(Long id);
-
-	public List<ArkFunction> getArkFunctionListByArkModule(ArkModule arkModule);
-
-	public void createOrUpdateArkModuleFunction(AdminVO modelObject);
-
-	public ArkRole getArkRole(Long id);
-	
-	public long getArkRoleCount(ArkRole arkRoleCriteria);
-
-	public List<ArkRole> searchPageableArkRoles(ArkRole arkRoleCriteria, int first, int count);
-	
-	public void createOrUpdateArkRole(AdminVO modelObject);
-
-	public ArkModuleRole getArkModuleRole(Long id);
-	
-	public List<ArkRole> getArkRoleListByArkModule(ArkModule arkModule);
-	
-	public long getArkModuleRoleCount(ArkModuleRole arkModuleRole);
-	
-	public List<ArkModuleRole> searchPageableArkModuleRoles(ArkModuleRole arkModulRoleCriteria, int first, int count);
-
-	public void createArkModuleRole(AdminVO modelObject);
-	
-	public void updateArkModuleRole(AdminVO modelObject);
-
-	public List<ArkModule> getArkModuleListByArkRole(ArkRole arkRole);
+	public void deleteArkRedcap(AdminVO adminVO);
 }

@@ -18,7 +18,6 @@
  ******************************************************************************/
 package au.org.theark.lims.model.dao;
 
-import java.util.Collection;
 import java.util.List;
 
 import au.org.theark.core.exception.ArkSystemException;
@@ -129,13 +128,5 @@ public interface IBioCollectionDao {
 	public BioCollection getBioCollectionByUID(String biocollectionUid,Long studyId, String subjectUID);
 
 	public List<String> getAllBiocollectionUIDs(Study study);
-	
-	public BioCollection getBioCollectionForStudySubjectByUID(String biocollectionUid, Study study, LinkSubjectStudy linkSubjectStudy);
-	
-	public void batchInsertBiocollections(Collection<BioCollection> insertBioCollections);
-	
-	public void batchUpdateBiocollections(Collection<BioCollection> updateBioCollections);
-	
-	public boolean hasBiocllectionGotCustomFieldData(BioCollection bioCollection);
 
 }

@@ -81,6 +81,7 @@ public class BioCollectionListForm extends Form<LimsVO> {
 	private Label														idLblFld;
 	private Label														biocollectionLblFld;
 	private Label														nameLblFld;
+	private Label														patientAgeLblFld;
 	private Label														commentsLblFld;
 	private Label														collectionDateLblFld;
 	private Panel														modalContentPanel;
@@ -113,6 +114,7 @@ public class BioCollectionListForm extends Form<LimsVO> {
 		String sessionSubjectUID = (String) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.SUBJECTUID);
 
 		if ((sessionStudyId != null) && (sessionSubjectUID != null)) {
+			log.info(sessionStudyId + " " + sessionSubjectUID);
 			LinkSubjectStudy linkSubjectStudy = null;
 			Study study = null;
 			boolean contextLoaded = false;
@@ -147,6 +149,7 @@ public class BioCollectionListForm extends Form<LimsVO> {
 			private static final long	serialVersionUID	= 1L;
 
 			public int size() {
+				log.info(service.getBioCollectionCount(model.getObject())+ " ");
 				return (int) service.getBioCollectionCount(model.getObject());
 			}
 
@@ -170,7 +173,7 @@ public class BioCollectionListForm extends Form<LimsVO> {
 		});
 
 		dataView = buildDataView(bioColectionProvider);
-		dataView.setItemsPerPage(iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue());
+		dataView.setItemsPerPage(iArkCommonService.getRowsPerPage());
 
 		AjaxPagingNavigator pageNavigator = new AjaxPagingNavigator("navigator", dataView) {
 
@@ -270,12 +273,20 @@ public class BioCollectionListForm extends Form<LimsVO> {
 				else {
 					new Label("bioCollection.surgeryDate", "");
 				}
+				
+				if (bioCollection.getPatientAge() != null) {
+					patientAgeLblFld = new Label("bioCollection.patientAge", bioCollection.getPatientAge().toString());
+				}
+				else {
+					patientAgeLblFld = new Label("bioCollection.patientAge", "");
+				}
 
 				commentsLblFld = new Label("bioCollection.comments", bioCollection.getComments());
 
 				item.add(idLblFld);
 				item.add(rowDetailsWMC);
 				item.add(nameLblFld);
+				item.add(patientAgeLblFld);
 				item.add(collectionDateLblFld);
 				item.add(commentsLblFld);
 

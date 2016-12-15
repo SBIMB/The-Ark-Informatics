@@ -37,9 +37,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
 import au.org.theark.core.model.Constants;
 
 /**
@@ -48,34 +45,33 @@ import au.org.theark.core.model.Constants;
  */
 @Entity
 @Table(name = "inv_rack", schema = Constants.LIMS_TABLE_SCHEMA)
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class InvRack implements java.io.Serializable {
 
 
 	private static final long	serialVersionUID	= 971975144156543372L;
 	private Long			id;
 	private String			timestamp;
-	private InvFreezer	invFreezer;
+	private InvShelf	invShelf;
 	private Integer		deleted;
 	private String			name;
 	private Integer		available;
 	private String			description;
 	private Integer		capacity;
 	private List<InvBox>	invBoxes	= new ArrayList<InvBox>(0);
-	protected String 		siteFreezerRack;
+	protected String 		siteFreezerShelfRack;
 
 	public InvRack() {
 	}
 
-	public InvRack(Long id, InvFreezer invFreezer, String name) {
+	public InvRack(Long id, InvShelf invShelf, String name) {
 		this.id = id;
-		this.invFreezer = invFreezer;
+		this.invShelf = invShelf;
 		this.name = name;
 	}
 
-	public InvRack(Long id, InvFreezer invFreezer, Integer deleted, String name, Integer available, String description, Integer capacity, List<InvBox> invBoxes) {
+	public InvRack(Long id, InvShelf invShelf, Integer deleted, String name, Integer available, String description, Integer capacity, List<InvBox> invBoxes) {
 		this.id = id;
-		this.invFreezer = invFreezer;
+		this.invShelf = invShelf;
 		this.deleted = deleted;
 		this.name = name;
 		this.available = available;
@@ -105,13 +101,13 @@ public class InvRack implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "FREEZER_ID", nullable = false)
-	public InvFreezer getInvFreezer() {
-		return this.invFreezer;
+	@JoinColumn(name = "SHELF_ID", nullable = false)
+	public InvShelf getInvShelf() {
+		return this.invShelf;
 	}
 
-	public void setInvFreezer(InvFreezer invFreezer) {
-		this.invFreezer = invFreezer;
+	public void setInvShelf(InvShelf invShelf) {
+		this.invShelf = invShelf;
 	}
 
 	@Column(name = "DELETED")
@@ -184,16 +180,18 @@ public class InvRack implements java.io.Serializable {
 		return this.getClass().getCanonicalName();
 	}
 
-	public void setSiteFreezerRack(String siteFreezerRack) {
-		this.siteFreezerRack = siteFreezerRack;
+	public void setSiteFreezerShelfRack(String siteFreezerShelfRack) {
+		this.siteFreezerShelfRack = siteFreezerShelfRack;
 	}
 
 	@Transient
-	public String getSiteFreezerRack() {
+	public String getSiteFreezerShelfRack() {
 		StringBuilder displayExpression = new StringBuilder();
-		displayExpression.append(invFreezer.getInvSite().getName());
+		displayExpression.append(invShelf.getInvFreezer().getInvSite().getName());
 		displayExpression.append(" > ");
-		displayExpression.append(invFreezer.getName());
+		displayExpression.append(invShelf.getInvFreezer().getName());
+		displayExpression.append(" > ");
+		displayExpression.append(invShelf.getName());
 		displayExpression.append(" > ");
 		displayExpression.append(name);
 		return displayExpression.toString();
