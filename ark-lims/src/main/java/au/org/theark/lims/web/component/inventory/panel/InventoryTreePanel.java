@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import au.org.theark.core.model.lims.entity.InvBox;
 import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.model.lims.entity.InvFreezer;
+import au.org.theark.core.model.lims.entity.InvShelf;
 import au.org.theark.core.model.lims.entity.InvRack;
 import au.org.theark.core.model.lims.entity.InvSite;
 import au.org.theark.core.model.study.entity.Study;
@@ -36,6 +37,7 @@ import au.org.theark.lims.web.Constants;
 import au.org.theark.lims.web.component.inventory.form.ContainerForm;
 import au.org.theark.lims.web.component.inventory.panel.box.BoxDetailPanel;
 import au.org.theark.lims.web.component.inventory.panel.freezer.FreezerDetailPanel;
+import au.org.theark.lims.web.component.inventory.panel.shelf.ShelfDetailPanel;
 import au.org.theark.lims.web.component.inventory.panel.rack.RackDetailPanel;
 import au.org.theark.lims.web.component.inventory.panel.site.SiteDetailPanel;
 import au.org.theark.lims.web.component.inventory.tree.InventoryLinkTree;
@@ -60,6 +62,7 @@ public class InventoryTreePanel extends Panel {
 	
 	protected ArkBusyAjaxButton	addSite;
 	protected ArkBusyAjaxButton	addFreezer;
+	protected ArkBusyAjaxButton	addShelf;
 	protected ArkBusyAjaxButton	enableAllEmptyCells;
 	protected ArkBusyAjaxButton	addRack;
 	protected ArkBusyAjaxButton	addBox;
@@ -134,6 +137,17 @@ public class InventoryTreePanel extends Panel {
 				containerForm.getModelObject().setInvFreezer(invFreezer);
 
 				FreezerDetailPanel detailPanel = new FreezerDetailPanel("detailPanel", feedbackPanel, detailContainer, containerForm, this.tree, node);
+				detailPanel.initialisePanel();
+
+				detailContainer.addOrReplace(detailPanel);
+				detailContainer.setVisible(true);
+			}
+			if (node.getUserObject() instanceof InvShelf) {
+				InvShelf invShelf = (InvShelf) node.getUserObject();
+
+				containerForm.getModelObject().setInvShelf(invShelf);
+
+				ShelfDetailPanel detailPanel = new ShelfDetailPanel("detailPanel", feedbackPanel, detailContainer, containerForm, this.tree, node);
 				detailPanel.initialisePanel();
 
 				detailContainer.addOrReplace(detailPanel);
@@ -232,6 +246,28 @@ public class InventoryTreePanel extends Panel {
 			}
 
 		};
+		
+		addShelf = new ArkBusyAjaxButton("addShelf") {
+
+
+			private static final long	serialVersionUID	= 1L;
+
+			@Override
+			public boolean isVisible() {
+				return ArkPermissionHelper.isActionPermitted(Constants.SAVE);
+			}
+
+			@Override
+			public void onSubmit(AjaxRequestTarget target, Form<?> form) {
+				onAddShelfSubmit(target);
+			}
+
+			@Override
+			protected void onError(AjaxRequestTarget target, Form<?> form) {
+				this.error("Unexpected error: Unable to process Add Shelf button");
+			}
+
+		};
 
 		enableAllEmptyCells = new ArkBusyAjaxButton("enableAllEmptyCells") {
 
@@ -304,6 +340,7 @@ public class InventoryTreePanel extends Panel {
 	private void addComponents() {
 		treeForm.addOrReplace(addSite);
 		treeForm.addOrReplace(addFreezer);
+		treeForm.addOrReplace(addShelf);
 		treeForm.addOrReplace(enableAllEmptyCells);
 		treeForm.addOrReplace(addRack);
 		treeForm.addOrReplace(addBox);
@@ -330,7 +367,15 @@ public class InventoryTreePanel extends Panel {
 		refreshDetailPanel(target, detailPanel);
 	}
 
+	public void onAddShelfSubmit(AjaxRequestTarget target) {
+		resetModel();
 
+		ShelfDetailPanel detailPanel = new ShelfDetailPanel("detailPanel", feedbackPanel, detailContainer, containerForm, tree, null);
+		detailPanel.initialisePanel();
+
+		refreshDetailPanel(target, detailPanel);
+	}
+	
 	public void onEnableAllEmptyCellsSubmit(AjaxRequestTarget target) {
 		Long sessionStudyId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.STUDY_CONTEXT_ID);
 		Study study = null;

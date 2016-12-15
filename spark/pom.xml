@@ -38,18 +38,8 @@
 		<commons.io.version>2.3</commons.io.version>
 		<httpcomponents.version>4.2.1</httpcomponents.version>
 		<jackson.version>1.9.7</jackson.version>
-		
-		<genotype-io.version>1.0.2-SNAPSHOT</genotype-io.version>
 
 	</properties>
-
-	<repositories>
-		<repository>
-			<id>spring-milestone</id>
-			<name>Spring Maven MILESTONE Repository</name>
-			<url>http://repo.spring.io/libs-milestone</url>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -78,32 +68,6 @@
 			<artifactId>spring-integration-sftp</artifactId>
 			<version>4.1.2.RELEASE</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-cassandra</artifactId>
-			<version>1.0.0.RELEASE</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<version>4.0.2.RELEASE</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<version>4.0.2.RELEASE</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>4.0.2.RELEASE</version>
-		</dependency>
-
-
 		<!-- Other Web dependencies -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -184,7 +148,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -192,51 +155,16 @@
 		</dependency>
 		<!-- Used for loading test resources and converting a DirectoryOrObject 
 			to byte[] -->
-
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>${commons.io.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.jcraft</groupId>
 			<artifactId>jsch</artifactId>
 			<version>0.1.51</version>
 		</dependency>
-
-		<dependency>
-			<groupId>com.datastax.cassandra</groupId>
-			<artifactId>cassandra-driver-core</artifactId>
-			<version>2.1.4</version>
-		</dependency>
-
-		<!-- 
-		<dependency>
-			<groupId>nl.systemsgenetics</groupId>
-			<artifactId>Genotype-IO</artifactId>
-			<version>${genotype-io.version}</version>
-		</dependency>
-	 	-->	
-		
-		<dependency>
-			<groupId>nl.systemsgenetics</groupId>
-			<artifactId>Genotype-IO</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-		
-		<dependency>
-   			<groupId>commons-fileupload</groupId>
-   			<artifactId>commons-fileupload</artifactId>
-  			 <version>1.2.1</version> <!-- makesure correct version here -->
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
-		</dependency>
-
 		<!-- Test Artifacts -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -250,11 +178,8 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 	</dependencies>
-
-
-
 	<build>
 		<finalName>spark</finalName>
 		<sourceDirectory>src/main/java</sourceDirectory>

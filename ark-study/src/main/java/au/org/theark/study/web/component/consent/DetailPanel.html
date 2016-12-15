@@ -88,9 +88,9 @@
 
 					<div class="fldControl">
 						<input wicket:id="consent.requestedDate" type="text" maxLength="10"/>
-						<!-- <span class="requiredHint">
+						<span class="requiredHint">
 							*
-						</span> -->
+						</span>
 					</div>
 				</div>
 
@@ -103,9 +103,9 @@
 
 					<div class="fldControl">
 						<input wicket:id="consent.receivedDate"	type="text" maxLength="10"/>
-						<!-- <span class="requiredHint">
+						<span class="requiredHint">
 							*
-						</span> -->
+						</span>
 					</div>
 				</div>
 
@@ -118,9 +118,9 @@
 
 					<div class="fldControl">
 						<input wicket:id="consent.completedDate"	type="text" maxLength="10"/>
-						<!-- <span class="requiredHint">
+						<span class="requiredHint">
 							*
-						</span> -->
+						</span>
 					</div>
 				</div>
 
@@ -264,15 +264,8 @@
 				</div>
 
 				<div class="fldControl">
-					<input wicket:id="file" type="file"/>
+					<input wicket:id="subjectFile.filename" type="file"/>
 					<a href="#" wicket:id="clearButton"><img  src="images/icons/editclear.png" /></a>
-					<br>
-					<a href="#" wicket:id="subjectFile.link">
-						<b>
-							<span wicket:id="subjectFile.filename">File Name</span>
-						</b>
-					</a>
-					<a href="#" wicket:id="deleteButton"><img  src="images/icons/delete.png" /></a>
 				</div>
 				
 				<div class="detailPanelBreaker">
@@ -298,7 +291,6 @@
 					<input wicket:id="save" type="submit" wicket:message="value:page.save" />
 					<input wicket:id="cancel" type="submit"	wicket:message="value:page.cancel" />
 					<input wicket:id="delete" type="submit" wicket:message="value:page.delete" />
-					<div wicket:id="history" class="historyPanel"></div>
 				</div>
 			</div>
 		</div>

@@ -30,19 +30,12 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import au.org.theark.core.exception.ArkSystemException;
-import au.org.theark.core.exception.EntityNotFoundException;
-import au.org.theark.core.model.study.entity.ArkUser;
-import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.vo.ArkUserVO;
 import au.org.theark.core.web.component.AbstractContainerPanel;
 import au.org.theark.study.service.IUserService;
 import au.org.theark.study.web.component.manageuser.form.ContainerForm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UserContainerPanel extends AbstractContainerPanel<ArkUserVO> {
-
-	private static Logger log = LoggerFactory.getLogger(UserContainerPanel.class);
 
 	private static final long				serialVersionUID	= 8852394393025448913L;
 	private ContainerForm					containerForm;
@@ -53,9 +46,6 @@ public class UserContainerPanel extends AbstractContainerPanel<ArkUserVO> {
 	/* Spring Beans to Access Service Layer */
 	@SpringBean(name = "userService")
 	private IUserService						iUserService;
-	
-	@SpringBean(name = au.org.theark.core.Constants.ARK_COMMON_SERVICE)
-	private IArkCommonService<?>				iArkCommonService;
 
 	public UserContainerPanel(String id) {
 
@@ -81,33 +71,19 @@ public class UserContainerPanel extends AbstractContainerPanel<ArkUserVO> {
 			@Override
 			protected Object load() {
 				List<ArkUserVO> userResultList = new ArrayList<ArkUserVO>();
-				Long sessionStudyId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.STUDY_CONTEXT_ID);
-				String sessionUserName	= (String) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.ARK_USERID);
-				if (isActionPermitted()) {
-					if (sessionStudyId != null && sessionStudyId > 0) {
-						ArkUser arkUser = null;
-						try {
-							arkUser=iArkCommonService.getArkUser(sessionUserName);
-						} catch (EntityNotFoundException e) {
-							log.error("User not found: " + arkUser.getLdapUserName());
-							e.printStackTrace();
+				try {
+					Long sessionStudyId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.STUDY_CONTEXT_ID);
+					if (isActionPermitted()) {
+						if (sessionStudyId != null && sessionStudyId > 0) {
+							// Search Users must list all the users from ArkUser Group and will include all users across studies.
+							userResultList = iUserService.searchUser(containerForm.getModelObject());
+							containerForm.getModelObject().setUserList(userResultList);
 						}
-						for(ArkUser arkUserEntry : iArkCommonService.getArkUserListByStudy(arkUser, iArkCommonService.getStudy(sessionStudyId))) {
-							ArkUserVO arkUserVO = null;
-							try {
-								arkUserVO = iUserService.getCurrentUser(arkUserEntry.getLdapUserName());
-							} catch (EntityNotFoundException e) {
-							    log.error("User not found: " + arkUserEntry.getLdapUserName());
-								e.printStackTrace();
-							}
-							if(arkUserVO != null) {
-								userResultList.add(arkUserVO);
-							}
-						}
-
-						containerForm.getModelObject().setUserList(userResultList);
+						pageableListView.removeAll();
 					}
-					pageableListView.removeAll();
+				}
+				catch (ArkSystemException e) {
+					feedBackPanel.error("A System Error has occured. Please contact support.");
 				}
 				return userResultList;
 			}
@@ -154,4 +130,5 @@ public class UserContainerPanel extends AbstractContainerPanel<ArkUserVO> {
 		arkCrudContainerVO.getSearchPanelContainer().add(searchPanel);
 		return arkCrudContainerVO.getSearchPanelContainer();
 	}
+
 }

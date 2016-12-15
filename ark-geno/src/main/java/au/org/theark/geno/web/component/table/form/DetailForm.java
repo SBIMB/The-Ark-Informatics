@@ -277,6 +277,10 @@ public class DetailForm extends AbstractDetailForm<RowListVO>{
 	@Override
 	protected void onSave(Form<RowListVO> containerForm, AjaxRequestTarget target) {
 	}
+	
+	@Override
+	protected void onTest(Form<RowListVO> containerForm, AjaxRequestTarget target) {
+	}
 
 	@Override
 	protected void onDeleteConfirmed(AjaxRequestTarget target, String selection) {

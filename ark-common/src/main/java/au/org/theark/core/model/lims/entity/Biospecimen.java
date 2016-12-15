@@ -42,11 +42,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
-import au.org.theark.core.audit.annotations.ArkAuditDisplay;
 import au.org.theark.core.model.Constants;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
 import au.org.theark.core.model.study.entity.Study;
@@ -56,14 +51,12 @@ import au.org.theark.core.model.study.entity.Study;
  */
 @Entity
 @Table(name = "biospecimen", schema = Constants.LIMS_TABLE_SCHEMA)
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class Biospecimen implements java.io.Serializable {
 
 
 	private static final long			serialVersionUID	= -6811160809915149538L;
 	private Long							id;
 	private String							biospecimenUid;
-	private String							naturalUid;
 	private Study							study;
 	private Long							substudyId;
 	private LinkSubjectStudy			linkSubjectStudy;
@@ -96,7 +89,8 @@ public class Biospecimen implements java.io.Serializable {
 	private Double							concentration;
 	private Double							amount;
 	private BiospecimenProtocol		biospecimenProtocol;
-	private Double							purity;
+	private Double							purity280;
+	private Double							purity230;
 	
 
 	private Set<BioTransaction>		bioTransactions	= new HashSet<BioTransaction>(0);
@@ -153,7 +147,6 @@ public class Biospecimen implements java.io.Serializable {
 	//TODO:  evaluate EAGER vs LAZY
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BIOCOLLECTION_ID")
-	@NotAudited
 	public BioCollection getBioCollection() {
 		return this.bioCollection;
 	}
@@ -162,7 +155,6 @@ public class Biospecimen implements java.io.Serializable {
 		this.bioCollection = bioCollection;
 	}
 
-	@ArkAuditDisplay
 	@Column(name = "BIOSPECIMEN_UID", nullable = false)
 	public String getBiospecimenUid() {
 		return this.biospecimenUid;
@@ -170,16 +162,6 @@ public class Biospecimen implements java.io.Serializable {
 
 	public void setBiospecimenUid(String biospecimenUid) {
 		this.biospecimenUid = biospecimenUid;
-	}
-
-	@NotAudited
-	@Column(name = "NATURAL_UID")
-	public String getNaturalUid() {
-		return naturalUid;
-	}
-
-	public void setNaturalUid(String naturalUid) {
-		this.naturalUid = naturalUid;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -460,13 +442,22 @@ public class Biospecimen implements java.io.Serializable {
 		return ((quantity == null) ? 0 : quantity) * ((concentration == null) ? 0 : concentration);
 	}
 	
-	@Column(name = "PURITY")
-	public Double getPurity() {
-		return purity;
+	@Column(name = "PURITY280")
+	public Double getPurity280() {
+		return purity280;
 	}
 
-	public void setPurity(Double purity) {
-		this.purity = purity;
+	public void setPurity280(Double purity280) {
+		this.purity280 = purity280;
+	}
+	
+	@Column(name = "PURITY230")
+	public Double getPurity230() {
+		return purity230;
+	}
+
+	public void setPurity230(Double purity230) {
+		this.purity230 = purity230;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)

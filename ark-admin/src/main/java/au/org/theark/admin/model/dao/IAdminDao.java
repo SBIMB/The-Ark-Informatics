@@ -65,7 +65,7 @@ public interface IAdminDao {
 	public List<ArkModule> getArkModuleList();
 
 	public List<ArkFunction> getArkFunctionList();
-
+	
 	public ArkRolePolicyTemplate getArkRolePolicyTemplate(Long id);
 
 	public List<ArkRolePolicyTemplate> getArkRolePolicyTemplateList();
@@ -73,7 +73,7 @@ public interface IAdminDao {
 	public ArkPermission getArkPermissionByName(String name);
 
 	public ArkFunction getArkFunction(Long id);
-
+	
 	public ArkModule getArkModule(Long id);
 
 	public void createOrUpdateArkFunction(ArkFunction arkFunction);
@@ -81,13 +81,13 @@ public interface IAdminDao {
 	public void createOrUpdateArkModule(ArkModule arkModule);
 
 	public void deleteArkFunction(ArkFunction arkFunction);
-
+	
 	public void deleteArkModule(ArkModule arkModule);
 
 	public List<ArkFunctionType> getArkFunctionTypeList();
 
 	public List<ArkFunction> searchArkFunction(ArkFunction arkFunction);
-
+	
 	public List<ArkModule> searchArkModule(ArkModule arkModule);
 
 	public long getArkModuleCount(ArkModule arkModuleCriteria);
@@ -95,15 +95,15 @@ public interface IAdminDao {
 	public List<ArkModule> searchPageableArkModules(ArkModule arkModuleCriteria, int first, int count);
 
 	public long getArkFunctionCount(ArkFunction arkFunctionCriteria);
-
+	
 	public List<ArkFunction> searchPageableArkFunctions(ArkFunction arkFunctionCriteria, int first, int count);
-
+	
 	public long getArkRoleModuleFunctionVOCount(ArkRoleModuleFunctionVO arkRoleModuleFunctionVoCriteria);
 
 	public List<ArkRoleModuleFunctionVO> searchPageableArkRoleModuleFunctionVO(ArkRoleModuleFunctionVO arkRoleModuleFunctionVo, int first, int count);
 	
 	public ArkRole getArkRoleByName(String name);
-
+	
 	public List<ArkRoleModuleFunctionVO> getArkRoleModuleFunctionVoList(ArkRole arkRole);
 
 	public List<ArkRolePolicyTemplate> getArkRolePolicyTemplateList(ArkRolePolicyTemplate arkRolePolicyTemplate);

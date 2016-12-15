@@ -78,53 +78,42 @@ public class StudyLevelConsentReportDataSource implements Serializable, JRDataSo
 
 		if ("SubjectUID".equals(fieldName)) {
 			value = data.get(index).getSubjectUID();
-		}
-		else if ("ConsentStatus".equals(fieldName)) {
-			value = data.get(index).getConsentStatus();
-		}
+		}		
 		else if ("SubjectStatus".equals(fieldName)) {
 			value = data.get(index).getSubjectStatus();
 		}
-		else if ("Title".equals(fieldName)) {
-			value = data.get(index).getTitle();
+		else if ("DateOfEnrollment".equals(fieldName)) {
+			value = data.get(index).getDateOfEnrollment();
 		}
-		else if ("FirstName".equals(fieldName)) {
-			value = data.get(index).getFirstName();
+		else if ("AgeAtEnrollment".equals(fieldName)) {
+			value = data.get(index).getAgeAtEnrollment();
 		}
-		else if ("LastName".equals(fieldName)) {
-			value = data.get(index).getLastName();
-		}
-		else if ("StreetAddress".equals(fieldName)) {
-			value = data.get(index).getStreetAddress();
-		}
-		else if ("Suburb".equals(fieldName)) {
-			value = data.get(index).getSuburb();
-		}
-		else if ("State".equals(fieldName)) {
-			value = data.get(index).getState();
-		}
-		else if ("Postcode".equals(fieldName)) {
-			value = data.get(index).getPostcode();
-		}
-		else if ("Country".equals(fieldName)) {
-			value = data.get(index).getCountry();
-		}
-		else if ("WorkPhone".equals(fieldName)) {
-			value = data.get(index).getWorkPhone();
-		}
-		else if ("HomePhone".equals(fieldName)) {
-			value = data.get(index).getHomePhone();
-		}
-		else if ("Email".equals(fieldName)) {
-			value = data.get(index).getEmail();
+		else if ("Ethnicity".equals(fieldName)) {
+			value = data.get(index).getEthnicity();
 		}
 		else if ("Sex".equals(fieldName)) {
 			value = data.get(index).getSex();
 		}
+		else if ("ConsentStatus".equals(fieldName)) {
+			value = data.get(index).getConsentStatus();
+		}
 		else if ("ConsentDate".equals(fieldName)) {
 			value = data.get(index).getConsentDate();
 		}
-
+		else if ("ConsentToUseData".equals(fieldName)) {
+			value = data.get(index).getConsentToUseData();
+		}
+		else if ("ConsentToShareData".equals(fieldName)) {
+			value = data.get(index).getConsentToShareData();
+		}
+		else if ("ConsentToUseBiospecimen".equals(fieldName)) {
+			value = data.get(index).getConsentToUseBiospecimen();
+		}
+		else if ("ConsentToShareBiospecimen".equals(fieldName)) {
+			value = data.get(index).getConsentToShareBiospecimen();
+		}		
+		
+		
 		return value;
 	}
 

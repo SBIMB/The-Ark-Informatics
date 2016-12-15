@@ -32,6 +32,7 @@ import java.util.List;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
 
+import org.apache.batik.svggen.font.table.CvtTable;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -44,7 +45,10 @@ import au.org.theark.core.exception.FileFormatException;
 import au.org.theark.core.model.study.entity.ConsentOption;
 import au.org.theark.core.model.study.entity.ConsentStatus;
 import au.org.theark.core.model.study.entity.ConsentType;
+import au.org.theark.core.model.study.entity.EthnicityType;
+import au.org.theark.core.model.study.entity.GenderType;
 import au.org.theark.core.model.study.entity.Study;
+import au.org.theark.core.model.study.entity.SubjectStatus;
 import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.util.DataConversionAndManipulationHelper;
 import au.org.theark.core.util.XLStoCSV;
@@ -52,6 +56,7 @@ import au.org.theark.core.vo.UploadVO;
 import au.org.theark.core.web.component.worksheet.ArkGridCell;
 
 import com.csvreader.CsvReader;
+import com.x5.template.filters.HexUpperFilter;
 
 /**
  * SubjectUploadValidator provides support for validating subject matrix-formatted files.
@@ -180,7 +185,7 @@ public class SubjectUploadValidator {
 			fileFormat = filename.substring(filename.lastIndexOf('.') + 1).toUpperCase();
 			delimiterCharacter = uploadVo.getUpload().getDelimiterType().getDelimiterCharacter();
 			
-		// If Excel, convert to CSV for validation
+		/*// If Excel, convert to CSV for validation
 			if (fileFormat.equalsIgnoreCase("XLS")) {
 				Workbook w;
 				try {
@@ -197,7 +202,7 @@ public class SubjectUploadValidator {
 					log.error(e.getMessage());
 				}
 			}
-			
+			*/
 			validationMessages = validateSubjectFileFormat(inputStream, fileFormat, delimiterCharacter);
 		}
 		catch (IOException e) {
@@ -217,7 +222,7 @@ public class SubjectUploadValidator {
 	 *           is the delimiter character of the file (eg comma)
 	 * @return a collection of validation messages
 	 */
-	private Collection<String> validateSubjectFileFormat(InputStream inputStream, String fileFormat, char delimChar) {
+	public Collection<String> validateSubjectFileFormat(InputStream inputStream, String fileFormat, char delimChar) {
 		java.util.Collection<String> validationMessages = null;
 
 		try {
@@ -232,12 +237,14 @@ public class SubjectUploadValidator {
 					inputStream.reset();
 				}
 				catch (BiffException e) {
-					log.error(e.getMessage());
+					log.error("Got u ");
+					e.printStackTrace();
 				}
 				catch (IOException e) {
 					log.error(e.getMessage());
 				}
 			}
+						
 			validationMessages = validateSubjectMatrixFileFormat(inputStream, inputStream.toString().length(), fileFormat, delimChar);
 		}
 		catch (FileFormatException ffe) {
@@ -275,7 +282,7 @@ public class SubjectUploadValidator {
 					inputStream.reset();
 				}
 				catch (BiffException e) {
-					log.error(e.getMessage());
+					log.error("Got u " + e);
 				}
 			}
 
@@ -287,7 +294,7 @@ public class SubjectUploadValidator {
 		return validationMessages;
 	}
 
-	private Collection<String> validateSubjectFileData(InputStream inputStream, String fileFormat, char delimChar, List<String> uidsToUpdateRefence) {
+	public Collection<String> validateSubjectFileData(InputStream inputStream, String fileFormat, char delimChar, List<String> uidsToUpdateRefence) {
 		java.util.Collection<String> validationMessages = null;
 
 		try {
@@ -328,35 +335,44 @@ public class SubjectUploadValidator {
 
 		InputStreamReader inputStreamReader = null;
 		CsvReader csvReader = null;
+				
 		try {
 			inputStreamReader = new InputStreamReader(fileInputStream);
 			srcLength = inLength;
 			if (srcLength <= 0) {
 				throw new FileFormatException("The input size was not greater than 0.  Actual length reported: " + srcLength);
 			}
-
+			
 			csvReader = new CsvReader(inputStreamReader, delimiterCharacter);
-			// Set field list (note 2th column to Nth column) // SUBJECTUID DATE_COLLECTED F1 F2 FN // 0 1 2 3 N
 			csvReader.readHeaders();
 			srcLength = inLength - csvReader.getHeaders().toString().length();
+			log.debug("Header length: " + csvReader.getHeaders().toString().length());
+						
+			// Set field list (note 2th column to Nth column) // SUBJECTUID DATE_COLLECTED F1 F2 FN // 0 1 2 3 N
+			srcLength = inLength - csvReader.getHeaders().toString().length();
 			String[] headerColumnArray = csvReader.getHeaders();
-
+			
 			List<String> subjectColumns = new ArrayList<String>();
 			String[] subjectHeaderColumnArray = au.org.theark.study.web.Constants.SUBJECT_TEMPLATE_HEADER;
+			
 			boolean headerError = false;
 			for (int i = 0; i < subjectHeaderColumnArray.length; i++) {
 				String colName = subjectHeaderColumnArray[i];
-				subjectColumns.add(colName);
+				subjectColumns.add(colName);	
 			}
-
+			
 			for (int i = 0; i < headerColumnArray.length; i++) {
 				String colName = headerColumnArray[i];
+				
 				if (!subjectColumns.contains(colName)) {
 					headerError = true;
 					break;
 				}
+				
 			}
-
+			
+			
+			
 			if (headerError) {
 				StringBuffer stringBuffer = new StringBuffer();
 				// TODO ASAP : this should utilize the file that creates the template/requirements!
@@ -377,13 +393,13 @@ public class SubjectUploadValidator {
 			}
 			row = 1;
 		}
-		catch (IOException ioe) {
+		/*catch (IOException ioe) {
 			log.error("processMatrixSubjectFile IOException stacktrace:", ioe);
 			throw new ArkSystemException("Unexpected I/O exception whilst reading the subject data file");
-		}
+		}*/
 		catch (Exception ex) {
 			log.error("processMatrixSubjectFile Exception stacktrace:", ex);
-			throw new ArkSystemException("Unexpected exception occurred when trying to process subject data file");
+			throw new ArkSystemException(fileValidationMessages.toString());//"Unexpected exception occurred when trying to process subject data file"
 		}
 		finally {
 
@@ -437,9 +453,7 @@ public class SubjectUploadValidator {
 
 		InputStreamReader inputStreamReader = null;
 		CsvReader csvReader = null;
-		
-		
-
+	
 		try {
 			inputStreamReader = new InputStreamReader(fileInputStream);
 			String[] stringLineArray;
@@ -458,6 +472,9 @@ public class SubjectUploadValidator {
 			List<String> subjectUIDsAlreadyExisting = iArkCommonService.getAllSubjectUIDs(study); // TODO evaluate data in future to know if should get
 																																// all id's in the csv, rather than getting all id's
 																																// in study to compre
+			List<SubjectStatus> subjectStatusList = iArkCommonService.getSubjectStatus();
+			Collection<EthnicityType> ethnicityTypeList = iArkCommonService.getEthnicityTypes();
+			Collection<GenderType> genderTypeList = iArkCommonService.getGenderTypes();
 			List<ConsentStatus> consentStatusList = iArkCommonService.getConsentStatus();
 			List<ConsentType> consentTypeList = iArkCommonService.getConsentType();
 			List<ConsentOption> consentOptionList = iArkCommonService.getConsentOptionList();
@@ -511,88 +528,10 @@ public class SubjectUploadValidator {
 					int col = 0;
 					String dateStr = new String();
 					String cellValue = new String();
+					String intStr = new String();
 
-					if (csvReader.getIndex("DATE_OF_BIRTH") > 0 || csvReader.getIndex("DOB") > 0) {
-						if (csvReader.getIndex("DATE_OF_BIRTH") > 0) {
-							col = csvReader.getIndex("DATE_OF_BIRTH");
-							cellValue = csvReader.get("DATE_OF_BIRTH");
-						}
-						else {
-							col = csvReader.getIndex("DOB");
-							cellValue = csvReader.get("DOB");
-						}
-						try {
-							dateStr = cellValue;
-							if (dateStr != null && dateStr.length() > 0)
-								simpleDateFormat.parse(dateStr);
-						}
-						catch (ParseException pex) {
-							dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not in the valid date format of: "
-									+ Constants.DD_MM_YYYY.toLowerCase());
-							errorCells.add(new ArkGridCell(col, row));
-						}
-					}
-
-					if (csvReader.getIndex("DATE_OF_DEATH") > 0 || csvReader.getIndex("DODEATH") > 0) {
-						if (csvReader.getIndex("DATE_OF_DEATH") > 0) {
-							col = csvReader.getIndex("DATE_OF_DEATH");
-							cellValue = csvReader.get("DATE_OF_DEATH");
-						}
-						else {
-							col = csvReader.getIndex("DODEATH");
-							cellValue = csvReader.get("DODEATH");
-						}
-						try {
-							dateStr = cellValue;
-							if (dateStr != null && dateStr.length() > 0)
-								simpleDateFormat.parse(dateStr);
-						}
-						catch (ParseException pex) {
-							dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not in the valid date format of: "
-									+ Constants.DD_MM_YYYY.toLowerCase());
-							errorCells.add(new ArkGridCell(col, row));
-						}
-					}
-
-
-					if (csvReader.getIndex("DATE_LAST_KNOWN_ALIVE") > 0 || csvReader.getIndex("LAST_KNOWN_ALIVE") > 0) {
-						if (csvReader.getIndex("DATE_LAST_KNOWN_ALIVE") > 0) {
-							col = csvReader.getIndex("DATE_LAST_KNOWN_ALIVE");
-							cellValue = csvReader.get("DATE_LAST_KNOWN_ALIVE");
-						}
-						else {
-							col = csvReader.getIndex("LAST_KNOWN_ALIVE");
-							cellValue = csvReader.get("LAST_KNOWN_ALIVE");
-						}
-						try {
-							dateStr = cellValue;
-							if (dateStr != null && dateStr.length() > 0)
-								simpleDateFormat.parse(dateStr);
-						}
-						catch (ParseException pex) {
-							dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + 
-									cellValue + " is not in the valid date format of: "
-									+ Constants.DD_MM_YYYY.toLowerCase());
-							errorCells.add(new ArkGridCell(col, row));
-						}
-					}
-
-					if (csvReader.getIndex("ADDRESS_DATE_RECEIVED") > 0) {
-						col = csvReader.getIndex("ADDRESS_DATE_RECEIVED");
-						cellValue = csvReader.get("ADDRESS_DATE_RECEIVED");
-						try {
-							dateStr = cellValue;
-							if (dateStr != null && dateStr.length() > 0)
-								simpleDateFormat.parse(dateStr);
-						}
-						catch (ParseException pex) {
-							dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not in the valid date format of: "
-									+ Constants.DD_MM_YYYY.toLowerCase());
-							errorCells.add(new ArkGridCell(col, row));
-						}
-					}
-
-					// BOOLEAN CHECKS
+					
+					/*// BOOLEAN CHECKS
 					if (csvReader.getIndex("SILENT") > 0) {
 						col = csvReader.getIndex("SILENT");
 						cellValue = csvReader.get("SILENT");
@@ -600,43 +539,38 @@ public class SubjectUploadValidator {
 						if (silent != null && !silent.isEmpty()) {// if null or empty just ignore...if invalid flag
 							if (!DataConversionAndManipulationHelper.isSomethingLikeABoolean(silent)) {
 								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue
-										+ " is not a valid boolean value.  Please use true or false for this column.");
+										+ " is not in the valid boolean value.  Please use true or false for this column.");
 								errorCells.add(new ArkGridCell(col, row));
 							}
 						}
-					}
+					}*/
 
-					if (csvReader.getIndex("IS_PREFERRED_MAILING_ADDRESS") > 0) {
-						col = csvReader.getIndex("IS_PREFERRED_MAILING_ADDRESS");
-						cellValue = csvReader.get("IS_PREFERRED_MAILING_ADDRESS");
-						String prefer = cellValue;
-						if (prefer != null && !prefer.isEmpty()) {// if null or empty just ignore...if invalid flag
-							if (prefer != null && !DataConversionAndManipulationHelper.isSomethingLikeABoolean(prefer)) {
-								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue
-										+ " is not a valid boolean value. Please use true or false for this column.");
+					if (csvReader.getIndex("SUBJECT_STATUS") > 0) {
+						boolean validData = true;
+						col = csvReader.getIndex("SUBJECT_STATUS");
+						cellValue = csvReader.get("SUBJECT_STATUS");
+						
+						if(!cellValue.isEmpty()) {
+							for(SubjectStatus ss : subjectStatusList){
+								if(cellValue.equalsIgnoreCase(ss.getName())) {
+									validData = true;
+									break;
+								}
+								else {
+									validData = false;
+								}
+							}
+							
+							if(!validData) {
+								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not a valid option");
 								errorCells.add(new ArkGridCell(col, row));
 							}
-						}
-					}
-
-					if (csvReader.getIndex("PHONE_DATE_RECEIVED") > 0) {
-						col = csvReader.getIndex("PHONE_DATE_RECEIVED");
-						cellValue = csvReader.get("PHONE_DATE_RECEIVED");
-						try {
-							dateStr = cellValue;
-							if (dateStr != null && dateStr.length() > 0)
-								simpleDateFormat.parse(dateStr);
-						}
-						catch (ParseException pex) {
-							dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not in the valid date format of: "
-									+ Constants.DD_MM_YYYY.toLowerCase());
-							errorCells.add(new ArkGridCell(col, row));
 						}
 					}
 					
-					if (csvReader.getIndex("CONSENT_DATE") > 0) {
-						col = csvReader.getIndex("CONSENT_DATE");
-						cellValue = csvReader.get("CONSENT_DATE");
+					if (csvReader.getIndex("DATE_AT_ENROLLMENT") > 0) {
+						col = csvReader.getIndex("DATE_AT_ENROLLMENT");
+						cellValue = csvReader.get("DATE_AT_ENROLLMENT");
 						try {
 							dateStr = cellValue;
 							if (dateStr != null && !dateStr.isEmpty())
@@ -649,6 +583,80 @@ public class SubjectUploadValidator {
 						}
 					}
 					
+					if (csvReader.getIndex("AGE_AT_ENROLLMENT") > 0) {
+						col = csvReader.getIndex("AGE_AT_ENROLLMENT");
+						cellValue = csvReader.get("AGE_AT_ENROLLMENT");
+						try {
+							intStr = cellValue;
+							if (intStr != null && !intStr.isEmpty())
+								Integer.parseInt(intStr);
+						}
+						catch (NumberFormatException pex) {
+							dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not in the valid date format of: "
+									+ Constants.DD_MM_YYYY.toLowerCase());
+							errorCells.add(new ArkGridCell(col, row));
+						}
+					}
+										
+					if (csvReader.getIndex("CONSENT_DATE") > 0) {
+						col = csvReader.getIndex("CONSENT_DATE");
+						cellValue = csvReader.get("CONSENT_DATE");
+						try {
+							dateStr = cellValue;
+							if (dateStr != null && !dateStr.isEmpty())
+								simpleDateFormat.parse(dateStr);
+						}
+						catch (NumberFormatException nfe) {
+							dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not in the valid integer format");
+							errorCells.add(new ArkGridCell(col, row));
+						}
+					}
+					
+					if (csvReader.getIndex("ETHNICITY") > 0) {
+						boolean validData = true;
+						col = csvReader.getIndex("ETHNICITY");
+						cellValue = csvReader.get("ETHNICITY");
+						
+						if(!cellValue.isEmpty()) {
+							for(EthnicityType et : ethnicityTypeList){
+								if(cellValue.equalsIgnoreCase(et.getName())) {
+									validData = true;
+									break;
+								}
+								else {
+									validData = false;
+								}
+							}
+							
+							if(!validData) {
+								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not a valid option");
+								errorCells.add(new ArkGridCell(col, row));
+							}
+						}
+					}
+					
+					if (csvReader.getIndex("GENDER") > 0) {
+						boolean validData = true;
+						col = csvReader.getIndex("GENDER");
+						cellValue = csvReader.get("GENDER");
+						
+						if(!cellValue.isEmpty()) {
+							for(GenderType gt : genderTypeList){
+								if(cellValue.equalsIgnoreCase(gt.getName())) {
+									validData = true;
+									break;
+								}
+								else {
+									validData = false;
+								}
+							}
+							
+							if(!validData) {
+								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not a valid option");
+								errorCells.add(new ArkGridCell(col, row));
+							}
+						}
+					}
 					
 					if (csvReader.getIndex("CONSENT_STATUS") > 0) {
 						boolean validData = true;
@@ -658,75 +666,6 @@ public class SubjectUploadValidator {
 						if(!cellValue.isEmpty()) {
 							for(ConsentStatus cs : consentStatusList){
 								if(cellValue.equalsIgnoreCase(cs.getName())) {
-									validData = true;
-									break;
-								}
-								else {
-									validData = false;
-								}
-							}
-							
-							if(!validData) {
-								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not a valid option");
-								errorCells.add(new ArkGridCell(col, row));
-							}
-						}
-					}
-					
-					if (csvReader.getIndex("CONSENT_TYPE") > 0) {
-						boolean validData = true;
-						col = csvReader.getIndex("CONSENT_TYPE");
-						cellValue = csvReader.get("CONSENT_TYPE");
-						
-						if(!cellValue.isEmpty()) {
-							for(ConsentType ct : consentTypeList){
-								if(cellValue.equalsIgnoreCase(ct.getName())) {
-									validData = true;
-									break;
-								}
-								else {
-									validData = false;
-								}
-							}
-							
-							if(!validData) {
-								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not a valid option");
-								errorCells.add(new ArkGridCell(col, row));
-							}
-						}
-					}
-					
-					if (csvReader.getIndex("CONSENT_TO_PASSIVE_DATA_GATHERING") > 0) {
-						boolean validData = true;
-						col = csvReader.getIndex("CONSENT_TO_PASSIVE_DATA_GATHERING");
-						cellValue = csvReader.get("CONSENT_TO_PASSIVE_DATA_GATHERING");
-						
-						if(!cellValue.isEmpty()) {
-							for(ConsentOption co : consentOptionList){
-								if(cellValue.equalsIgnoreCase(co.getName())) {
-									validData = true;
-									break;
-								}
-								else {
-									validData = false;
-								}
-							}
-							
-							if(!validData) {
-								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not a valid option");
-								errorCells.add(new ArkGridCell(col, row));
-							}
-						}
-					}
-					
-					if (csvReader.getIndex("CONSENT_TO_ACTIVE_CONTACT") > 0) {
-						boolean validData = true;
-						col = csvReader.getIndex("CONSENT_TO_ACTIVE_CONTACT");
-						cellValue = csvReader.get("CONSENT_TO_ACTIVE_CONTACT");
-						
-						if(!cellValue.isEmpty()) {
-							for(ConsentOption co : consentOptionList){
-								if(cellValue.equalsIgnoreCase(co.getName())) {
 									validData = true;
 									break;
 								}
@@ -757,6 +696,102 @@ public class SubjectUploadValidator {
 								}
 							}
 							
+							if(!validData) {
+								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not a valid option");
+								errorCells.add(new ArkGridCell(col, row));
+							}
+						}
+					}
+
+					
+					if (csvReader.getIndex("CONSENT_TO_USE_BIOSPECIMEN") > 0) {
+						boolean validData = true;
+						col = csvReader.getIndex("CONSENT_TO_USE_BIOSPECIMEN");
+						cellValue = csvReader.get("CONSENT_TO_USE_BIOSPECIMEN");
+						if(!cellValue.isEmpty()) {
+							for(ConsentOption co : consentOptionList){
+								if(cellValue.equalsIgnoreCase(co.getName())) {
+									validData = true;
+									break;
+								}
+								else {
+									validData = false;
+								}
+							}
+							
+							if(!validData) {
+								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not a valid option");
+								errorCells.add(new ArkGridCell(col, row));
+							}
+						}
+					}
+
+					
+					if (csvReader.getIndex("CONSENT_TO_SHARE_DATA") > 0) {
+						boolean validData = true;
+						col = csvReader.getIndex("CONSENT_TO_SHARE_DATA");
+						cellValue = csvReader.get("CONSENT_TO_SHARE_DATA");
+						if(!cellValue.isEmpty()) {
+							for(ConsentOption co : consentOptionList){
+								if(cellValue.equalsIgnoreCase(co.getName())) {
+									validData = true;
+									break;
+								}
+								else {
+									validData = false;
+								}
+							}
+							
+							if(!validData) {
+								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not a valid option");
+								errorCells.add(new ArkGridCell(col, row));
+							}
+						}
+					}
+
+					if (csvReader.getIndex("CONSENT_TO_SHARE_BIOSPECIMEN") > 0) {
+						boolean validData = true;
+						col = csvReader.getIndex("CONSENT_TO_SHARE_BIOSPECIMEN");
+						cellValue = csvReader.get("CONSENT_TO_SHARE_BIOSPECIMEN");
+						if(!cellValue.isEmpty()) {
+							for(ConsentOption co : consentOptionList){
+								if(cellValue.equalsIgnoreCase(co.getName())) {
+									validData = true;
+									break;
+								}
+								else {
+									validData = false;
+								}
+							}
+							
+							if(!validData) {
+								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not a valid option");
+								errorCells.add(new ArkGridCell(col, row));
+							}
+						}
+					}
+					
+					if (csvReader.getIndex("SUBSTUDYS") > 0) {
+						boolean validData = true;
+						col = csvReader.getIndex("SUBSTUDYS");
+						cellValue = csvReader.get("SUBSTUDYS");
+						
+						if(!cellValue.isEmpty()) {
+							String[] str = cellValue.split(",");
+							for(String s : str){
+								try{
+									if(iArkCommonService.getStudy(Long.parseLong(s))!=null) {
+										validData = true;
+										break;
+									}
+									else {
+										validData = false;
+									}
+								}catch(NumberFormatException nfe){
+									validData = false;
+								}
+							}
+													
 							if(!validData) {
 								dataValidationMessages.add("Error: Row " + row + ": Subject UID: " + subjectUID + " " + fieldNameArray[col] + ": " + cellValue + " is not a valid option");
 								errorCells.add(new ArkGridCell(col, row));

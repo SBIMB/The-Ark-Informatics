@@ -52,8 +52,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.theark.core.Constants;
-import au.org.theark.core.exception.ArkCheckSumNotSameException;
-import au.org.theark.core.exception.ArkFileNotFoundException;
 import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.EntityNotFoundException;
 import au.org.theark.core.model.study.entity.SubjectFile;
@@ -96,7 +94,7 @@ public class SearchResultListPanel extends Panel {
 	 */
 	@SuppressWarnings("unchecked")
 	public PageableListView<SubjectFile> buildPageableListView(IModel iModel) {
-		PageableListView<SubjectFile> sitePageableListView = new PageableListView<SubjectFile>(Constants.RESULT_LIST, iModel, arkCommonService.getUserConfig(Constants.CONFIG_ROWS_PER_PAGE).getIntValue()) {
+		PageableListView<SubjectFile> sitePageableListView = new PageableListView<SubjectFile>(Constants.RESULT_LIST, iModel, Constants.ROWS_PER_PAGE) {
 
 			private static final long	serialVersionUID	= 1L;
 
@@ -209,15 +207,14 @@ public class SearchResultListPanel extends Panel {
 				catch(ArkSystemException e){
 					this.error("Unexpected error: Download request could not be fulfilled.");
 					log.error("ArkSystemException" + e.getMessage(), e);
-				}catch (IOException e) {
-					this.error("Unexpected error: Download request could not be fulfilled.");
-					log.error("IOException" + e.getMessage(), e);
-				} catch (ArkFileNotFoundException e) {
+				}
+				catch (FileNotFoundException e) {
 					this.error("Unexpected error: Download request could not be fulfilled.");
 					log.error("FileNotFoundException" + e.getMessage(), e);
-				} catch (ArkCheckSumNotSameException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				}
+				catch (IOException e) {
+					this.error("Unexpected error: Download request could not be fulfilled.");
+					log.error("IOException" + e.getMessage(), e);
 				}
 				
 				target.add(arkCrudContainerVO.getSearchResultPanelContainer());
@@ -253,7 +250,7 @@ public class SearchResultListPanel extends Panel {
 				boolean success=false;
 				if (subjectFile.getId() != null) {
 					try {
-						studyService.delete(subjectFile,au.org.theark.study.web.Constants.ARK_SUBJECT_ATTACHEMENT_DIR);
+						studyService.delete(subjectFile);
 						success=true;
 					}
 					catch (ArkSystemException e) {
@@ -262,9 +259,7 @@ public class SearchResultListPanel extends Panel {
 					}
 					catch (EntityNotFoundException e) {
 						this.error("Unexpected error: Delete request could not be fulfilled.");
-						log.error("Entity not found" + e.getMessage(), e);
-					} catch (ArkFileNotFoundException e) {
-						this.error("File not found:"+e.getMessage());
+						log.error("Ent not found" + e.getMessage(), e);
 					}
 				}
 

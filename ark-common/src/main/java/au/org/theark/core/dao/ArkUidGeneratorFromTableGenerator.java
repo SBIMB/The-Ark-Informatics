@@ -9,8 +9,6 @@ import org.hibernate.internal.util.config.ConfigurationHelper;
 
 public class ArkUidGeneratorFromTableGenerator extends TableGenerator {
 	
-
-	@Override
 	protected String determineValueColumnName(Properties params, Dialect dialect) {
 		System.out.println("What is params.get( IDENTIFIER_NORMALIZER ) ........ " +  params.get( IDENTIFIER_NORMALIZER ));
 		System.out.println("What is VALUE_COLUMN_PARAM   ........ " +  VALUE_COLUMN_PARAM);

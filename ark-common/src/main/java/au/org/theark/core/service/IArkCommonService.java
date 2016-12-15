@@ -18,27 +18,22 @@
  ******************************************************************************/
 package au.org.theark.core.service;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.File;
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
-import au.org.theark.core.dao.IArkAuthorisation;
 import org.apache.velocity.exception.VelocityException;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 
+import za.ac.theark.core.model.study.entity.UploadMethod;
 import au.org.theark.core.dao.ReCaptchaContextSource;
-import au.org.theark.core.exception.ArkAlreadyBeingUsedException;
-import au.org.theark.core.exception.ArkCheckSumNotSameException;
-import au.org.theark.core.exception.ArkFileNotFoundException;
-import au.org.theark.core.exception.ArkNotAllowedToUpdateException;
-import au.org.theark.core.exception.ArkRunTimeException;
-import au.org.theark.core.exception.ArkRunTimeUniqueException;
 import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.ArkUniqueException;
 import au.org.theark.core.exception.EntityCannotBeRemoved;
@@ -57,7 +52,6 @@ import au.org.theark.core.model.lims.entity.BioCollectionUidToken;
 import au.org.theark.core.model.lims.entity.BiospecimenUidPadChar;
 import au.org.theark.core.model.lims.entity.BiospecimenUidTemplate;
 import au.org.theark.core.model.lims.entity.BiospecimenUidToken;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetFieldDisplay;
 import au.org.theark.core.model.report.entity.BiocollectionField;
 import au.org.theark.core.model.report.entity.BiospecimenField;
 import au.org.theark.core.model.report.entity.ConsentStatusField;
@@ -72,7 +66,6 @@ import au.org.theark.core.model.study.entity.AddressType;
 import au.org.theark.core.model.study.entity.ArkFunction;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkModuleRole;
-import au.org.theark.core.model.study.entity.ArkPermission;
 import au.org.theark.core.model.study.entity.ArkRole;
 import au.org.theark.core.model.study.entity.ArkRolePolicyTemplate;
 import au.org.theark.core.model.study.entity.ArkUser;
@@ -84,14 +77,12 @@ import au.org.theark.core.model.study.entity.ConsentStatus;
 import au.org.theark.core.model.study.entity.ConsentType;
 import au.org.theark.core.model.study.entity.Country;
 import au.org.theark.core.model.study.entity.CustomField;
-import au.org.theark.core.model.study.entity.CustomFieldCategory;
-import au.org.theark.core.model.study.entity.CustomFieldCategoryUpload;
 import au.org.theark.core.model.study.entity.CustomFieldDisplay;
 import au.org.theark.core.model.study.entity.CustomFieldGroup;
-import au.org.theark.core.model.study.entity.CustomFieldType;
 import au.org.theark.core.model.study.entity.CustomFieldUpload;
 import au.org.theark.core.model.study.entity.DelimiterType;
 import au.org.theark.core.model.study.entity.EmailStatus;
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.FieldType;
 import au.org.theark.core.model.study.entity.FileFormat;
 import au.org.theark.core.model.study.entity.GenderType;
@@ -118,18 +109,17 @@ import au.org.theark.core.model.study.entity.SubjectUidToken;
 import au.org.theark.core.model.study.entity.TitleType;
 import au.org.theark.core.model.study.entity.UnitType;
 import au.org.theark.core.model.study.entity.Upload;
-import au.org.theark.core.model.study.entity.UploadLevel;
 import au.org.theark.core.model.study.entity.UploadStatus;
 import au.org.theark.core.model.study.entity.UploadType;
 import au.org.theark.core.model.study.entity.VitalStatus;
 import au.org.theark.core.model.study.entity.YesNo;
 import au.org.theark.core.vo.ArkModuleVO;
 import au.org.theark.core.vo.ArkUserVO;
-import au.org.theark.core.vo.CustomFieldCategoryVO;
 import au.org.theark.core.vo.CustomFieldVO;
 import au.org.theark.core.vo.QueryFilterVO;
 import au.org.theark.core.vo.SearchVO;
 import au.org.theark.core.vo.SubjectVO;
+import au.org.theark.core.vo.UserConfigVO;
 
 public interface IArkCommonService<T> {
 
@@ -163,6 +153,8 @@ public interface IArkCommonService<T> {
 	public Collection<VitalStatus> getVitalStatus();
 
 	public Collection<GenderType> getGenderTypes();
+	
+	public Collection<EthnicityType> getEthnicityTypes();
 
 	public List<PhoneType> getListOfPhoneType();
 
@@ -186,6 +178,14 @@ public interface IArkCommonService<T> {
 	public Collection<MaritalStatus> getMaritalStatus();
 
 	public Collection<EmailStatus> getAllEmailStatuses();
+	
+	public List<Study> getAllStudies();
+	
+	public List<Study> getAllParentStudies();
+	
+	public List<Study> getAllSubStudiesList(Study study);
+	
+	public Hashtable<String, Study> getAllSubStudiesHashTable(Study study);
 
 	public List<Country> getCountries();
 
@@ -341,7 +341,7 @@ public interface IArkCommonService<T> {
 	 * @param name
 	 * @return
 	 */
-	public TitleType getTitleType(String name);
+	public TitleType getTitleTypes(String name);
 
 	/**
 	 * Returns an instance of Marital Status for a given String that represents
@@ -601,7 +601,7 @@ public interface IArkCommonService<T> {
 	 */
 	public void createCustomField(CustomFieldVO customFieldVO) throws ArkSystemException, ArkUniqueException;
 
-	public void updateCustomField(CustomFieldVO customFieldVO) throws ArkSystemException, ArkUniqueException,ArkNotAllowedToUpdateException;
+	public void updateCustomField(CustomFieldVO customFieldVO) throws ArkSystemException, ArkUniqueException;
 
 	public void deleteCustomField(CustomFieldVO customFieldVO) throws ArkSystemException, EntityCannotBeRemoved;
 
@@ -632,6 +632,8 @@ public interface IArkCommonService<T> {
 	 * @param customFieldGroup
 	 * @return
 	 */
+	public long getCustomFieldGroupCount(CustomFieldGroup customFieldGroup);
+
 	public CustomField getFieldByNameAndStudyAndFunction(String fieldName, Study study, ArkFunction arkFunction) throws EntityNotFoundException;
 
 	public FieldType getFieldTypeByName(String typeName) throws EntityNotFoundException;
@@ -691,7 +693,7 @@ public interface IArkCommonService<T> {
 
 	public Collection<UploadType> getUploadTypes();
 
-	public Collection<UploadType> getUploadTypesForSubject(Study study);
+	public Collection<UploadType> getUploadTypesForSubject();
 
 	public Collection<UploadType> getUploadTypesForLims();
 
@@ -701,11 +703,11 @@ public interface IArkCommonService<T> {
 
 	public CustomField getCustomFieldByNameStudyArkFunction(String customFieldName, Study study, ArkFunction arkFunction);
 
-	//public CustomField getCustomFieldByNameStudyCFG(String customFieldName, Study study, ArkFunction arkFunction, CustomFieldGroup customFieldGroup);
+	public CustomField getCustomFieldByNameStudyCFG(String customFieldName, Study study, ArkFunction arkFunction, CustomFieldGroup customFieldGroup);
 
 	public UnitType getUnitTypeByNameAndArkFunction(String string, ArkFunction arkFunction);
 
-	public void createUpload(Upload studyUpload) throws Exception;
+	public void createUpload(Upload studyUpload);
 
 	public void updateUpload(Upload studyUpload);
 
@@ -752,7 +754,7 @@ public interface IArkCommonService<T> {
 
 	public void updateBioCollectionUidTemplate(BioCollectionUidTemplate bioCollectionUidTemplate);
 
-	public List<ArkUser> getArkUserListByStudy(ArkUser arkUser,Study study);
+	public List<ArkUser> getArkUserListByStudy(Study study);
 
 	public List<Study> getParentStudyList();
 
@@ -806,13 +808,21 @@ public interface IArkCommonService<T> {
 
 	public List<String> getAllSubjectUIDs(Study study);
 
+	public List<CustomFieldDisplay> getCustomFieldDisplaysIn(List fieldNameCollection, Study study, ArkFunction arkFunction, CustomFieldGroup customFieldGroup);
+
 	public List<CustomFieldDisplay> getCustomFieldDisplaysIn(List fieldNameCollection, Study study, ArkFunction arkFunction);
 
-	public List<SubjectCustomFieldData> getSubjectCustomFieldDataFor(List customFieldDisplaysThatWeNeed, List<String> subjectUIDsToBeIncluded);
+	public List<SubjectCustomFieldData> getCustomFieldDataFor(List customFieldDisplaysThatWeNeed, List<String> subjectUIDsToBeIncluded);
 
 	public Payload createPayload(byte[] bytes);
 
 	public Payload getPayloadForUpload(Upload upload);
+
+	public UploadStatus getUploadStatusForUploaded();
+
+	public UploadStatus getUploadStatusForAwaitingValidation();
+	
+	public UploadMethod getUploadMethod(Long id);
 
 	public UploadStatus getUploadStatusFor(String uploadStatusConstant);
 
@@ -854,8 +864,6 @@ public interface IArkCommonService<T> {
 	// getSelectedDemographicFieldsForSearch(Search search, boolean readOnly);
 
 	public Collection<CustomFieldDisplay> getSelectedPhenoCustomFieldDisplaysForSearch(Search search);
-
-	public Collection<PhenoDataSetFieldDisplay> getSelectedPhenoDataSetFieldDisplaysForSearch(Search search);
 
 	public List<CustomFieldDisplay> getCustomFieldDisplaysIn(Study study, ArkFunction arkFunction);
 
@@ -925,14 +933,14 @@ public interface IArkCommonService<T> {
 
 	public List<ProcessOutput> getProcessOutputsForProcess(Process process);
 
-	public List<ConfigField> getAllConfigFields();
+	public Collection<ConfigField> getAllConfigFields();
 
-	public List<UserConfig> getUserConfigs(ArkUser arkUser);
+	public List<UserConfigVO> getUserConfigVOs(ArkUser arkUser);
 
-	public UserConfig getUserConfig(ArkUser arkUser, ConfigField configField);
-	
-	public UserConfig getUserConfig(String configName);
-	
+	public int getRowsPerPage();
+
+	public int getCustomFieldsPerPage();
+
 	public void createUserConfigs(List userConfigList) throws ArkSystemException;
 
 	public void deleteUserConfig(UserConfig userConfig);
@@ -987,7 +995,7 @@ public interface IArkCommonService<T> {
 	 * @param checksum
 	 * @return
 	 */
-	public byte[] retriveArkFileAttachmentByteArray(final Long studyId, final String subjectUID, final String directoryType, final String fileId, String checksum) throws ArkSystemException,ArkFileNotFoundException,ArkCheckSumNotSameException;
+	public byte[] retriveArkFileAttachmentByteArray(final Long studyId, final String subjectUID, final String directoryType, final String fileId, String checksum) throws ArkSystemException;
 
 	/**
 	 * Delete the Ark file attachment
@@ -1000,7 +1008,7 @@ public interface IArkCommonService<T> {
 	 * @return isDeleteSuccess
 	 * @throws ArkSystemException
 	 */
-	public boolean deleteArkFileAttachment(Long studyId, String subjectUID, String fileId, String attachmentType, String checksum) throws ArkSystemException,ArkFileNotFoundException;
+	public boolean deleteArkFileAttachment(Long studyId, String subjectUID, String fileId, String attachmentType, String checksum) throws ArkSystemException;
 	
 	/**
 	 * Copy Large file attachments from one location to another
@@ -1019,293 +1027,5 @@ public interface IArkCommonService<T> {
 	 * @throws ArkSystemException
 	 */
 	public String generateArkFileChecksum(File file, String algorithm) throws ArkSystemException;
-		
-	/**
-	 * After introducing the CustomFieldCategory following methods add to the class.
-	 * *****************************************************************************
-	 * A generic interface that will return count of the subjects in the study
-	 * 
-	 * @param customFieldCriteria
-	 * @return int
-	 */
-	public long getCustomFieldCategoryCount(CustomFieldCategory customFieldCategoryCriteria);
 	
-	/**
-	 * Create custom field category
-	 * @param CustomFieldCategoryVO
-	 * @throws ArkSystemException
-	 * @throws ArkUniqueException
-	 */
-	public void createCustomFieldCategory(CustomFieldCategoryVO CustomFieldCategoryVO) throws ArkSystemException, ArkRunTimeUniqueException,ArkRunTimeException;
-	/**
-	 * Update custom field category
-	 * 
-	 * @param CustomFieldCategoryVO
-	 * @throws ArkSystemException
-	 * @throws ArkUniqueException
-	 */
-	public void updateCustomFieldCategory(CustomFieldCategoryVO CustomFieldCategoryVO) throws ArkSystemException, ArkUniqueException, ArkAlreadyBeingUsedException,ArkNotAllowedToUpdateException;
-
-	/**
-	 * Delete custom fied category.
-	 * 
-	 * @param CustomFieldCategoryVO
-	 * @throws ArkSystemException
-	 * @throws EntityCannotBeRemoved
-	 */
-	public void deleteCustomFieldCategory(CustomFieldCategoryVO CustomFieldCategoryVO) throws ArkSystemException, EntityCannotBeRemoved;
-	
-	/**
-	 * Get custom field category by id.
-	 * @param id
-	 * @return
-	 */
-	public CustomFieldCategory getCustomFieldCategory(Long id) throws EntityNotFoundException;
-	/**
-	 * Search pageable custom filed categories.
-	 * @param customFieldCategoryCriteria
-	 * @param first
-	 * @param count
-	 * @return
-	 */
-	public List<CustomFieldCategory> searchPageableCustomFieldCategories(CustomFieldCategory customFieldCategoryCriteria, int first, int count);
-	
-	/**
-	 * Category list By custom field Type.
-	 * @param study
-	 * @param arkFunction
-	 * @param customFieldType
-	 * @return
-	 * @throws ArkSystemException
-	 */
-	public List<CustomFieldCategory> getParentCategoryListByCustomFieldType(Study study,ArkFunction arkFunction,CustomFieldType customFieldType) throws ArkSystemException;
-	/**
-	 * List of all available category list for update.
-	 * @param study
-	 * @param arkFunction
-	 * @param customFieldType
-	 * @param thisCustomFieldCategory
-	 * @return
-	 * @throws ArkSystemException
-	 */
-	public List<CustomFieldCategory> getAvailableAllCategoryListByCustomFieldTypeExceptThis(Study study,ArkFunction arkFunction,CustomFieldType customFieldType,CustomFieldCategory thisCustomFieldCategory) throws ArkSystemException;
-	/**
-	 * List of all available category list for new
-	 * @param study
-	 * @param arkFunction
-	 * @param customFieldType
-	 * @return
-	 * @throws ArkSystemException
-	 */
-	public List<CustomFieldCategory> getAvailableAllCategoryListByCustomFieldType(Study study,ArkFunction arkFunction,CustomFieldType customFieldType) throws ArkSystemException;
-	
-	/**
-	 * List of all available categories in custom fileds by .
-	 * @param study
-	 * @param arkFunction
-	 * @param customFieldType
-	 * @return
-	 * @throws ArkSystemException
-	 */
-	public List<CustomFieldCategory> getCategoriesListInCustomFieldsByCustomFieldType(Study study, ArkFunction arkFunction,CustomFieldType customFieldType) throws ArkSystemException;
-	/**
-	 * List of all available categories for study.
-	 * @param study
-	 * @param customFieldType
-	 * @return
-	 * @throws ArkSystemException
-	 */
-	public List<CustomFieldCategory> getAvailableAllCategoryListInStudyByCustomFieldType(Study study,ArkFunction arkFunction,CustomFieldType customFieldType) throws ArkSystemException;
-	/**
-	 * Get custom field Type by name.
-	 * @param name
-	 * @return
-	 */
-	public CustomFieldType getCustomFieldTypeByName(String name);
-	
-	/**
-	 * Return custom field types by ark module.
-	 * @param arkModule
-	 * @return
-	 */
-	public List<CustomFieldType> getCustomFieldTypes(ArkModule arkModule);
-	
-	/**
-	 * Get all the upload levels
-	 * @return
-	 */
-	public List<UploadLevel> getAllUploadLevels();
-	
-	/**
-	 * Get custom field categories by custom field type and study.
-	 * @param study
-	 * @param customFieldType
-	 * @return
-	 */
-	public List<CustomFieldCategory> getCustomFieldCategoryByCustomFieldTypeAndStudy(Study study,CustomFieldType customFieldType);
-	/**
-	 * Get custom field category by name.
-	 * @param name
-	 * @return
-	 */
-	public CustomFieldCategory getCustomFieldCategotyByName(String name);
-	
-	/**
-	 * Get a upload levels by id
-	 * @return
-	 */
-	public UploadLevel getUploadLevelByName(String name);
-	/**
-	 * Get custom field category by name study and function.
-	 * @param name
-	 * @param study
-	 * @param arkFunction
-	 * @return
-	 */
-	public CustomFieldCategory getCustomFieldCategoryByNameStudyAndArkFunction(String name,Study study,ArkFunction arkFunction);
-	
-	/**Check for the custom field being used for categorise custom field.
-	 * 
-	 * @param customFieldCategory
-	 * @return
-	 */
-	public boolean isCustomFieldCategoryBeingUsed(CustomFieldCategory customFieldCategory);
-	/**
-	 * Create the custom field category.
-	 * @param cfcUpload
-	 */
-	public void createCustomFieldCategoryUpload(CustomFieldCategoryUpload cfcUpload);
-	/**
-	 * Get all family UID's for Subject
-	 * @param study
-	 * @return
-	 */
-	public List<String> getAllFamilyUIDs(Study study);
-	/**
-	 * Get the family customFielddataFor
-	 * @param customFieldDisplaysThatWeNeed
-	 * @param subjectUIDsToBeIncluded
-	 * @return
-	 */
-	public List<SubjectCustomFieldData> getFamilyCustomFieldDataFor(Study study,List customFieldDisplaysThatWeNeed, List<String> familyUIDsToBeIncluded);
-	/**
-	 * Get customFieldDisplaysIn  for a custom field type.
-	 * @param fieldNameCollection
-	 * @param study
-	 * @param arkFunction
-	 * @param customFieldType
-	 * @return
-	 */
-	public List<CustomFieldDisplay> getCustomFieldDisplaysInWithCustomFieldType(List<?> fieldNameCollection, Study study, ArkFunction arkFunction,CustomFieldType customFieldType);
-	/**
-	 *  Get all children
-	 * @param study
-	 * @param arkFunction
-	 * @param customFieldType
-	 * @param parentCategory
-	 * @param allChilrenLst
-	 * @return
-	 */
-	public List<CustomFieldCategory> getAllChildrenCategoriedBelongToThisParent(Study study, ArkFunction arkFunction,CustomFieldType customFieldType,CustomFieldCategory parentCategory,List<CustomFieldCategory> allChildrenLst);
-	/**
-	 * Get sibling of a custom field category.
-	 * @param study
-	 * @param arkFunction
-	 * @param customFieldType
-	 * @param customFieldCategory
-	 * @return
-	 */
-	public List<CustomFieldCategory> getSiblingList(Study study,ArkFunction arkFunction,CustomFieldType customFieldType,CustomFieldCategory customFieldCategory);
-	
-	/**
-	 * Get all the function and permission list for user.
-	 * @param arkUserRole
-	 * @return
-	 */
-	public List<ArkRolePolicyTemplate> getArkRolePolicytemplateList(ArkUserVO arkUserVO);
-	/**
-	 * 
-	 * @param arkUserRole
-	 * @param arkFunction
-	 * @return
-	 */
-	public List<ArkPermission> getArkPremissionListForRoleAndModule(ArkRolePolicyTemplate arkRolePolicyTemplate);
-	/**
-	 * 
-	 * @param arkModule
-	 * @param name
-	 * @return
-	 */
-	public UploadType getUploadTypeByModuleAndName(ArkModule arkModule,String name);
-	
-	/**
-	 * 
-	 * @param customFieldCategory
-	 * @return
-	 */
-	public boolean isThisCustomCategoryWasAParentCategoryOfAnother(CustomFieldCategory customFieldCategory);
-	/**
-	 * 
-	 * @param name
-	 * @param customFieldType
-	 * @return
-	 */
-	public CustomFieldCategory getCustomFieldCategotyByNameAndCustomFieldType(String name, CustomFieldType customFieldType);
-	/**
-	 * 
-	 * @param search
-	 * @return
-	 */
-	public List<Search> getSearchesForSearch(Search search);
-	/**
-	 * Get study component never used in the subject.
-	 * 
-	 * @param study
-	 * @param linkSubjectStudy
-	 * @return
-	 */
-	public List<StudyComp> getStudyComponentsNotInThisSubject(Study study,LinkSubjectStudy linkSubjectStudy);
-	/**
-	 * 
-	 * @param study
-	 * @param linkSubjectStudy
-	 * @return
-	 */
-	public List<StudyComp> getDifferentStudyComponentsInConsentForSubject(Study study, LinkSubjectStudy linkSubjectStudy);
-	/**
-	 * 
-	 * @param studyId
-	 * @param subjectUID
-	 * @param directoryType
-	 * @param fileId
-	 * @param checksum
-	 * @return
-	 * @throws ArkSystemException
-	 * @throws ArkFileNotFoundException
-	 * @throws ArkCheckSumNotSameException
-	 */
-	public File retriveArkFileAttachmentAsFile(final Long studyId, final String subjectUID, final String directoryType, final String fileId, String checksum) throws ArkSystemException, ArkFileNotFoundException,ArkCheckSumNotSameException;
-	
-	/**
-	 * 
-	 * @param study
-	 * @param studyComp
-	 * @return
-	 */
-	public List<StudyCompStatus> getConsentStudyComponentStatusForStudyAndStudyComp(Study study,StudyComp studyComp);
-	/**
-	 * 
-	 * @param study
-	 * @param studyComp
-	 * @param studyCompStatus
-	 * @return
-	 */
-	public List<ConsentStatus> getConsentStatusForStudyStudyCompAndStudyCompStatus(Study study,StudyComp studyComp,StudyCompStatus studyCompStatus);
-
-	public String generateNaturalUID(String UID);
-
-	public IArkAuthorisation getArkAuthorisationDao();
-	
-	public void deleteUpload(final Upload upload);
-
-	}
+}

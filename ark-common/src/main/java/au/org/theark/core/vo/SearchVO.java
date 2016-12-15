@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import au.org.theark.core.model.pheno.entity.PhenoDataSetFieldDisplay;
 import au.org.theark.core.model.report.entity.BiocollectionField;
 import au.org.theark.core.model.report.entity.BiospecimenField;
 import au.org.theark.core.model.report.entity.ConsentStatusField;
@@ -62,8 +61,8 @@ public class SearchVO implements Serializable {
 	private Collection<CustomFieldDisplay>	availableBiocollectionCustomFieldDisplays = new ArrayList<CustomFieldDisplay>();
 	private Collection<CustomFieldDisplay>	selectedBiocollectionCustomFieldDisplays = new ArrayList<CustomFieldDisplay>();
 
-	private Collection<PhenoDataSetFieldDisplay>	availablePhenoDataSetFieldDisplays = new ArrayList<PhenoDataSetFieldDisplay>();
-	private Collection<PhenoDataSetFieldDisplay>	selectedPhenoDataSetFieldDisplays = new ArrayList<PhenoDataSetFieldDisplay>();
+	private Collection<CustomFieldDisplay>	availablePhenoCustomFieldDisplays = new ArrayList<CustomFieldDisplay>();
+	private Collection<CustomFieldDisplay>	selectedPhenoCustomFieldDisplays = new ArrayList<CustomFieldDisplay>();
 	
 	private Collection<ConsentStatusField> availableConsentStatusFields = new ArrayList<ConsentStatusField>();
 	private Collection<ConsentStatusField> selectedConsentStatusFields = new ArrayList<ConsentStatusField>();
@@ -188,25 +187,25 @@ public class SearchVO implements Serializable {
 
 
 
-	public Collection<PhenoDataSetFieldDisplay> getAvailablePhenoDataSetFieldDisplays() {
-		return availablePhenoDataSetFieldDisplays;
+	public Collection<CustomFieldDisplay> getAvailablePhenoCustomFieldDisplays() {
+		return availablePhenoCustomFieldDisplays;
 	}
 
 
-	public void setAvailablePhenoDataSetFieldDisplays(
-			Collection<PhenoDataSetFieldDisplay> availablePhenoDataSetFieldDisplays) {
-		this.availablePhenoDataSetFieldDisplays = availablePhenoDataSetFieldDisplays;
+	public void setAvailablePhenoCustomFieldDisplays(
+			Collection<CustomFieldDisplay> availablePhenoCustomFieldDisplays) {
+		this.availablePhenoCustomFieldDisplays = availablePhenoCustomFieldDisplays;
 	}
 
 
-	public Collection<PhenoDataSetFieldDisplay> getSelectedPhenoDataSetFieldDisplays() {
-		return selectedPhenoDataSetFieldDisplays;
+	public Collection<CustomFieldDisplay> getSelectedPhenoCustomFieldDisplays() {
+		return selectedPhenoCustomFieldDisplays;
 	}
 
 
-	public void setSelectedPhenoDataSetFieldDisplays(
-			Collection<PhenoDataSetFieldDisplay> selectedPhenoDataSetFieldDisplays) {
-		this.selectedPhenoDataSetFieldDisplays = selectedPhenoDataSetFieldDisplays;
+	public void setSelectedPhenoCustomFieldDisplays(
+			Collection<CustomFieldDisplay> selectedPhenoCustomFieldDisplays) {
+		this.selectedPhenoCustomFieldDisplays = selectedPhenoCustomFieldDisplays;
 	}
 
 

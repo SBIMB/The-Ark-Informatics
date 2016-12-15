@@ -39,11 +39,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
-import au.org.theark.core.audit.annotations.ArkAuditDisplay;
 import au.org.theark.core.model.Constants;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
 import au.org.theark.core.model.study.entity.Study;
@@ -53,12 +48,10 @@ import au.org.theark.core.model.study.entity.Study;
  */
 @Entity
 @Table(name = "biocollection", schema = Constants.LIMS_TABLE_SCHEMA)
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class BioCollection implements java.io.Serializable {
 	private static final long	serialVersionUID	= -7384213608019152409L;
 	private Long					id;
 	private String					biocollectionUid;
-	private String					natural_Uid;
 	private String					name;
 	private LinkSubjectStudy		linkSubjectStudy;
 	private Study					study;
@@ -70,7 +63,7 @@ public class BioCollection implements java.io.Serializable {
 	private Date					surgeryDate;
 	private String					diagCategory;
 	private String					refDoctor;
-	private Integer					patientage;
+	private Integer					patientAge;
 	private Date					dischargeDate;
 	private String					hospitalUr;
 	private Date					diagDate;
@@ -98,7 +91,6 @@ public class BioCollection implements java.io.Serializable {
 		this.id = id;
 	}
 	
-	@ArkAuditDisplay
 	@Column(name = "BIOCOLLECTION_UID", nullable = false)
 	public String getBiocollectionUid() {
 		return biocollectionUid;
@@ -106,16 +98,6 @@ public class BioCollection implements java.io.Serializable {
 	
 	public void setBiocollectionUid(String biocollectionUid) {
 		this.biocollectionUid = biocollectionUid;
-	}
-
-	@NotAudited
-	@Column(name = "NATURAL_UID")
-	public String getNaturalUid() {
-		return natural_Uid;
-	}
-
-	public void setNaturalUid(String natural_Uid) {
-		this.natural_Uid = natural_Uid;
 	}
 
 	@Column(name = "TIMESTAMP", length = 55)
@@ -222,12 +204,12 @@ public class BioCollection implements java.io.Serializable {
 	}
 
 	@Column(name = "PATIENTAGE")
-	public Integer getPatientage() {
-		return this.patientage;
+	public Integer getPatientAge() {
+		return this.patientAge;
 	}
 
-	public void setPatientage(Integer patientage) {
-		this.patientage = patientage;
+	public void setPatientAge(Integer patientage) {
+		this.patientAge = patientage;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -324,7 +306,6 @@ public class BioCollection implements java.io.Serializable {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "bioCollection")
 	@OrderBy("id")
-	@NotAudited
 	public Set<Biospecimen> getBiospecimens() {
 		return this.biospecimens;
 	}

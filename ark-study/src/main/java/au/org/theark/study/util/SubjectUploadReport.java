@@ -44,7 +44,7 @@ public class SubjectUploadReport {
 
 		dateNow = new Date(System.currentTimeMillis());
 		this.appendAndNewLine("************************************************************");
-		this.appendAndNewLine("the-ark.org.au Upload Report");
+		this.appendAndNewLine("the-ark.wits.ac.za Upload Report");
 		this.appendAndNewLine(dateNow.toString());
 		this.appendAndNewLine("************************************************************");
 	}
@@ -91,6 +91,19 @@ public class SubjectUploadReport {
 		appendAndNewLine(studyName);
 		append("UserID: ");
 		appendAndNewLine(SecurityUtils.getSubject().getPrincipal().toString());
+		append("Filename: ");
+		appendAndNewLine(studyUpload.getFilename());
+		append("File Format: ");
+		appendAndNewLine(studyUpload.getFileFormat().getName());
+		append("Delimiter Type ");
+		appendAndNewLine(studyUpload.getDelimiterType().getName());
+	}
+	
+	public void appendDetails(Upload studyUpload, String studyName, String userID) {
+		append("Study: ");
+		appendAndNewLine(studyName);
+		append("UserID: ");
+		appendAndNewLine(userID);
 		append("Filename: ");
 		appendAndNewLine(studyUpload.getFilename());
 		append("File Format: ");

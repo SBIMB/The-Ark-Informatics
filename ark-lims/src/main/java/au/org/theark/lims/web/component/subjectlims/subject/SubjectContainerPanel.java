@@ -133,7 +133,7 @@ public class SubjectContainerPanel extends AbstractContainerPanel<LimsVO> {
 		containerForm.add(arkCrudContainerVO.getSearchResultPanelContainer());
 		containerForm.add(initialiseDetailPanel());
 		if(!prerenderContextCheck()) {
-			error(au.org.theark.core.Constants.MESSAGE_NO_SUBJECT_IN_CONTEXT);
+			error("A study and subject in context are required to proceed.");
 		}
 		add(containerForm);
 	}
@@ -287,7 +287,7 @@ public class SubjectContainerPanel extends AbstractContainerPanel<LimsVO> {
 		subjectProvider.setCriteriaModel(this.cpModel);
 
 		dataView = searchResultListPanel.buildDataView(subjectProvider);
-		dataView.setItemsPerPage(iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue());
+		dataView.setItemsPerPage(iArkCommonService.getRowsPerPage());
 
 		AjaxPagingNavigator pageNavigator = new AjaxPagingNavigator("navigator", dataView) {
 

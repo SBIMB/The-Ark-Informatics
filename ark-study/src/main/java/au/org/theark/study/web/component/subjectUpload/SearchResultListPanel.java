@@ -18,17 +18,22 @@
  ******************************************************************************/
 package au.org.theark.study.web.component.subjectUpload;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PageableListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -40,6 +45,7 @@ import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.file.Files;
+import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.resource.FileResourceStream;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.slf4j.Logger;
@@ -55,8 +61,7 @@ import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.util.ByteDataResourceRequestHandler;
 import au.org.theark.core.vo.ArkCrudContainerVO;
 import au.org.theark.core.web.component.button.ArkDownloadTemplateButton;
-import au.org.theark.core.web.component.panel.ConfirmationAnswer;
-import au.org.theark.core.web.component.panel.YesNoPanel;
+import au.org.theark.study.model.capsule.RelativeCapsule;
 import au.org.theark.study.web.component.subjectUpload.form.ContainerForm;
 
 /**
@@ -73,16 +78,9 @@ public class SearchResultListPanel extends Panel {
 	private IArkCommonService<Void>			iArkCommonService;
 	
 	private transient Logger	log					= LoggerFactory.getLogger(SearchResultListPanel.class);
-	private ModalWindow 			confirmModal;
-	private ConfirmationAnswer		confirmationAnswer;
-	private final String modalText = "<p>You are about to delete this record of</p><p><b>*.</b></p></p><p> But it will never delete the data imported to the Ark from this file previously.</p>";
-	private SearchResultListPanel me;
-	
 
 	public SearchResultListPanel(String id, FeedbackPanel feedBackPanel, ContainerForm containerForm, ArkCrudContainerVO arkCrudContainerVO) {
 		super(id);
-		this.setOutputMarkupId(true);
-		me=this;
 		ArkDownloadTemplateButton downloadTemplateButton = new ArkDownloadTemplateButton("downloadTemplate", "SubjectUpload", au.org.theark.study.web.Constants.SUBJECT_TEMPLATE_CELLS) {
 			private static final long	serialVersionUID	= 1L;
 
@@ -92,7 +90,7 @@ public class SearchResultListPanel extends Panel {
 			}
 
 		};
-		ArkDownloadTemplateButton downloadCustomFieldTemplateButton = new ArkDownloadTemplateButton("downloadCustomFieldTemplate", "SubjectOrFamilyCustomFieldDataUpload", au.org.theark.study.web.Constants.SUBJECT_OR_FAMILY_CUSTOM_FIELD_DATA_TEMPLATE_CELLS) {
+		ArkDownloadTemplateButton downloadCustomFieldTemplateButton = new ArkDownloadTemplateButton("downloadCustomFieldTemplate", "SubjectCustomFieldUpload", au.org.theark.study.web.Constants.SUBJECT_CUSTOM_FIELD_TEMPLATE_CELLS) {
 			private static final long	serialVersionUID	= 1L;
 
 			@Override
@@ -165,7 +163,7 @@ public class SearchResultListPanel extends Panel {
 				this.error("Unexpected Error: Could not proceed with download of the template.");
 			}
 		};				
-		initConfirmModel();
+		
 		add(downloadTemplateButton);
 		add(downloadCustomFieldTemplateButton);
 		add(downloadConsentFieldTemplateButton);
@@ -180,7 +178,7 @@ public class SearchResultListPanel extends Panel {
 	 */
 	@SuppressWarnings("unchecked")
 	public PageableListView<Upload> buildPageableListView(IModel iModel) {
-		PageableListView<Upload> sitePageableListView = new PageableListView<Upload>(Constants.RESULT_LIST, iModel, iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue()) {
+		PageableListView<Upload> sitePageableListView = new PageableListView<Upload>(Constants.RESULT_LIST, iModel, iArkCommonService.getRowsPerPage()) {
 			
 			private static final long	serialVersionUID	= 1L;
 
@@ -251,9 +249,10 @@ public class SearchResultListPanel extends Panel {
 
 				// Download upload report button
 				item.add(buildDownloadReportButton(upload));
-				
-				item.add(buildDeleteUploadButton(upload));
-				
+
+				// Delete the upload file
+				// item.add(buildDeleteButton(upload));
+
 				// For the alternative stripes
 				item.add(new AttributeModifier("class", new AbstractReadOnlyModel<String>() {
 
@@ -269,7 +268,7 @@ public class SearchResultListPanel extends Panel {
 		return sitePageableListView;
 	}
 
-	/*protected Link<Upload> buildDownloadLink(final Upload upload) {
+	protected Link<Upload> buildDownloadLink(final Upload upload) {
 		Link<Upload> link = new Link<Upload>(au.org.theark.study.web.Constants.DOWNLOAD_FILE) {
 
 			private static final long	serialVersionUID	= 1L;
@@ -287,7 +286,7 @@ public class SearchResultListPanel extends Panel {
 		link.add(nameLinkLabel);
 		return link;
 	}
-*/
+
 	private AjaxButton buildDownloadButton(final Upload upload) {
 		AjaxButton ajaxButton = new AjaxButton(au.org.theark.study.web.Constants.DOWNLOAD_FILE) {
 
@@ -325,7 +324,7 @@ public class SearchResultListPanel extends Panel {
 		return ajaxButton;
 	}
 
-	/*protected Link<Upload> buildDownloadReportLink(final Upload upload) {
+	protected Link<Upload> buildDownloadReportLink(final Upload upload) {
 		Link<Upload> link = new Link<Upload>(au.org.theark.study.web.Constants.UPLOADVO_UPLOAD_UPLOAD_REPORT) {
 
 			private static final long	serialVersionUID	= 1L;
@@ -341,7 +340,7 @@ public class SearchResultListPanel extends Panel {
 		Label nameLinkLabel = new Label("downloadReportLbl", "Download Report");
 		link.add(nameLinkLabel);
 		return link;
-	}*/
+	}
 
 	private AjaxButton buildDownloadReportButton(final Upload upload) {
 		AjaxButton ajaxButton = new AjaxButton(au.org.theark.study.web.Constants.UPLOADVO_UPLOAD_UPLOAD_REPORT) {
@@ -367,53 +366,6 @@ public class SearchResultListPanel extends Panel {
 			ajaxButton.setVisible(false);
 
 		return ajaxButton;
-	}
-	/**
-	 * 
-	 * @param upload
-	 * @return
-	 */
-	private AjaxButton buildDeleteUploadButton(Upload upload){
-		AjaxButton ajaxButton = new AjaxButton(au.org.theark.core.Constants.DELETE_UPLOAD){
-			private static final long serialVersionUID = 1L;
-			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-				updateModelAndVarifyForDeleteUpload(upload);
-				confirmModal.show(target);
-			}
-			@Override
-			protected void onError(AjaxRequestTarget target, Form<?> form) {
-				log.error("onError called when buildDeleteUploadButton pressed");
-			};
-		};
-		ajaxButton.setDefaultFormProcessing(false);
-		return ajaxButton;
-	}
-	/**
-	 * 
-	 * @param upload
-	 */
-	private void updateModelAndVarifyForDeleteUpload(Upload upload) {
-		confirmModal.setContent(new YesNoPanel(confirmModal.getContentId(), modalText.replace("*"," ["+upload.getId()+"] "+upload.getFilename()),"Delete upload record.", confirmModal, confirmationAnswer));
-		confirmModal.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
-		private static final long serialVersionUID = 1L;
-			public void onClose(AjaxRequestTarget target) {
-				if (confirmationAnswer.isAnswer() ) {
-					iArkCommonService.deleteUpload(upload);
-					target.add(me);
-				} else {//if no nothing be done.Just close I guess
-				}
-			}
-		});
-		addOrReplace(confirmModal);
-	}
-	
-	private void initConfirmModel(){
-		confirmationAnswer = new ConfirmationAnswer(false);
-		confirmModal = new ModalWindow("confirmModal");
-		confirmModal.setCookieName("yesNoPanel");
-		confirmModal.setContent(new YesNoPanel(confirmModal.getContentId(), modalText,"Delete upload record.", confirmModal, confirmationAnswer));
-		addOrReplace(confirmModal);
 	}
 
 	/*

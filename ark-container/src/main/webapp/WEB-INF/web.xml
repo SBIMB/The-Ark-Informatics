@@ -15,15 +15,58 @@
 	-->
 	<context-param>
 		<param-name>configuration</param-name>
-		<param-value>development</param-value>
-		<!-- <param-value>deployment</param-value> -->
+		<!--<param-value>development</param-value>-->
+		<param-value>deployment</param-value>
 	</context-param>
 
-	<context-param>
+	 <context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:applicationContext.xml</param-value>
 	</context-param>
 	
+	<context-param>
+         <param-name>quartz:config-file</param-name>
+         <param-value>quartz.properties</param-value>
+     </context-param>
+     <context-param>
+         <param-name>quartz:shutdown-on-unload</param-name>
+         <param-value>true</param-value>
+     </context-param>
+     <context-param>
+         <param-name>quartz:wait-on-shutdown</param-name>
+         <param-value>false</param-value>
+     </context-param>
+     <context-param>
+         <param-name>quartz:start-scheduler-on-load</param-name>
+         <param-value>true</param-value>
+     </context-param>
+     
+    <listener>
+         <listener-class>
+             org.quartz.ee.servlet.QuartzInitializerListener
+         </listener-class>
+     </listener>
+              
+     <servlet> 
+      <servlet-name>QuartzInitializer</servlet-name> 
+      <servlet-class>org.quartz.ee.servlet.QuartzInitializerServlet</servlet-class> 
+      <init-param>
+        <param-name>shutdown-on-unload</param-name>
+        <param-value>true</param-value>
+      </init-param>
+      <load-on-startup>2</load-on-startup>
+    </servlet>
+     
+    <!--<servlet>
+    	<servlet-name>StartScheduler</servlet-name>
+    	<servlet-class>za.ac.theark.study.util.StartSchedulerServlet</servlet-class>
+     		<init-param>
+        		<param-name>shutdown-on-unload</param-name>
+        		<param-value>true</param-value>
+      		</init-param>
+      	<load-on-startup>3</load-on-startup>
+    </servlet>-->
+
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>

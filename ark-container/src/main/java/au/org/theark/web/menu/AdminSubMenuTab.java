@@ -21,19 +21,23 @@ package au.org.theark.web.menu;
 import java.util.ArrayList;
 import java.util.List;
 
+import mx4j.log.Log;
+
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import au.org.theark.admin.web.component.activitymonitor.ActivityMonitorContainerPanel;
-import au.org.theark.admin.web.component.audit.AuditContainerPanel;
 import au.org.theark.admin.web.component.function.FunctionContainerPanel;
 import au.org.theark.admin.web.component.module.ModuleContainerPanel;
 import au.org.theark.admin.web.component.modulefunction.ModuleFunctionContainerPanel;
 import au.org.theark.admin.web.component.modulerole.ModuleRoleContainerPanel;
+import za.ac.theark.admin.web.component.redcap.RedcapContainerPanel;
 import au.org.theark.admin.web.component.role.RoleContainerPanel;
 import au.org.theark.admin.web.component.rolePolicy.RolePolicyContainerPanel;
 import au.org.theark.core.model.study.entity.ArkFunction;
@@ -45,6 +49,9 @@ import au.org.theark.core.web.component.tabbedPanel.ArkAjaxTabbedPanel;
 public class AdminSubMenuTab extends AbstractArkTabPanel {
 
 	private static final long			serialVersionUID	= 2808674930679468072L;
+	
+	protected transient Logger		log					= LoggerFactory.getLogger(AdminSubMenuTab.class);
+	
 	@SpringBean(name = au.org.theark.core.Constants.ARK_COMMON_SERVICE)
 	private IArkCommonService<Void>	iArkCommonService;
 	private List<ITab>					moduleSubTabsList	= new ArrayList<ITab>();
@@ -60,6 +67,8 @@ public class AdminSubMenuTab extends AbstractArkTabPanel {
 
 		// TODO: Shoud admin sub-menus really access the database to determine their visibility?
 		for (final ArkFunction arkFunction : arkFunctionList) {
+			log.info("Test - " + arkFunction.getResourceKey());
+			try{
 			AbstractTab tab = new AbstractTab(new StringResourceModel(arkFunction.getResourceKey(), this, null)) {
 				/**
 				 * 
@@ -68,10 +77,17 @@ public class AdminSubMenuTab extends AbstractArkTabPanel {
 
 				@Override
 				public Panel getPanel(final String panelId) {
+					log.debug(arkFunction.getName().toString() + panelId);
 					return panelToReturn(arkFunction, panelId);
 				}
 			};
 			moduleSubTabsList.add(tab);
+			}catch(Exception ex){
+				log.info("Error");
+			}
+			
+			
+			
 		}
 		
 		// Add a new tab for activity monitoring
@@ -87,6 +103,8 @@ public class AdminSubMenuTab extends AbstractArkTabPanel {
 			
 		};
 		moduleSubTabsList.add(tab);
+		
+		
 
 		ArkAjaxTabbedPanel moduleTabbedPanel = new ArkAjaxTabbedPanel("adminSubMenus", moduleSubTabsList);
 		add(moduleTabbedPanel);
@@ -95,6 +113,7 @@ public class AdminSubMenuTab extends AbstractArkTabPanel {
 	protected Panel panelToReturn(ArkFunction arkFunction, String panelId) {
 		Panel panelToReturn = null;
 
+		log.info(arkFunction.getResourceKey());
 		// Clear cache to determine permissions
 		processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_ADMIN, arkFunction);
 
@@ -111,7 +130,13 @@ public class AdminSubMenuTab extends AbstractArkTabPanel {
 			panelToReturn = containerPanel;
 		}
 		else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_ROLE)) {
+			log.info("Role");
 			RoleContainerPanel containerPanel = new RoleContainerPanel(panelId);
+			panelToReturn = containerPanel;
+		}
+		else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_REDCap)) {
+			log.info("Redcap");
+			RedcapContainerPanel containerPanel = new RedcapContainerPanel(panelId);
 			panelToReturn = containerPanel;
 		}
 		else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_MODULE_ROLE)) {
@@ -120,9 +145,6 @@ public class AdminSubMenuTab extends AbstractArkTabPanel {
 		}
 		else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_ROLE_POLICY_TEMPLATE)) {
 			RolePolicyContainerPanel containerPanel = new RolePolicyContainerPanel(panelId);
-			panelToReturn = containerPanel;
-		} else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_AUDIT)) {
-			AuditContainerPanel containerPanel = new AuditContainerPanel(panelId);
 			panelToReturn = containerPanel;
 		}
 

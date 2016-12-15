@@ -82,38 +82,26 @@ public class ConsentDetailsReportDataSource implements Serializable, JRDataSourc
 		else if ("SubjectStatus".equals(fieldName)) {
 			value = data.get(index).getSubjectStatus();
 		}
-		else if ("Title".equals(fieldName)) {
-			value = data.get(index).getTitle();
+		else if ("DateOfEnrollment".equals(fieldName)) {
+			value = data.get(index).getDateOfEnrollment();
 		}
-		else if ("FirstName".equals(fieldName)) {
-			value = data.get(index).getFirstName();
+		else if ("AgeAtEnrollment".equals(fieldName)) {
+			value = data.get(index).getAgeAtEnrollment();
 		}
-		else if ("LastName".equals(fieldName)) {
-			value = data.get(index).getLastName();
+		else if ("Ethnicity".equals(fieldName)) {
+			value = data.get(index).getEthnicity();
 		}
-		else if ("StreetAddress".equals(fieldName)) {
-			value = data.get(index).getStreetAddress();
+		else if ("ConsentToUseData".equals(fieldName)) {
+			value = data.get(index).getConsentToUseData();
 		}
-		else if ("Suburb".equals(fieldName)) {
-			value = data.get(index).getSuburb();
+		else if ("ConsentToShareData".equals(fieldName)) {
+			value = data.get(index).getConsentToShareData();
 		}
-		else if ("State".equals(fieldName)) {
-			value = data.get(index).getState();
+		else if ("ConsentToUseBiospecimen".equals(fieldName)) {
+			value = data.get(index).getConsentToUseBiospecimen();
 		}
-		else if ("Postcode".equals(fieldName)) {
-			value = data.get(index).getPostcode();
-		}
-		else if ("Country".equals(fieldName)) {
-			value = data.get(index).getCountry();
-		}
-		else if ("WorkPhone".equals(fieldName)) {
-			value = data.get(index).getWorkPhone();
-		}
-		else if ("HomePhone".equals(fieldName)) {
-			value = data.get(index).getHomePhone();
-		}
-		else if ("Email".equals(fieldName)) {
-			value = data.get(index).getEmail();
+		else if ("ConsentToShareBiospecimen".equals(fieldName)) {
+			value = data.get(index).getConsentToShareBiospecimen();
 		}
 		else if ("Sex".equals(fieldName)) {
 			value = data.get(index).getSex();

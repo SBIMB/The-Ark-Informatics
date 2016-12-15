@@ -71,7 +71,7 @@ public class SearchResultListPanel extends Panel {
 
 	public PageableListView<RelationshipVo> buildPageableListView(IModel iModel) {
 		
-		sitePageableListView = new PageableListView<RelationshipVo>("relationshipList", iModel, iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue()) {
+		sitePageableListView = new PageableListView<RelationshipVo>("relationshipList", iModel, iArkCommonService.getRowsPerPage()) {
 
 			private static final long	serialVersionUID	= 1L;
 
@@ -103,13 +103,6 @@ public class SearchResultListPanel extends Panel {
 					item.add(new Label(Constants.PEDIGREE_RELATIONSHIP, ""));
 				}
 				
-				if(relationshipVo.isInbreed()){
-					item.add(new Label(Constants.PEDIGREE_INBREED, "*"));
-				}
-				else{
-					item.add(new Label(Constants.PEDIGREE_INBREED, ""));
-				}
-				
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(au.org.theark.core.Constants.DD_MM_YYYY);	
 				String dob = "";
 				if (relationshipVo.getDob() != null) {
@@ -134,12 +127,12 @@ public class SearchResultListPanel extends Panel {
 					unsetLink.setVisible(false);
 				}
 				
-				if(!ArkPermissionHelper.isActionPermitted(Constants.SAVE) ||"Father".equalsIgnoreCase(relationshipVo.getRelationship())){
+				if("Father".equalsIgnoreCase(relationshipVo.getRelationship())){
 					arkCrudContainerVO.getSearchPanelContainer().get("searchComponentPanel").get("searchForm").get("father").setEnabled(false);
 					
 				}
 				
-				if(!ArkPermissionHelper.isActionPermitted(Constants.SAVE) ||"Mother".equalsIgnoreCase(relationshipVo.getRelationship())){
+				if("Mother".equalsIgnoreCase(relationshipVo.getRelationship())){
 					arkCrudContainerVO.getSearchPanelContainer().get("searchComponentPanel").get("searchForm").get("mother").setEnabled(false);
 				}
 				
@@ -193,15 +186,6 @@ public class SearchResultListPanel extends Panel {
 				arkCrudContainerVO.getSearchPanelContainer().get("searchComponentPanel").get("searchForm").get("father").setEnabled(true);
 				arkCrudContainerVO.getSearchPanelContainer().get("searchComponentPanel").get("searchForm").get("mother").setEnabled(true);
 				arkCrudContainerVO.getSearchPanelContainer().get("searchComponentPanel").get("searchForm").get("twin").setEnabled(false);
-				
-				//Enable OR Disable family data button
-				String familyId = iStudyService.getSubjectFamilyId(sessionStudyId, relationshipVo.getIndividualId());
-				if(familyId == null){
-					arkCrudContainerVO.getSearchPanelContainer().get("searchComponentPanel").get("searchForm").get(au.org.theark.core.Constants.FAMILY).setEnabled(false);
-				}else{
-					arkCrudContainerVO.getSearchPanelContainer().get("searchComponentPanel").get("searchForm").get(au.org.theark.core.Constants.FAMILY).setEnabled(true);
-				}
-				
 				sitePageableListView.removeAll();
 				containerForm.getModelObject().setRelationshipList(iStudyService.generateSubjectPedigreeRelativeList(subjectFromBackend.getLinkSubjectStudy().getSubjectUID(),sessionStudyId));
 				target.add(arkCrudContainerVO.getSearchResultPanelContainer());

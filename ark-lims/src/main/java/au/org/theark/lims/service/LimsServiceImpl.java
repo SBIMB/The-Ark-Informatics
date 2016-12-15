@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import au.org.theark.core.dao.ICustomFieldDao;
 import au.org.theark.core.dao.IStudyDao;
 import au.org.theark.core.exception.ArkBaseException;
 import au.org.theark.core.exception.ArkSystemException;
@@ -65,7 +64,7 @@ import au.org.theark.lims.model.dao.IBioTransactionDao;
 import au.org.theark.lims.model.dao.IBiospecimenDao;
 import au.org.theark.lims.model.dao.IInventoryDao;
 import au.org.theark.lims.model.vo.LimsVO;
-import au.org.theark.lims.util.BioCollectionSpecimenUploader;
+import au.org.theark.lims.util.BiospecimenUploader;
 import au.org.theark.lims.web.Constants;
 
 /**
@@ -79,13 +78,12 @@ public class LimsServiceImpl implements ILimsService {
 
 	@SuppressWarnings("unchecked")
 	private IArkCommonService	arkCommonService;
-	private IStudyDao			iStudyDao;
+	private IStudyDao				iStudyDao;
 	private IBioCollectionDao	iBioCollectionDao;
 	private IBiospecimenDao		iBiospecimenDao;
 	private IBioTransactionDao	iBioTransactionDao;
 	private IInventoryDao 		iInventoryDao;
-	private IInventoryService   iInventoryService;
-	private ICustomFieldDao     iCustomFieldDao;
+	private IInventoryService  iInventoryService;
 
 	/**
 	 * @param arkCommonService
@@ -96,6 +94,8 @@ public class LimsServiceImpl implements ILimsService {
 	public void setArkCommonService(IArkCommonService arkCommonService) {
 		this.arkCommonService = arkCommonService;
 	}
+
+
 
 	/**
 	 * @param iStudyDao
@@ -148,11 +148,6 @@ public class LimsServiceImpl implements ILimsService {
 	@Autowired
 	public void setiInventoryService(IInventoryService iInventoryService) {
 		this.iInventoryService = iInventoryService;
-	}
-	
-	@Autowired
-	public void setiCustomFieldDao(ICustomFieldDao iCustomFieldDao) {
-		this.iCustomFieldDao = iCustomFieldDao;
 	}
 
 	/*
@@ -283,6 +278,7 @@ public class LimsServiceImpl implements ILimsService {
 	 */
 	public void deleteBiospecimen(LimsVO modelObject) {
 		log.debug("Deleting Biospecimen");
+		
 		// Need to set the InvCell reference to null (if it had one)
 		Biospecimen biospecimen = modelObject.getBiospecimen();
 		InvCell invCell = iInventoryDao.getInvCellByBiospecimen(biospecimen);
@@ -455,10 +451,11 @@ public class LimsServiceImpl implements ILimsService {
 					
 					CustomField customField = arkCommonService.getCustomField(id);
 					customField.setCustomFieldHasData(true);
-					//CustomFieldVO customFieldVO = new CustomFieldVO();
-					//customFieldVO.setCustomField(customField);
-					//arkCommonService.updateCustomField(customFieldVO);
-					iCustomFieldDao.updateCustomField(customField);
+					CustomFieldVO customFieldVO = new CustomFieldVO();
+					customFieldVO.setCustomField(customField);
+					
+					arkCommonService.updateCustomField(customFieldVO);
+
 				}
 				else if (canUpdate(bioCollectionCFData)) {
 					
@@ -479,10 +476,9 @@ public class LimsServiceImpl implements ILimsService {
 						Long id = bioCollectionCFData.getCustomFieldDisplay().getCustomField().getId();//Reload since the session was closed in the front end and the child objects won't be lazy loaded
 						CustomField customField = arkCommonService.getCustomField(id);
 						customField.setCustomFieldHasData(false);
-						//CustomFieldVO customFieldVO = new CustomFieldVO();
-						//customFieldVO.setCustomField(customField);
-						//arkCommonService.updateCustomField(customFieldVO); //Update it
-						iCustomFieldDao.updateCustomField(customField);
+						CustomFieldVO customFieldVO = new CustomFieldVO();
+						customFieldVO.setCustomField(customField);
+						arkCommonService.updateCustomField(customFieldVO); //Update it
 					}
 				}
 			}
@@ -742,23 +738,42 @@ public class LimsServiceImpl implements ILimsService {
 	public Double getQuantityAvailable(Biospecimen biospecimen){
 		return iBiospecimenDao.getQuantityAvailable(biospecimen);
 	}
-
+	
+	public BiospecimenAnticoagulant getBiospecimenAnticoagulantByName(String name) {
+		return iBiospecimenDao.getBiospecimenAnticoagulantByName(name);
+	}
+	
 	public List<BiospecimenAnticoagulant> getBiospecimenAnticoagulantList() {
 		return iBiospecimenDao.getBiospecimenAnticoagulantList();
+	}
+	
+	public BiospecimenGrade getBiospecimenGradeByName(String name) {
+		return iBiospecimenDao.getBiospecimenGradeByName(name);
 	}
 
 	public List<BiospecimenGrade> getBiospecimenGradeList() {
 		return iBiospecimenDao.getBiospecimenGradeList();
 	}
-
+	
+	public BiospecimenQuality getBiospecimenQualityByName(String name) {
+		return iBiospecimenDao.getBiospecimenQualityByName(name);
+	}	
+	
 	public List<BiospecimenQuality> getBiospecimenQualityList() {
 		return iBiospecimenDao.getBiospecimenQualityList();
+	}
+	
+	public BiospecimenStatus getBiospecimenStatusByName(String name){
+		return iBiospecimenDao.getBiospecimenStatusByName(name);
 	}
 
 	public List<BiospecimenStatus> getBiospecimenStatusList() {
 		return iBiospecimenDao.getBiospecimenStatusList();
 	}
-
+	
+	public BiospecimenStorage getBiospecimenStorageByName(String name){
+		return iBiospecimenDao.getBiospecimenStorageByName(name);
+	}
 	public List<BiospecimenStorage> getBiospecimenStorageList() {
 		return iBiospecimenDao.getBiospecimenStorageList();
 	}
@@ -767,8 +782,8 @@ public class LimsServiceImpl implements ILimsService {
 		return iBiospecimenDao.getNextGeneratedBiospecimenUID(study);
 	}
 
-	public void batchInsertBiospecimensAndUpdateInventoryCell(Collection<Biospecimen> insertBiospecimens) {
-		iBiospecimenDao.batchInsertBiospecimensAndUpdateInventoryCell(insertBiospecimens);
+	public void batchInsertBiospecimens(Collection<Biospecimen> insertBiospecimens) {
+		iBiospecimenDao.batchInsertBiospecimens(insertBiospecimens);
 	}
 
 	public void batchUpdateBiospecimens(Collection<Biospecimen> updateBiospecimens) {
@@ -786,53 +801,32 @@ public class LimsServiceImpl implements ILimsService {
 	public TreatmentType getTreatmentTypeByName(String name) {
 		return iBiospecimenDao.getTreatmentTypeByName(name);
 	}
-	
-	public StringBuffer uploadAndReportMatrixBiocollectionFile(Study study,InputStream inputStream, long size, String fileFormat,char delimiterChar) {
-		StringBuffer uploadReport = null;
-		BioCollectionSpecimenUploader bioCollectionSpecimenUploader = new BioCollectionSpecimenUploader(study, arkCommonService, this, iInventoryService);
-		
-		try {
-			log.debug("Importing and reporting Biocollection file");
-			uploadReport = bioCollectionSpecimenUploader.uploadAndReportMatrixBiocollectionFile(inputStream, size, fileFormat, delimiterChar);
-		}
-		catch (FileFormatException ffe) {
-			log.error(au.org.theark.core.Constants.FILE_FORMAT_EXCEPTION + ffe);
-		}
-		catch (ArkBaseException abe) {
-			log.error(au.org.theark.core.Constants.ARK_BASE_EXCEPTION + abe);
-		}
-		return uploadReport;
-		
-		
-	}
 
-	public StringBuffer uploadAndReportMatrixBiospecimenInventoryFile(Study study, InputStream inputStream, long size, String fileFormat, char delimiterChar) {
+	public StringBuffer uploadAndReportMatrixLocationFile(Study study, InputStream inputStream, long size, String fileFormat, char delimiterChar) {
 		StringBuffer uploadReport = null;
-		BioCollectionSpecimenUploader bioCollectionSpecimenUploader = new BioCollectionSpecimenUploader(study, arkCommonService, this, iInventoryService);
-		
-		try {
-			log.debug("Importing and reporting Biospecimen inventory file");
-			uploadReport = bioCollectionSpecimenUploader.uploadAndReportMatrixBiospecimenInventoryFile(inputStream, size, fileFormat, delimiterChar);
-		}
-		catch (FileFormatException ffe) {
-			log.error(au.org.theark.core.Constants.FILE_FORMAT_EXCEPTION + ffe);
-		}
-		catch (ArkBaseException abe) {
-			log.error(au.org.theark.core.Constants.ARK_BASE_EXCEPTION + abe);
-		}
-		return uploadReport;
-	}
-
-	/**
-	 * 
-	 */
-	public StringBuffer uploadAndReportMatrixBiospecimenFile(Study study, InputStream inputStream, long size, String fileFormat, char delimiterChar) {
-		StringBuffer uploadReport = null;
-		BioCollectionSpecimenUploader bioCollectionSpecimenUploader = new BioCollectionSpecimenUploader(study, arkCommonService, this, iInventoryService);
+		BiospecimenUploader biospecimenUploader = new BiospecimenUploader(study, arkCommonService, this, iInventoryService);
 		
 		try {
 			log.debug("Importing and reporting Biospecimen file");
-			uploadReport = bioCollectionSpecimenUploader.uploadAndReportMatrixBiospecimenFile(inputStream, size, fileFormat, delimiterChar);
+			uploadReport = biospecimenUploader.uploadAndReportMatrixLocationFile(inputStream, size, fileFormat, delimiterChar);
+		}
+		catch (FileFormatException ffe) {
+			log.error(au.org.theark.core.Constants.FILE_FORMAT_EXCEPTION + ffe);
+		}
+		catch (ArkBaseException abe) {
+			log.error(au.org.theark.core.Constants.ARK_BASE_EXCEPTION + abe);
+		}
+		return uploadReport;
+	}
+
+
+	public StringBuffer uploadAndReportMatrixBiospecimenFile(Study study, InputStream inputStream, long size, String fileFormat, char delimiterChar) {
+		StringBuffer uploadReport = null;
+		BiospecimenUploader biospecimenUploader = new BiospecimenUploader(study, arkCommonService, this, iInventoryService);
+		
+		try {
+			log.debug("Importing and reporting Biospecimen file");
+			uploadReport = biospecimenUploader.uploadAndReportMatrixBiospecimenFile(inputStream, size, fileFormat, delimiterChar);
 		}
 		catch (FileFormatException ffe) {
 			log.error(au.org.theark.core.Constants.FILE_FORMAT_EXCEPTION + ffe);
@@ -871,6 +865,10 @@ public class LimsServiceImpl implements ILimsService {
 		iBiospecimenDao.batchAliquotBiospecimens(biospecimenList);		
 	}
 
+	public BiospecimenProtocol getBiospecimenProtocolByName(String name) {
+		return iBiospecimenDao.getBiospecimenProtocolByName(name);
+	}
+	
 	public List<BiospecimenProtocol> getBiospecimenProtocolList() {
 		return iBiospecimenDao.getBiospecimenProtocolList();
 	}
@@ -878,24 +876,4 @@ public class LimsServiceImpl implements ILimsService {
 	public List<Biospecimen> getRootBiospecimensForBiocollection(BioCollection bc) {
 		return iBiospecimenDao.getRootBiospecimensForBiocollection(bc);
 	}
-
-	public BioCollection getBioCollectionForStudySubjectByUID(String biocollectionUid,Study study, LinkSubjectStudy linkSubjectStudy) {
-		return iBioCollectionDao.getBioCollectionForStudySubjectByUID(biocollectionUid,study, linkSubjectStudy);
-	}
-
-	public void batchInsertBiocollections(Collection<BioCollection> insertBioCollections) {
-		iBioCollectionDao.batchInsertBiocollections(insertBioCollections);
-	}
-
-	public void batchUpdateBiocollections(Collection<BioCollection> updateBioCollections) {
-		iBioCollectionDao.batchUpdateBiocollections(updateBioCollections);
-	}
-	public boolean hasBiocllectionGotCustomFieldData(BioCollection bioCollection) {
-		return iBioCollectionDao.hasBiocllectionGotCustomFieldData(bioCollection);
-	}
-
-	public List<BioTransaction> getAllBiotransactionForBiospecimen(Biospecimen biospecimen) {
-		return iBioTransactionDao.getAllBiotransactionForBiospecimen(biospecimen);
-	}
-	
 }

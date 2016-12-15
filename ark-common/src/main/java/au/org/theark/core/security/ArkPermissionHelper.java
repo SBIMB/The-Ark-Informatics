@@ -123,6 +123,9 @@ public class ArkPermissionHelper {
 		else if (actionType.equalsIgnoreCase(Constants.NEW)) {
 			actionPermitted = hasNewPermission(securityManager, currentUser);
 		}
+		else if (actionType.equalsIgnoreCase(Constants.TEST)) {
+			actionPermitted = hasSavePermission(securityManager, currentUser);
+		}
 
 		return actionPermitted;
 	}

@@ -66,6 +66,9 @@
 				<div class="panelContentLeft">
 					&nbsp;
 				</div>
+
+				<!--	wmc-areaCode is a WebMarkupContainer to allow updates to areaCode textfield -->
+				<!--<div wicket:id="wmc-areaCode"> -->
 				<div class="fldLabel">
 					<div class="label">
 						<label for="areaCode">
@@ -83,30 +86,9 @@
 						<input wicket:id="phoneVo.phone.areaCode" type="text" maxlength="10"/>
 					</div>
 				</div>
+				<!-- </div>-->
+
 				<div class="panelMargin">
-					&nbsp;
-				</div>
-
-				<div class="fldLabel">
-					<wicket:message key="phone.preferredPhoneNumber">
-						Preferred Phone Number:
-					</wicket:message>
-					<div class="note">
-						<wicket:message key="phone.preferredPhoneNumber.note">
-							[Note]
-						</wicket:message>
-					</div>
-				</div>
-
-				<div class="fldControl">
-					<input type="checkbox" wicket:id="phoneVo.phone.preferredPhoneNumber" />
-				</div>
-				
-				<div class="detailPanelBreaker">
-					&nbsp;
-				</div>
-
-				<div class="panelContentLeft">
 					&nbsp;
 				</div>
 
@@ -124,7 +106,11 @@
 					</div>
 				</div>
 
-				<div class="panelMargin">
+				<div class="detailPanelBreaker">
+					&nbsp;
+				</div>
+
+				<div class="panelContentLeft">
 					&nbsp;
 				</div>
 
@@ -148,11 +134,9 @@
 						</select>
 					</div>
 				</div>
-				<div class="detailPanelBreaker">
-					&nbsp;
-				</div>
+				<!-- </div>-->
 
-				<div class="panelContentLeft">
+				<div class="panelMargin">
 					&nbsp;
 				</div>
 
@@ -170,7 +154,11 @@
 					</div>
 				</div>
 
-				<div class="panelMargin">
+				<div class="detailPanelBreaker">
+					&nbsp;
+				</div>
+
+				<div class="panelContentLeft">
 					&nbsp;
 				</div>
 
@@ -190,11 +178,7 @@
 					</div>
 				</div>
 
-				<div class="detailPanelBreaker">
-					&nbsp;
-				</div>
-
-				<div class="panelContentLeft">
+				<div class="panelMargin">
 					&nbsp;
 				</div>
 
@@ -215,51 +199,6 @@
 						</select>
 					</div>
 				</div>
-				
-				<div class="panelMargin">
-					&nbsp;
-				</div>
-
-				<div class="fldLabel">
-					<div class="label">
-						&nbsp;
-					</div>
-				</div>
-				<div class="fldControl">
-					<div class="label">
-						&nbsp;
-					</div>
-				</div>
-				<!-- valid from field add on 2015-10-06(ARK-1498) -->
-				<div class="detailPanelBreaker">
-					&nbsp;
-				</div>
-				<div class="panelContentLeft">
-					&nbsp;
-				</div>
-				<div class="fldLabel">
-					<wicket:message key="validFrom">
-						Valid from:
-					</wicket:message>
-				</div>
-
-				<div class="fldControl">
-					<input wicket:id="phoneVo.phone.validFrom" type="text"	maxlength="10" />
-				</div>
-				<div class="panelMargin">
-					&nbsp;
-				</div>
-				<div class="fldLabel">
-					<wicket:message key="validTo">
-						Valid to:
-					</wicket:message>
-				</div>
-
-				<div class="fldControl">
-					<input wicket:id="phoneVo.phone.validTo" type="text"  maxlength="10" />
-				</div>
-				<!--end of valid from field add on 2015-10-06(ARK-1498) -->
-				
 
 				<div class="detailPanelBreaker">
 					&nbsp;
@@ -312,7 +251,6 @@
 					<input wicket:id="save" type="submit" wicket:message="value:page.save" />
 					<input wicket:id="cancel" type="submit"	wicket:message="value:page.cancel" />
 					<input wicket:id="delete" type="submit" wicket:message="value:page.delete" />
-					<div wicket:id="history" class="historyPanel"></div>
 				</div>
 			</div>
 		</div>

@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
@@ -63,8 +62,7 @@ public class SearchResultListPanel extends Panel {
 
 	@SpringBean(name = au.org.theark.core.Constants.ARK_COMMON_SERVICE)
 	private IArkCommonService		iArkCommonService;
-	
-	
+	private boolean 				unitTypeDropDownOn;
 	
 	/**
 	 * Constructor
@@ -74,12 +72,12 @@ public class SearchResultListPanel extends Panel {
 	 * @param feedBackPanel
 	 * @param unitTypeDropDownOn
 	 */
-	public SearchResultListPanel(String id, CompoundPropertyModel<CustomFieldVO> cpModel, ArkCrudContainerVO arkCrudContainerVO, FeedbackPanel feedBackPanel) {
+	public SearchResultListPanel(String id, CompoundPropertyModel<CustomFieldVO> cpModel, ArkCrudContainerVO arkCrudContainerVO, FeedbackPanel feedBackPanel,boolean unitTypeDropDownOn) {
 		super(id);
 		this.cpModel = cpModel;
 		this.arkCrudContainerVO = arkCrudContainerVO;
 		this.feedbackPanel = feedBackPanel;
-		
+		this.unitTypeDropDownOn=unitTypeDropDownOn;
 	}
 
 	public DataView<CustomField> buildDataView(ArkDataProvider2<CustomField, CustomField> subjectProvider) {
@@ -100,6 +98,15 @@ public class SearchResultListPanel extends Panel {
 
 				// Component Name Link
 				item.add(buildLinkWMC(item));
+
+				// Field Label
+				if (field.getFieldType() != null) {
+					item.add(new Label(Constants.CUSTOMFIELD_FIELD_LABEL, field.getFieldLabel()));
+				}
+				else {
+					item.add(new Label(Constants.CUSTOMFIELD_FIELD_LABEL, ""));
+				}
+
 				// Field Type
 				if (field.getFieldType() != null) {
 					item.add(new Label(Constants.CUSTOMFIELD_FIELD_TYPE, field.getFieldType().getName()));
@@ -107,34 +114,44 @@ public class SearchResultListPanel extends Panel {
 				else {
 					item.add(new Label(Constants.CUSTOMFIELD_FIELD_TYPE, ""));
 				}
-				// Field Label
-				if (field.getFieldLabel() != null) {
-					item.add(new Label(Constants.CUSTOMFIELD_FIELD_LABEL, field.getFieldLabel()));
+
+				// Description
+				if (field.getDescription() != null) {
+					item.add(new Label(Constants.CUSTOMFIELD_DESCRIPTION, field.getDescription()));
 				}
 				else {
-					item.add(new Label(Constants.CUSTOMFIELD_FIELD_LABEL, ""));
+					item.add(new Label(Constants.CUSTOMFIELD_DESCRIPTION, ""));
 				}
-				// custom field type
-				if (field.getCustomFieldType() != null) {
-					item.add(new Label(Constants.CUSTOMFIELD_CUSTOME_FIELD_TYPE, field.getCustomFieldType().getName()));
+
+				// Units
+				if (field.getUnitType() != null && field.getUnitType().getName() != null) {
+					item.add(new Label(Constants.CUSTOMFIELD_UNIT_TYPE, field.getUnitType().getName()));
+				}
+				else if(field.getUnitTypeInText() !=null ){
+					item.add(new Label(Constants.CUSTOMFIELD_UNIT_TYPE, field.getUnitTypeInText()));
+				}
+				else  {
+					item.add(new Label(Constants.CUSTOMFIELD_UNIT_TYPE, ""));
+				}
+				
+				
+
+				// Min
+				if (field.getMinValue() != null) {
+					item.add(new Label(Constants.CUSTOMFIELD_MIN_VALUE, field.getMinValue()));
 				}
 				else {
-					item.add(new Label(Constants.CUSTOMFIELD_CUSTOME_FIELD_TYPE, ""));
+					item.add(new Label(Constants.CUSTOMFIELD_MIN_VALUE, ""));
 				}
-				//custom file category
-				if (field.getCustomFieldCategory() != null) {
-					item.add(new Label(Constants.CUSTOMFIELD_CATEGORY, field.getCustomFieldCategory().getName()));
-				}
-				else {
-					item.add(new Label(Constants.CUSTOMFIELD_CATEGORY, ""));
-				}
-				//custom file category order number
-				if (field.getCustomFieldCategory()!=null && field.getCustomFieldCategory().getOrderNumber() != null) {
-					item.add(new Label(Constants.CUSTOMFIELD_CATEGORY_ORDERNUMBER, field.getCustomFieldCategory().getOrderNumber().toString()));
+
+				// Max
+				if (field.getMaxValue() != null) {
+					item.add(new Label(Constants.CUSTOMFIELD_MAX_VALUE, field.getMaxValue()));
 				}
 				else {
-					item.add(new Label(Constants.CUSTOMFIELD_CATEGORY_ORDERNUMBER, ""));
+					item.add(new Label(Constants.CUSTOMFIELD_MAX_VALUE, ""));
 				}
+
 				/* For the alternative stripes */
 				item.add(new AttributeModifier("class", new AbstractReadOnlyModel() {
 					@Override
@@ -163,15 +180,13 @@ public class SearchResultListPanel extends Panel {
 				newModel.getObject().setCustomField(cf);
 				newModel.getObject().setUseCustomFieldDisplay(cpModel.getObject().isUseCustomFieldDisplay());
 
-				DetailPanel detailPanel = new DetailPanel("detailPanel", feedbackPanel, newModel, arkCrudContainerVO);
+				DetailPanel detailPanel = new DetailPanel("detailPanel", feedbackPanel, newModel, arkCrudContainerVO,unitTypeDropDownOn);
 				arkCrudContainerVO.getDetailPanelContainer().addOrReplace(detailPanel);
 				ArkCRUDHelper.preProcessDetailPanelOnSearchResults(target, arkCrudContainerVO);
-				//Added on 2016-05-26 to stop showing the previous feed back message when deleting or updating in the form.
-				//This will clear the feedback message.
-				Session.get().cleanupFeedbackMessages();
-				target.add(feedbackPanel);
+
 			}
 		};
+
 		// Add the label for the link
 		CustomField field = item.getModelObject();
 		Label nameLinkLabel = new Label("nameLbl", field.getName());
@@ -192,7 +207,7 @@ public class SearchResultListPanel extends Panel {
 		columns.add(new ExportableTextColumn<CustomField>(Model.of("maxValue"), "maxValue"));
 		columns.add(new ExportableTextColumn<CustomField>(Model.of("missingValue"), "missingValue"));
 
-		DataTable table = new DataTable("datatable", columns, customFieldDataView.getDataProvider(), iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue());
+		DataTable table = new DataTable("datatable", columns, customFieldDataView.getDataProvider(), iArkCommonService.getRowsPerPage());
 		List<String> headers = new ArrayList<String>(0);
 		headers.add("FIELD_NAME");
 		headers.add("FIELD_TYPE");

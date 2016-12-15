@@ -53,12 +53,10 @@ import au.org.theark.core.model.study.entity.Person;
 import au.org.theark.core.model.study.entity.State;
 import au.org.theark.core.model.study.entity.Study;
 import au.org.theark.core.service.IArkCommonService;
-import au.org.theark.core.util.DateFromToValidator;
 import au.org.theark.core.vo.ArkCrudContainerVO;
 import au.org.theark.core.vo.ContactVO;
 import au.org.theark.core.web.behavior.ArkDefaultFormFocusBehavior;
 import au.org.theark.core.web.component.ArkDatePicker;
-import au.org.theark.core.web.component.audit.button.HistoryButtonPanel;
 import au.org.theark.core.web.form.AbstractDetailForm;
 import au.org.theark.study.service.IStudyService;
 import au.org.theark.study.web.Constants;
@@ -82,25 +80,22 @@ public class AddressDetailForm extends AbstractDetailForm<ContactVO> {
 	private TextField<String>					streetAddressTxtFld;
 	private TextField<String>					cityTxtFld;
 	private TextField<String>					postCodeTxtFld;
-	private DropDownChoice<Country>				countryChoice;
+	private DropDownChoice<Country>			countryChoice;
 	private DropDownChoice<State>				stateChoice;
-	private DropDownChoice<AddressType>			addressTypeChoice;
+	private DropDownChoice<AddressType>		addressTypeChoice;
 	private WebMarkupContainer					stateSelector;
-	private DropDownChoice<AddressStatus>		addressStatusChoice;
-	private CheckBox							preferredMailingAddressChkBox;
+	private DropDownChoice<AddressStatus>	addressStatusChoice;
+	private CheckBox								preferredMailingAddressChkBox;
 	private DateTextField						dateReceivedDp;
 	private TextArea<String>					commentsTxtArea;
 	private TextField<String>					sourceTxtFld;
 	private TextField<String>					addressLineOneTxtFld;
 
-	protected TextField<String>					otherState;
+	protected TextField<String>				otherState;
 	protected Label								otherStateInvalidError;
 	
 	private FeedbackPanel 					feedBackPanel;
-	private ArkCrudContainerVO 				arkCrudContainerVO;
-	private DateTextField 					dateValidFrom;
-	private DateTextField 					dateValidTo;
-	private HistoryButtonPanel historyButtonPanel;
+	private ArkCrudContainerVO 			arkCrudContainerVO;
 
 	/**
 	 * 
@@ -120,7 +115,6 @@ public class AddressDetailForm extends AbstractDetailForm<ContactVO> {
 		// Disable preferred mailing for new address and no others exist
 		boolean enabled = !(isNew() && containerForm.getModelObject().getAddressVo().getAddresses().size() == 0);
 		preferredMailingAddressChkBox.setEnabled(enabled);
-		historyButtonPanel.setVisible(!isNew());
 		super.onBeforeRender();
 	}
 
@@ -133,7 +127,6 @@ public class AddressDetailForm extends AbstractDetailForm<ContactVO> {
 		otherState = new TextField<String>("addressVo.address.otherState");
 		sourceTxtFld = new TextField<String>("addressVo.address.source");
 		addressLineOneTxtFld = new TextField<String>("addressVo.address.addressLineOne");
-		historyButtonPanel = new HistoryButtonPanel(containerForm, arkCrudContainerVO.getEditButtonContainer(), arkCrudContainerVO.getDetailPanelFormContainer());
 		
 		initialiaseCountryDropDown();
 		initialiseCountrySelector();
@@ -159,10 +152,6 @@ public class AddressDetailForm extends AbstractDetailForm<ContactVO> {
 		arkCrudContainerVO.getDetailPanelFormContainer().add(preferredMailingAddressChkBox);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(sourceTxtFld);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(addressLineOneTxtFld);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(dateValidFrom);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(dateValidTo);
-		arkCrudContainerVO.getEditButtonContainer().add(historyButtonPanel);
-		this.add(new DateFromToValidator(dateValidFrom, dateValidTo,"Valid from date","Valid to date"));
 	}
 
 	private void initialiseAddressTypeDropDown() {
@@ -263,34 +252,9 @@ public class AddressDetailForm extends AbstractDetailForm<ContactVO> {
 	private void initialiseDatePicker() {
 		// Create new DateTextField and assign date format
 		dateReceivedDp = new DateTextField("addressVo.address.dateReceived", au.org.theark.core.Constants.DD_MM_YYYY);
-		ArkDatePicker dPDateReceived = new ArkDatePicker();
-		dPDateReceived.bind(dateReceivedDp);
-		dateReceivedDp.add(dPDateReceived);
-		
-		//Valid From
-		dateValidFrom=new DateTextField("addressVo.address.validFrom", au.org.theark.core.Constants.DD_MM_YYYY);
-		dateValidFrom.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-			private static final long	serialVersionUID	= 1L;
-				@Override
-				protected void onUpdate(AjaxRequestTarget target) {
-					target.add(dateValidFrom);
-				}
-			});
-		ArkDatePicker dPDateValidFrom = new ArkDatePicker();
-		dPDateValidFrom.bind(dateValidFrom);
-		dateValidFrom.add(dPDateValidFrom);
-		//Valid To
-		dateValidTo=new DateTextField("addressVo.address.validTo", au.org.theark.core.Constants.DD_MM_YYYY);
-		dateValidTo.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-		private static final long	serialVersionUID	= 1L;
-			@Override
-			protected void onUpdate(AjaxRequestTarget target) {
-				target.add(dateValidTo);
-			}
-		});
-		ArkDatePicker dPDateValidTo = new ArkDatePicker();
-		dPDateValidTo.bind(dateValidTo);
-		dateValidTo.add(dPDateValidTo);
+		ArkDatePicker datePicker = new ArkDatePicker();
+		datePicker.bind(dateReceivedDp);
+		dateReceivedDp.add(datePicker);
 	}
 
 	/*
@@ -302,22 +266,25 @@ public class AddressDetailForm extends AbstractDetailForm<ContactVO> {
 	protected void attachValidators() {
 
 		addressLineOneTxtFld.add(StringValidator.maximumLength(255));
+
 		sourceTxtFld.add(StringValidator.maximumLength(255));
+
 		streetAddressTxtFld.setRequired(true).setLabel(new StringResourceModel("address.streetAddress.RequiredValidator", this, new Model<String>("Street Address")));
+
 		streetAddressTxtFld.add(LengthBetweenValidator.maximumLength(255));
+
 		cityTxtFld.setRequired(true).setLabel(new StringResourceModel("address.city.RequiredValidator", this, new Model<String>("City")));
+
 		postCodeTxtFld.setRequired(true).setLabel(new StringResourceModel("address.postCode.RequiredValidator", this, new Model<String>("Post Code")));
 		// TODO User Centric ones for Max and Min
 		postCodeTxtFld.add(LengthBetweenValidator.maximumLength(10));
 		postCodeTxtFld.add(LengthBetweenValidator.minimumLength(4));
+
 		dateReceivedDp.add(DateValidator.maximum(new Date())).setLabel(new StringResourceModel("address.dateReceived.DateValidator.maximum", this, null));
+
 		addressTypeChoice.setRequired(true).setLabel(new StringResourceModel("address.addressType.RequiredValidator", this, new Model<String>("Address Type")));
 		addressStatusChoice.setRequired(true).setLabel(new StringResourceModel("address.addressStatus.RequiredValidator", this, new Model<String>("Address Status")));
 		stateChoice.setRequired(true).setLabel(new StringResourceModel("address.state.RequiredValidator", this, new Model<String>("State")));
-		//Bug fix Ark-1611
-		sourceTxtFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_DESCRIPTIVE_MAX_LENGTH_255));
-		cityTxtFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_NAME_MAX_LENGTH_50));
-		commentsTxtArea.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_COMMENTS_MAX_LENGTH_500));
 	}
 
 	/*
@@ -420,6 +387,10 @@ public class AddressDetailForm extends AbstractDetailForm<ContactVO> {
 		catch (ArkSystemException e) {
 			this.error("A system error has occured, Pleas contact support.");
 		}
+	}
+	
+	@Override
+	protected void onTest(Form<ContactVO> containerForm, AjaxRequestTarget target) {
 	}
 
 	/*

@@ -31,7 +31,7 @@ public class ConsentDetailsReportVO extends GenericReportViewVO {
 
 	protected LinkSubjectStudy	linkSubjectStudy;
 	protected ConsentStatus		consentStatus;
-	protected Date				consentDate;
+	protected Date					consentDate;
 	protected StudyComp			studyComp;
 
 	public ConsentDetailsReportVO() {
@@ -69,6 +69,5 @@ public class ConsentDetailsReportVO extends GenericReportViewVO {
 	public void setStudyComp(StudyComp studyComp) {
 		this.studyComp = studyComp;
 	}
-	
 
 }

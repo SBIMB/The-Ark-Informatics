@@ -26,6 +26,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -34,14 +36,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import za.ac.theark.core.model.study.entity.UploadMethod;
 import au.org.theark.core.Constants;
 
 /**
  * Upload entity. @author MyEclipse Persistence Tools
  */
 @SuppressWarnings("serial")
-@Entity(name = "au.org.theark.core.model.study.entity")
+@Entity(name = "au.org.theark.core.model.study.entity.Upload")
 @Table(name = "UPLOAD", schema = Constants.STUDY_SCHEMA)
+@Inheritance(strategy=InheritanceType.JOINED)
 public class Upload implements java.io.Serializable {
 
 	private Long id;
@@ -52,6 +56,7 @@ public class Upload implements java.io.Serializable {
 	private Payload payload;
 	private DelimiterType delimiterType;
 	private UploadType uploadType;
+	private UploadMethod uploadMethod;
 	private String filename;
 	private String checksum;
 	private Date startTime;
@@ -60,21 +65,19 @@ public class Upload implements java.io.Serializable {
 	private String userId;
 	private ArkFunction arkFunction;
 	private UploadStatus uploadStatus;
-	private UploadLevel uploadLevel;// introduced upload level to check whether it is field or a category.
-	
 
 	public Upload() {
+		
 	}
 
 	public Upload(Long id, FileFormat fileFormat, DelimiterType delimiterType,
-			String filename, byte[] uploadReport, ArkFunction arkFunction , UploadLevel uploadLevel) {
+			String filename, byte[] uploadReport, ArkFunction arkFunction) {
 		this.id = id;
 		this.fileFormat = fileFormat;
 		this.delimiterType = delimiterType;
 		this.filename = filename;
 		this.uploadReport = uploadReport;
 		this.arkFunction = arkFunction;
-		this.uploadLevel=uploadLevel;
 	}
 
 	@Id
@@ -246,13 +249,23 @@ public class Upload implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "UPLOAD_TYPE_ID")
+	@JoinColumn(name = "UPLOAD_TYPE_ID", nullable = false)
 	public UploadType getUploadType() {
 		return uploadType;
 	}
 
 	public void setUploadType(UploadType uploadType) {
 		this.uploadType = uploadType;
+	}
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "UPLOAD_METHOD_ID", nullable = false)
+	public UploadMethod getUploadMethod() {
+		return uploadMethod;
+	}
+
+	public void setUploadMethod(UploadMethod uploadMethod) {
+		this.uploadMethod = uploadMethod;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -266,15 +279,4 @@ public class Upload implements java.io.Serializable {
 		this.uploadStatus = uploadStatus;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "UPLOAD_LEVEL_ID")
-	public UploadLevel getUploadLevel() {
-		return uploadLevel;
-	}
-
-	public void setUploadLevel(UploadLevel uploadLevel) {
-		this.uploadLevel = uploadLevel;
-	}
-
-	
 }

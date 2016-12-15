@@ -27,12 +27,15 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import au.org.theark.admin.web.component.activitymonitor.ActivityMonitorContainerPanel;
 import au.org.theark.admin.web.component.function.FunctionContainerPanel;
 import au.org.theark.admin.web.component.module.ModuleContainerPanel;
 import au.org.theark.admin.web.component.modulefunction.ModuleFunctionContainerPanel;
 import au.org.theark.admin.web.component.modulerole.ModuleRoleContainerPanel;
+import za.ac.theark.admin.web.component.redcap.RedcapContainerPanel;
 import au.org.theark.admin.web.component.role.RoleContainerPanel;
 import au.org.theark.admin.web.component.rolePolicy.RolePolicyContainerPanel;
 import au.org.theark.core.model.study.entity.ArkFunction;
@@ -44,22 +47,29 @@ import au.org.theark.core.web.component.tabbedPanel.ArkAjaxTabbedPanel;
 public class AdminSubMenuTab extends AbstractArkTabPanel {
 
 	private static final long			serialVersionUID	= 2808674930679468072L;
+	
+	protected transient Logger		log					= LoggerFactory.getLogger(AdminSubMenuTab.class);
+	
 	@SpringBean(name = au.org.theark.core.Constants.ARK_COMMON_SERVICE)
 	private IArkCommonService<Void>	iArkCommonService;
 	private List<ITab>					moduleSubTabsList	= new ArrayList<ITab>();
 
 	public AdminSubMenuTab(String id) {
 		super(id);
+		log.info("Building Tabs - " + id);
 		buildTabs();
 	}
 
 	public void buildTabs() {
 		ArkModule arkModule = iArkCommonService.getArkModuleByName(au.org.theark.core.Constants.ARK_MODULE_ADMIN);
+		log.info("Getting Functions - " + arkModule.getName());
 		List<ArkFunction> arkFunctionList = iArkCommonService.getModuleFunction(arkModule);
 
 		// TODO: Shoud admin sub-menus really access the database to determine their visibility?
 		for (final ArkFunction arkFunction : arkFunctionList) {
+			log.info("Testing - " + arkFunction.getResourceKey());
 			AbstractTab tab = new AbstractTab(new StringResourceModel(arkFunction.getResourceKey(), this, null)) {
+				
 				/**
 				 * 
 				 */
@@ -86,6 +96,10 @@ public class AdminSubMenuTab extends AbstractArkTabPanel {
 			
 		};
 		moduleSubTabsList.add(tab);
+		
+		for(ITab af : moduleSubTabsList){
+			log.debug("Tabs - " + af.getTitle().toString());
+		}
 
 		ArkAjaxTabbedPanel moduleTabbedPanel = new ArkAjaxTabbedPanel("adminSubMenus", moduleSubTabsList);
 		add(moduleTabbedPanel);
@@ -111,6 +125,10 @@ public class AdminSubMenuTab extends AbstractArkTabPanel {
 		}
 		else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_ROLE)) {
 			RoleContainerPanel containerPanel = new RoleContainerPanel(panelId);
+			panelToReturn = containerPanel;
+		}
+		else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_REDCap)) {
+			RedcapContainerPanel containerPanel = new RedcapContainerPanel(panelId);
 			panelToReturn = containerPanel;
 		}
 		else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_MODULE_ROLE)) {

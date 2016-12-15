@@ -148,6 +148,10 @@ public class DetailForm extends AbstractDetailForm<AdminVO> {
 		
 		onSavePostProcess(target);
 	}
+	
+	protected void onTest(Form<AdminVO> containerForm, AjaxRequestTarget target) {
+		
+	}
 
 	protected void onCancel(AjaxRequestTarget target) {
 		containerForm.setModelObject(new AdminVO());

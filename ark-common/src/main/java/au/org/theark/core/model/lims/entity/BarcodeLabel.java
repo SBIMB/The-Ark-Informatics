@@ -34,9 +34,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
 import au.org.theark.core.model.Constants;
 import au.org.theark.core.model.study.entity.Study;
 
@@ -47,7 +44,6 @@ import au.org.theark.core.model.study.entity.Study;
  */
 @Entity
 @Table(name = "barcode_label", schema = Constants.LIMS_TABLE_SCHEMA)
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class BarcodeLabel implements java.io.Serializable {
 
 

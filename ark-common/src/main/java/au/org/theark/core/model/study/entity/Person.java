@@ -18,12 +18,9 @@
  ******************************************************************************/
 package au.org.theark.core.model.study.entity;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -39,22 +36,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
 
 import au.org.theark.core.Constants;
-import au.org.theark.core.audit.annotations.ArkAuditDisplay;
 
 /**
  * Person entity. @author MyEclipse Persistence Tools
  */
 @Entity
 @Table(name = "PERSON", schema = Constants.STUDY_SCHEMA)
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class Person implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -64,6 +53,7 @@ public class Person implements java.io.Serializable {
 	private String middleName;
 	private String lastName;
 	private String preferredName;
+	private EthnicityType ethnicityType;
 	private GenderType genderType;
 	private VitalStatus vitalStatus;
 	private TitleType titleType;
@@ -77,7 +67,6 @@ public class Person implements java.io.Serializable {
 	private EmailStatus preferredEmailStatus;
 	private EmailStatus otherEmailStatus;
 	private Date dateLastKnownAlive;
-	private String currentOrDeathAge;
 
 	private Set<LinkSubjectStudy> linkSubjectStudies = new HashSet<LinkSubjectStudy>(0);
 	private Set<Address> addresses = new HashSet<Address>(0);
@@ -86,7 +75,7 @@ public class Person implements java.io.Serializable {
 	private Set<LinkSubjectContact> linkSubjectContactsForContactKey = new HashSet<LinkSubjectContact>(0);
 	private Set<LinkSubjectContact> linkSubjectContactsForSubjectKey = new HashSet<LinkSubjectContact>(0);
 	private Set<PersonLastnameHistory> personLastnameHistory = new HashSet<PersonLastnameHistory>(0);
-	private List<OtherID> otherIDs = new ArrayList<OtherID>(0);
+	private Set<OtherID> otherIDs = new HashSet<OtherID>(0);
 
 	public Person() {
 	}
@@ -99,7 +88,6 @@ public class Person implements java.io.Serializable {
 	@SequenceGenerator(name = "person_generator", sequenceName = "PERSON_SEQUENCE")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "person_generator")
 	@Column(name = "ID", unique = true, nullable = false, precision = 22, scale = 0)
-	@ArkAuditDisplay
 	public Long getId() {
 		return this.id;
 	}
@@ -107,7 +95,7 @@ public class Person implements java.io.Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	@Column(name = "FIRST_NAME", length = 50)
 	public String getFirstName() {
 		return this.firstName;
@@ -163,6 +151,16 @@ public class Person implements java.io.Serializable {
 	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "ETHNICITY_TYPE_ID ")
+	public EthnicityType getEthnicityType() {
+		return ethnicityType;
+	}
+
+	public void setEthnicityType(EthnicityType ethnicityType) {
+		this.ethnicityType = ethnicityType;
+	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "VITAL_STATUS_ID")
@@ -203,7 +201,6 @@ public class Person implements java.io.Serializable {
 		this.linkSubjectStudies = linkSubjectStudies;
 	}
 
-	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "person")
 	public Set<Address> getAddresses() {
 		return addresses;
@@ -318,12 +315,12 @@ public class Person implements java.io.Serializable {
 		return personLastnameHistory;
 	}
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "person", orphanRemoval=true)
-	public List<OtherID> getOtherIDs() {
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "person")
+	public Set<OtherID> getOtherIDs() {
 		return otherIDs;
 	}
 	
-	public void setOtherIDs(List<OtherID> otherIDs) {
+	public void setOtherIDs(Set<OtherID> otherIDs) {
 		this.otherIDs = otherIDs;
 	}
 
@@ -381,6 +378,7 @@ public class Person implements java.io.Serializable {
 		this.otherEmailStatus = otherEmailStatus;
 	}
 
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PREFERRED_EMAIL_STATUS")
 	public EmailStatus getPreferredEmailStatus() {
@@ -390,25 +388,12 @@ public class Person implements java.io.Serializable {
 	public void setPreferredEmailStatus(EmailStatus preferredEmailStatus) {
 		this.preferredEmailStatus = preferredEmailStatus;
 	}
-	@Column(name = "CURRENT_OR_DEATH_AGE", length = 50)
-	public String getCurrentOrDeathAge() {
-		return currentOrDeathAge;
-	}
+
 	
-	public void setCurrentOrDeathAge(String currentOrDeathAge) {
-		this.currentOrDeathAge = currentOrDeathAge;
-	}
-
-	@Transient
-	public String getDescriptiveLastNameHistory() {
-		return getPersonLastnameHistory().stream().map(name -> name.getLastName()).collect(Collectors.joining(", "));
-	}
-
-	@Transient
-	public String getDescriptiveOtherIDs() {
-		return getOtherIDs().stream().map(otherID -> otherID.getOtherID_Source() + ": " + otherID.getOtherID()).collect(Collectors.joining("\n"));
-	}
-
+	
+	
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -427,6 +412,8 @@ public class Person implements java.io.Serializable {
 				+ ((dateOfDeath == null) ? 0 : dateOfDeath.hashCode());
 		result = prime * result
 				+ ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result
+				+ ((ethnicityType == null) ? 0 : ethnicityType.hashCode());
 		result = prime * result
 				+ ((genderType == null) ? 0 : genderType.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
@@ -498,6 +485,11 @@ public class Person implements java.io.Serializable {
 			if (other.firstName != null)
 				return false;
 		} else if (!firstName.equals(other.firstName))
+			return false;
+		if (ethnicityType == null) {
+			if (other.ethnicityType != null)
+				return false;
+		} else if (!ethnicityType.equals(other.ethnicityType))
 			return false;
 		if (genderType == null) {
 			if (other.genderType != null)
@@ -572,11 +564,7 @@ public class Person implements java.io.Serializable {
 			return false;
 		return true;
 	}
-
-	@Override
-	public String toString() {
-		return "Person [id=" + id + ", firstName=" + firstName
-				+ ", middleName=" + middleName + ", lastName=" + lastName + "]";
-	}
+	
+	
 
 }

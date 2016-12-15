@@ -129,6 +129,10 @@ public class ProcessDetailForm extends AbstractDetailForm<Process> {
 		
 		target.add(feedBackPanel);
 	}
+	
+	@Override
+	protected void onTest(Form<Process> containerForm, AjaxRequestTarget target) {
+	}
 
 	/*
 	 * (non-Javadoc)

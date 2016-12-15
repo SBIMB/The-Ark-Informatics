@@ -70,8 +70,6 @@ public abstract class AbstractInventoryDetailForm<T> extends Form<T> {
 	protected WebMarkupContainer	detailFormContainer;
 	//protected WebMarkupContainer	viewButtonContainer;
 	protected WebMarkupContainer	editButtonContainer;
-	
-	protected Panel containerPanel;
 
 	protected AjaxButton				saveButton;
 	protected AjaxButton				cancelButton;
@@ -93,14 +91,13 @@ public abstract class AbstractInventoryDetailForm<T> extends Form<T> {
 	 * @param tree
 	 * @param node 
 	 */
-	public AbstractInventoryDetailForm(String id, FeedbackPanel feedbackPanel, WebMarkupContainer detailContainer, Form<T> containerForm, InventoryLinkTree tree, DefaultMutableTreeNode node, Panel containerPaenl) {
+	public AbstractInventoryDetailForm(String id, FeedbackPanel feedbackPanel, WebMarkupContainer detailContainer, Form<T> containerForm, InventoryLinkTree tree, DefaultMutableTreeNode node) {
 		super(id, containerForm.getModel());
 		this.feedbackPanel = feedbackPanel;
 		this.detailContainer = detailContainer;
 		this.containerForm = containerForm;
 		this.tree = tree;
 		this.node = node;
-		this.containerPanel = containerPaenl;
 		setOutputMarkupPlaceholderTag(true);
 		setModelObject(containerForm.getModelObject());
 		initialiseForm();
@@ -140,7 +137,6 @@ public abstract class AbstractInventoryDetailForm<T> extends Form<T> {
 			public void onSubmit(AjaxRequestTarget target, Form<?> form) {
 				onSave(containerForm, target);
 				target.add(detailFormContainer);
-				target.add(containerPanel);
 			}
 
 			@SuppressWarnings("unchecked")

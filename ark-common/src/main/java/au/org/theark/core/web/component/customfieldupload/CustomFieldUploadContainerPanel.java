@@ -48,13 +48,9 @@ public class CustomFieldUploadContainerPanel extends AbstractContainerPanel<Cust
 
 	@SpringBean(name = au.org.theark.core.Constants.ARK_COMMON_SERVICE)
 	private IArkCommonService<Void>			iArkCommonService;
-	
-	//private String templateName;
 
 	public CustomFieldUploadContainerPanel(String id, ArkFunction arkFunction) {
 		super(id);
-		
-		//this.templateName = templateName;
 
 		/* Initialise the CPM */
 		cpModel = new CompoundPropertyModel<CustomFieldUploadVO>(new CustomFieldUploadVO());

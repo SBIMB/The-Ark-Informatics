@@ -70,7 +70,7 @@ public class LoginForm extends StatelessForm<ArkUserVO> {
 	private TextField<String>			userNameTxtFld		= new TextField<String>("userName");
 	private PasswordTextField			passwordTxtFld		= new PasswordTextField("password");
 
-	private Button							aafLogInButton;
+	//private Button							aafLogInButton;
 	private Button							signInButton;
 	private Button							forgotPasswordButton;
 
@@ -87,7 +87,7 @@ public class LoginForm extends StatelessForm<ArkUserVO> {
 		feedbackPanel.setOutputMarkupId(true);
 		add(feedbackPanel);
 		
-		aafLogInButton = new AjaxButton("aafLogInButton"){
+		/*aafLogInButton = new AjaxButton("aafLogInButton"){
 			private static final long	serialVersionUID	= 1L;
 
 			@Override
@@ -101,7 +101,7 @@ public class LoginForm extends StatelessForm<ArkUserVO> {
 			}
 		};
 		aafLogInButton.setDefaultFormProcessing(false);
-		aafLogInButton.setVisible(ArkShibbolethServiceProviderContextSource.useShibboleth.equalsIgnoreCase("true"));
+		aafLogInButton.setVisible(ArkShibbolethServiceProviderContextSource.useShibboleth.equalsIgnoreCase("true"));*/
 		
 		signInButton = new AjaxButton("signInButton") {
 
@@ -160,7 +160,7 @@ public class LoginForm extends StatelessForm<ArkUserVO> {
 	private void addComponentsToForm() {
 		add(userNameTxtFld.setRequired(true));
 		add(passwordTxtFld.setRequired(true));
-		add(aafLogInButton);
+		//add(aafLogInButton);
 		add(signInButton);
 		add(forgotPasswordButton);
 	}
@@ -175,7 +175,7 @@ public class LoginForm extends StatelessForm<ArkUserVO> {
 		Subject subject = SecurityUtils.getSubject();
 		// Disable Remember me
 		UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(user.getUserName(), user.getPassword(), false);
-
+		
 		try {
 			// This will propagate to the Realm
 			subject.login(usernamePasswordToken);

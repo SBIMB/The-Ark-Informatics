@@ -32,12 +32,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
 
 import au.org.theark.core.model.Constants;
 
@@ -48,15 +44,13 @@ import au.org.theark.core.model.Constants;
 
 @Entity
 @Table(name = "CUSTOM_FIELD", schema = Constants.STUDY_SCHEMA)
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class CustomField implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String name;
-	private CustomFieldCategory customFieldCategory;
 	private String description;
-	private FieldType fieldType;//Charactor,Number,Date,Look up.
+	private FieldType fieldType;
 	private Study study;
 	private ArkFunction arkFunction;
 	private UnitType unitType;
@@ -69,11 +63,8 @@ public class CustomField implements Serializable {
 	private String defaultValue;
 	//Add unit type as String
 	private String unitTypeInText;
-	private CustomFieldType customFieldType;//Subject or Family but later can be more types.
 
 	private Set<CustomFieldDisplay> customFieldDisplay = new HashSet<CustomFieldDisplay>();
-	
-	private Set<LinkCalendarCustomField> linkCalendarCustomField = new HashSet<LinkCalendarCustomField>();
 
 	public CustomField() {
 
@@ -100,16 +91,6 @@ public class CustomField implements Serializable {
 	public void setStudy(Study study) {
 		this.study = study;
 	}
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CATEGORY_ID")
-	public CustomFieldCategory getCustomFieldCategory() {
-		return customFieldCategory;
-	}
-
-	public void setCustomFieldCategory(CustomFieldCategory customFieldCategory) {
-		this.customFieldCategory = customFieldCategory;
-	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "FIELD_TYPE_ID", nullable = false)
@@ -130,12 +111,11 @@ public class CustomField implements Serializable {
 		this.name = name;
 	}
 
-	@Column(name = "DESCRIPTION", length = 1024)
 	public String getDescription() {
 		return description;
 	}
 
-	
+	@Column(name = "DESCRIPTION", length = 1024)
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -240,25 +220,7 @@ public class CustomField implements Serializable {
 	public void setUnitTypeInText(String unitTypeInText) {
 		this.unitTypeInText = unitTypeInText;
 	}
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CUSTOM_FIELD_TYPE_ID")
-	public CustomFieldType getCustomFieldType() {
-		return customFieldType;
-	}
 
-	public void setCustomFieldType(CustomFieldType customFieldType) {
-		this.customFieldType = customFieldType;
-	}
-	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "customField")
-	public Set<LinkCalendarCustomField> getLinkCalendarCustomField() {
-		return linkCalendarCustomField;
-	}
-
-	public void setLinkCalendarCustomField(Set<LinkCalendarCustomField> linkCalendarCustomField) {
-		this.linkCalendarCustomField = linkCalendarCustomField;
-	}
 
 	@Override
 	public int hashCode() {

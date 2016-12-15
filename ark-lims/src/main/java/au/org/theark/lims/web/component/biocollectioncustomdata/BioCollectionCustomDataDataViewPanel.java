@@ -35,7 +35,6 @@ import au.org.theark.core.model.lims.entity.BioCollectionCustomFieldData;
 import au.org.theark.core.model.study.entity.ArkFunction;
 import au.org.theark.core.model.study.entity.CustomField;
 import au.org.theark.core.security.ArkPermissionHelper;
-import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.web.component.ArkDataProvider2;
 import au.org.theark.core.web.component.customfield.dataentry.CustomDataEditorDataView;
 import au.org.theark.lims.model.vo.BioCollectionCustomDataVO;
@@ -58,9 +57,6 @@ public class BioCollectionCustomDataDataViewPanel extends Panel {
 	@SpringBean(name = au.org.theark.lims.web.Constants.LIMS_SERVICE)
 	protected ILimsService					iLimsService;
 	
-	@SpringBean(name = au.org.theark.core.Constants.ARK_COMMON_SERVICE)
-	private static IArkCommonService<Void>	iArkCommonService;
-	
 	protected ArkDataProvider2<BioCollectionCustomDataVO, BioCollectionCustomFieldData> scdDataProvider;
 	protected DataView<BioCollectionCustomFieldData> dataView;
 
@@ -74,7 +70,7 @@ public class BioCollectionCustomDataDataViewPanel extends Panel {
 	public BioCollectionCustomDataDataViewPanel initialisePanel(Integer numRowsPerPage) {	
 		initialiseDataView();
 		if (numRowsPerPage != null) {
-			dataView.setItemsPerPage(numRowsPerPage);	// iArkCommonService.getUserConfig(Constants.CONFIG_ROWS_PER_PAGE).getIntValue());
+			dataView.setItemsPerPage(numRowsPerPage);	// iArkCommonService.getRowsPerPage());
 		}
 		
 		this.add(dataView);
@@ -96,9 +92,7 @@ public class BioCollectionCustomDataDataViewPanel extends Panel {
 	
 				public Iterator<BioCollectionCustomFieldData> iterator(int first, int count) {
 					BioCollection bc = criteriaModel.getObject().getBioCollection();
-					//Change the ark function according to the custom field inserted ark function to get all related details.
 					ArkFunction arkFunction = criteriaModel.getObject().getArkFunction();
-					//ArkFunction arkFunction = iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_LIMS_CUSTOM_FIELD);
 	
 					List<BioCollectionCustomFieldData> bioCollectionCustomDataList = iLimsService.getBioCollectionCustomFieldDataList(bc, arkFunction, first, count);
 					cpModel.getObject().setCustomFieldDataList(bioCollectionCustomDataList);

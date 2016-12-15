@@ -19,7 +19,6 @@
 package au.org.theark.study.service;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -48,9 +47,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import au.org.theark.core.dao.IAuditDao;
-import au.org.theark.core.dao.ICustomFieldDao;
 import au.org.theark.core.exception.ArkBaseException;
-import au.org.theark.core.exception.ArkFileNotFoundException;
 import au.org.theark.core.exception.ArkSubjectInsertException;
 import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.ArkUniqueException;
@@ -81,12 +78,9 @@ import au.org.theark.core.model.study.entity.CorrespondenceModeType;
 import au.org.theark.core.model.study.entity.CorrespondenceOutcomeType;
 import au.org.theark.core.model.study.entity.Correspondences;
 import au.org.theark.core.model.study.entity.CustomField;
-import au.org.theark.core.model.study.entity.CustomFieldCategory;
-import au.org.theark.core.model.study.entity.CustomFieldType;
 import au.org.theark.core.model.study.entity.EmailStatus;
-import au.org.theark.core.model.study.entity.FamilyCustomFieldData;
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.GenderType;
-import au.org.theark.core.model.study.entity.ICustomFieldData;
 import au.org.theark.core.model.study.entity.LinkStudySubstudy;
 import au.org.theark.core.model.study.entity.LinkSubjectPedigree;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
@@ -99,7 +93,6 @@ import au.org.theark.core.model.study.entity.Phone;
 import au.org.theark.core.model.study.entity.PhoneStatus;
 import au.org.theark.core.model.study.entity.PhoneType;
 import au.org.theark.core.model.study.entity.Study;
-import au.org.theark.core.model.study.entity.StudyCalendar;
 import au.org.theark.core.model.study.entity.StudyComp;
 import au.org.theark.core.model.study.entity.StudyPedigreeConfiguration;
 import au.org.theark.core.model.study.entity.StudyStatus;
@@ -113,6 +106,7 @@ import au.org.theark.core.model.study.entity.VitalStatus;
 import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.vo.ArkUserVO;
 import au.org.theark.core.vo.ConsentVO;
+import au.org.theark.core.vo.CustomFieldVO;
 import au.org.theark.core.vo.StudyModelVO;
 import au.org.theark.core.vo.SubjectVO;
 import au.org.theark.core.vo.UploadVO;
@@ -120,15 +114,11 @@ import au.org.theark.study.model.capsule.ArkRelativeCapsule;
 import au.org.theark.study.model.capsule.RelativeCapsule;
 import au.org.theark.study.model.dao.IStudyDao;
 import au.org.theark.study.model.vo.RelationshipVo;
-import au.org.theark.study.model.vo.StudyCalendarVo;
 import au.org.theark.study.util.ConsentHistoryComparator;
 import au.org.theark.study.util.DataUploader;
 import au.org.theark.study.util.LinkSubjectStudyConsentHistoryComparator;
-import au.org.theark.study.util.PedigreeUploadValidator;
 import au.org.theark.study.util.SubjectUploadValidator;
 import au.org.theark.study.web.Constants;
-
-
 
 @Transactional
 @Service(Constants.STUDY_SERVICE)
@@ -136,11 +126,10 @@ public class StudyServiceImpl implements IStudyService {
 
 	private static Logger		log	= LoggerFactory.getLogger(StudyServiceImpl.class);
 
-	private IArkCommonService		iArkCommonService;
+	private IArkCommonService	iArkCommonService;
 	private IUserService			iUserService;
 	private IStudyDao				iStudyDao;
 	private IAuditDao				iAuditDao;
-	private ICustomFieldDao 		iCustomFieldDao;
 
 	public IArkCommonService getiArkCommonService() {
 		return iArkCommonService;
@@ -195,13 +184,6 @@ public class StudyServiceImpl implements IStudyService {
 
 	public List<StudyStatus> getListOfStudyStatus() {
 		return iStudyDao.getListOfStudyStatus();
-	}
-	public ICustomFieldDao getiCustomFieldDao() {
-		return iCustomFieldDao;
-	}
-	@Autowired
-	public void setiCustomFieldDao(ICustomFieldDao iCustomFieldDao) {
-		this.iCustomFieldDao = iCustomFieldDao;
 	}
 
 	public void createStudy(StudyModelVO studyModelVo) {
@@ -272,6 +254,13 @@ public class StudyServiceImpl implements IStudyService {
 		ah.setEntityId(studyModelVo.getStudy().getId());
 		ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_STUDY);
 		iArkCommonService.createAuditHistory(ah);
+	}
+	
+	
+
+	public void update(LinkSubjectStudy linkSubjectStudy) {
+		// TODO Auto-generated method stub
+		iStudyDao.update(linkSubjectStudy);
 	}
 
 	public void updateStudy(StudyModelVO studyModelVo) throws CannotRemoveArkModuleException {
@@ -489,12 +478,12 @@ public class StudyServiceImpl implements IStudyService {
 	private void createLssConsentHistory(LinkSubjectStudy newLinkSubjectStudy) {
 		LssConsentHistory lssConsentHistory = new LssConsentHistory();
 		lssConsentHistory.setLinkSubjectStudy(newLinkSubjectStudy);
-		lssConsentHistory.setConsentToActiveContact(newLinkSubjectStudy.getConsentToActiveContact());
-		lssConsentHistory.setConsentToPassiveDataGathering(newLinkSubjectStudy.getConsentToPassiveDataGathering());
-		lssConsentHistory.setConsentToUseData(newLinkSubjectStudy.getConsentToUseData());
-		lssConsentHistory.setConsentStatus(newLinkSubjectStudy.getConsentStatus());
-		lssConsentHistory.setConsentType(newLinkSubjectStudy.getConsentType());
 		lssConsentHistory.setConsentDate(newLinkSubjectStudy.getConsentDate());
+		lssConsentHistory.setConsentStatus(newLinkSubjectStudy.getConsentStatus());
+		lssConsentHistory.setConsentToUseData(newLinkSubjectStudy.getConsentToUseData());
+		lssConsentHistory.setConsentToUseBiospecimen(newLinkSubjectStudy.getConsentToUseBiospecimen());
+		lssConsentHistory.setConsentToShareData(newLinkSubjectStudy.getConsentToShareData());
+		lssConsentHistory.setConsentToShareBiospecimen(newLinkSubjectStudy.getConsentToShareBiospecimen());
 		lssConsentHistory.setConsentDownloaded(newLinkSubjectStudy.getConsentDownloaded());
 		iAuditDao.createLssConsentHistory(lssConsentHistory);
 	}
@@ -543,6 +532,8 @@ public class StudyServiceImpl implements IStudyService {
 			}
 		}
 	}
+	
+	
 
 	/**
 	 * Look up a Person based on the supplied Long ID that represents a Person primary key. This id is the primary key of the Person table that can
@@ -740,7 +731,7 @@ public class StudyServiceImpl implements IStudyService {
 			String fileId = iArkCommonService.generateArkFileId(fileName);
 
 			// Set unique subject file id
-			correspondence.setAttachmentFileId(fileId);
+			correspondence.setAttachementFileId(fileId);
 
 			// Save the attachment to directory configured in application.properties {@code fileAttachmentDir}
 			iArkCommonService.saveArkFileAttachment(studyId, subjectUID, Constants.ARK_SUBJECT_CORRESPONDENCE_DIR, fileName, payload, fileId);
@@ -755,20 +746,20 @@ public class StudyServiceImpl implements IStudyService {
 		iStudyDao.update(correspondence);
 	}
 	
-	public void update(Correspondences correspondence, String checksum) throws ArkSystemException, EntityNotFoundException, ArkFileNotFoundException {
+	public void update(Correspondences correspondence, String checksum) throws ArkSystemException, EntityNotFoundException {
 		Long studyId = correspondence.getLss().getStudy().getId();
 		String subjectUID = correspondence.getLss().getSubjectUID();
 		String fileName = correspondence.getAttachmentFilename();
 		byte[] payload = correspondence.getAttachmentPayload();
-		String prevChecksum = correspondence.getAttachmentChecksum();
+		String prevChecksum = correspondence.getAttachementChecksum();
 
 		String fileId = null;
 		if (correspondence.getAttachmentPayload() != null) {
 
-			if (correspondence.getAttachmentFileId() != null) {
+			if (correspondence.getAttachementFileId() != null) {
 
 				// Get existing file Id
-				fileId = correspondence.getAttachmentFileId();
+				fileId = correspondence.getAttachementFileId();
 
 				// Delete existing attachment
 				iArkCommonService.deleteArkFileAttachment(studyId, subjectUID, fileId, Constants.ARK_SUBJECT_CORRESPONDENCE_DIR,prevChecksum);
@@ -777,7 +768,7 @@ public class StudyServiceImpl implements IStudyService {
 				fileId = iArkCommonService.generateArkFileId(fileName);
 
 				// Set unique subject file id
-				correspondence.setAttachmentFileId(fileId);
+				correspondence.setAttachementFileId(fileId);
 
 				// Save the attachment to directory configured in application.properties {@code fileAttachmentDir}
 				iArkCommonService.saveArkFileAttachment(studyId, subjectUID, Constants.ARK_SUBJECT_CORRESPONDENCE_DIR, fileName, payload, fileId);
@@ -787,25 +778,25 @@ public class StudyServiceImpl implements IStudyService {
 				fileId = iArkCommonService.generateArkFileId(fileName);
 
 				// Set unique subject file id
-				correspondence.setAttachmentFileId(fileId);
+				correspondence.setAttachementFileId(fileId);
 
 				// Save the attachment to directory configured in application.properties {@code fileAttachmentDir}
 				iArkCommonService.saveArkFileAttachment(studyId, subjectUID, Constants.ARK_SUBJECT_CORRESPONDENCE_DIR, fileName, payload, fileId);
 			}
 			//Set new file checksum
-			correspondence.setAttachmentChecksum(checksum);
+			correspondence.setAttachementChecksum(checksum);
 		}
 		else {
-			if (correspondence.getAttachmentFileId() != null) {
+			if (correspondence.getAttachementFileId() != null) {
 				// Get existing file Id
-				fileId = correspondence.getAttachmentFileId();
+				fileId = correspondence.getAttachementFileId();
 
 				// Delete existing attachment
 				iArkCommonService.deleteArkFileAttachment(studyId, subjectUID, fileId, Constants.ARK_SUBJECT_CORRESPONDENCE_DIR,prevChecksum);
 				
 				//remove existing attachment file id and checksum
-				correspondence.setAttachmentFileId(null);
-				correspondence.setAttachmentChecksum(null);
+				correspondence.setAttachementFileId(null);
+				correspondence.setAttachementChecksum(null);
 			}
 		}
 		// Remove the attachment
@@ -815,11 +806,11 @@ public class StudyServiceImpl implements IStudyService {
 
 	public void delete(Correspondences correspondence) throws ArkSystemException, EntityNotFoundException {
 
-		if (correspondence.getAttachmentFileId() != null) {
+		if (correspondence.getAttachementFileId() != null) {
 			Long studyId = correspondence.getLss().getStudy().getId();
 			String subjectUID = correspondence.getLss().getSubjectUID();
-			String fileId =correspondence.getAttachmentFileId();
-			String checksum = correspondence.getAttachmentChecksum();
+			String fileId =correspondence.getAttachementFileId();
+			String checksum = correspondence.getAttachementChecksum();
 			try {
 					if (iArkCommonService.deleteArkFileAttachment(studyId, subjectUID, fileId, Constants.ARK_SUBJECT_CORRESPONDENCE_DIR, checksum)) {
 						log.info("File deleted successfully - " + fileId);
@@ -925,7 +916,7 @@ public class StudyServiceImpl implements IStudyService {
 		return iStudyDao.personHasPreferredMailingAddress(person, currentAddressId);
 	}
 
-	public void create(SubjectFile subjectFile, String directoryType) throws ArkSystemException {
+	public void create(SubjectFile subjectFile) throws ArkSystemException {
 
 		Long studyId = subjectFile.getLinkSubjectStudy().getStudy().getId();
 		String subjectUID = subjectFile.getLinkSubjectStudy().getSubjectUID();
@@ -939,7 +930,7 @@ public class StudyServiceImpl implements IStudyService {
 		subjectFile.setFileId(fileId);
 
 		// Save the attachment to directory configured in application.properties {@code fileAttachmentDir}
-		iArkCommonService.saveArkFileAttachment(studyId, subjectUID, directoryType, fileName, payload, fileId);
+		iArkCommonService.saveArkFileAttachment(studyId, subjectUID, Constants.ARK_SUBJECT_ATTACHEMENT_DIR, fileName, payload, fileId);
 
 		// Remove the attachment
 		subjectFile.setPayload(null);
@@ -965,7 +956,7 @@ public class StudyServiceImpl implements IStudyService {
 		iArkCommonService.createAuditHistory(ah);
 	}
 
-	public void update(SubjectFile subjectFile, String checksum) throws ArkSystemException, EntityNotFoundException, ArkFileNotFoundException {
+	public void update(SubjectFile subjectFile, String checksum) throws ArkSystemException, EntityNotFoundException {
 		Long studyId = subjectFile.getLinkSubjectStudy().getStudy().getId();
 		String subjectUID = subjectFile.getLinkSubjectStudy().getSubjectUID();
 		String fileName = subjectFile.getFilename();
@@ -1001,12 +992,15 @@ public class StudyServiceImpl implements IStudyService {
 		iArkCommonService.createAuditHistory(ah);
 	}
 
-	public void delete(SubjectFile subjectFile,String directoryType) throws ArkSystemException, EntityNotFoundException, ArkFileNotFoundException {
+	public void delete(SubjectFile subjectFile) throws ArkSystemException, EntityNotFoundException {
+
 		Long studyId = subjectFile.getLinkSubjectStudy().getStudy().getId();
 		String subjectUID = subjectFile.getLinkSubjectStudy().getSubjectUID();
 		String fileId = subjectFile.getFileId();
 		String checksum=subjectFile.getChecksum();
-				if (iArkCommonService.deleteArkFileAttachment(studyId, subjectUID, fileId, directoryType, checksum)) {
+		
+		try {
+				if (iArkCommonService.deleteArkFileAttachment(studyId, subjectUID, fileId, Constants.ARK_SUBJECT_ATTACHEMENT_DIR, checksum)) {
 					iStudyDao.delete(subjectFile);
 					AuditHistory ah = new AuditHistory();
 					ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_DELETED);
@@ -1018,6 +1012,10 @@ public class StudyServiceImpl implements IStudyService {
 				else {
 					log.error("Could not find the file - "+fileId);
 				}
+		}
+		catch (Exception e) {
+			throw new ArkSystemException(e.getMessage());
+		}
 	}
 
 	public List<SubjectFile> searchSubjectFile(SubjectFile subjectFile) throws EntityNotFoundException, ArkSystemException {
@@ -1100,24 +1098,14 @@ public class StudyServiceImpl implements IStudyService {
 		}
 		return subjectUploadValidator;
 	}
-	/**
-	 * 
-	 */
-	public StringBuffer uploadAndReportCustomDataFile(InputStream inputStream, long size, String fileFormat, char delimChar, long studyId,
-			List<String> listOfUIDsToUpdate,String customFieldType,UploadVO uploadVO) {
+
+	public StringBuffer uploadAndReportCustomDataFile(InputStream inputStream, long size, String fileFormat, char delimChar, long studyId, List<String> listOfUIDsToUpdate) {
 		StringBuffer uploadReport = null;
 		Study study = iArkCommonService.getStudy(studyId);
 		DataUploader dataUploader = new DataUploader(study, iArkCommonService, this);
 		try {
-			//String customFieldType=new UploadUtilities().getUploadFileDataFileSubjectOrFamily(inputStream,delimChar);
-			if(au.org.theark.core.Constants.SUBJECT.equals(customFieldType)){
-					uploadReport = dataUploader.uploadAndReportSubjectCustomDataFile(inputStream, size, fileFormat, delimChar, listOfUIDsToUpdate,uploadVO);
-			}else if(au.org.theark.core.Constants.FAMILY.equals(customFieldType)){
-				uploadReport = dataUploader.uploadAndReportFamilyCustomDataFile(inputStream, size, fileFormat, delimChar, listOfUIDsToUpdate);
-			}else{
-				log.error(Constants.FILE_FORMAT_EXCEPTION);
-				throw new FileFormatException(); 
-			}
+			// log.warn("uploadAndReportCustomDataFile list=" + listOfUIDsToUpdate);
+			uploadReport = dataUploader.uploadAndReportCustomDataFile(inputStream, size, fileFormat, delimChar, listOfUIDsToUpdate);
 		}
 		catch (FileFormatException ffe) {
 			log.error(Constants.FILE_FORMAT_EXCEPTION + ffe);
@@ -1162,13 +1150,13 @@ public class StudyServiceImpl implements IStudyService {
 		return uploadReport;
 	}
 	
-	public StringBuffer uploadAndReportSubjectAttachmentDataFile(InputStream inputStream, long size, String fileFormat, char delimChar, long studyId, String user_id) {
+	public StringBuffer uploadAndReportSubjectAttachmentDataFile(InputStream inputStream, long size, String fileFormat, char delimChar, long studyId) {
 		StringBuffer uploadReport = null;
 		Study study = iArkCommonService.getStudy(studyId);
 		DataUploader dataUploader = new DataUploader(study, iArkCommonService, this);
 		try {
 			// log.warn("uploadAndReportCustomDataFile list=" + listOfUIDsToUpdate);
-			uploadReport = dataUploader.uploadAndReportSubjectAttachmentDataFile(inputStream, size, fileFormat, delimChar, user_id);
+			uploadReport = dataUploader.uploadAndReportSubjectAttachmentDataFile(inputStream, size, fileFormat, delimChar);
 		}
 		catch (FileFormatException ffe) {
 			log.error(Constants.FILE_FORMAT_EXCEPTION + ffe);
@@ -1223,10 +1211,11 @@ public class StudyServiceImpl implements IStudyService {
 	}
 
 	public void processBatch(List<LinkSubjectStudy> subjectListToInsert, Study study, List<LinkSubjectStudy> subjectsToUpdate) {
+		log.info("Inside batch processor");
 		iStudyDao.processBatch(subjectListToInsert, study, subjectsToUpdate);
 	}
-	@Override
-	public void processFieldsBatch(List<? extends ICustomFieldData> fieldsToUpdate, Study study, List<? extends ICustomFieldData> fieldsToInsert) {
+
+	public void processFieldsBatch(List<SubjectCustomFieldData> fieldsToUpdate, Study study, List<SubjectCustomFieldData> fieldsToInsert) {
 		iStudyDao.processFieldsBatch(fieldsToUpdate, study, fieldsToInsert);
 	}
 
@@ -1271,25 +1260,16 @@ public class StudyServiceImpl implements IStudyService {
 		return iStudyDao.getSubjectLinkedToStudy(personId, study);
 	}
 
-	/*public List<SubjectCustomFieldData> getSubjectCustomFieldDataList(LinkSubjectStudy linkSubjectStudyCriteria, ArkFunction arkFunction, int first, int count) {
+	public List<SubjectCustomFieldData> getSubjectCustomFieldDataList(LinkSubjectStudy linkSubjectStudyCriteria, ArkFunction arkFunction, int first, int count) {
 		List<SubjectCustomFieldData> customfieldDataList = new ArrayList<SubjectCustomFieldData>();
 		customfieldDataList = iStudyDao.getSubjectCustomFieldDataList(linkSubjectStudyCriteria, arkFunction, first, count);
 		return customfieldDataList;
-	}*/
+	}
 
 	public long getSubjectCustomFieldDataCount(LinkSubjectStudy linkSubjectStudyCriteria, ArkFunction arkFunction) {
 		return iStudyDao.getSubjectCustomFieldDataCount(linkSubjectStudyCriteria, arkFunction);
 	}
-	
-	public long getFamilyCustomFieldDataCount(LinkSubjectStudy linkSubjectStudyCriteria, ArkFunction arkFunction){
-		return iStudyDao.getFamilyCustomFieldDataCount(linkSubjectStudyCriteria, arkFunction);
-	}
 
-	/**
-	 * During the insert and delete the record of the custom filed we must careful to update the status of the 
-	 * customer field "HasData" stage that is why we have additional update statements for 
-	 * Please check insert and update here.
-	 */
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public List<SubjectCustomFieldData> createOrUpdateSubjectCustomFieldData(List<SubjectCustomFieldData> subjectCustomFieldDataList) {
 
@@ -1306,11 +1286,10 @@ public class StudyServiceImpl implements IStudyService {
 
 					CustomField customField = iArkCommonService.getCustomField(id);
 					customField.setCustomFieldHasData(true);
-					//CustomFieldVO customFieldVO = new CustomFieldVO();
-					//customFieldVO.setCustomField(customField);
-					//iArkCommonService.updateCustomField(customFieldVO);
-					iCustomFieldDao.updateCustomField(customField);
-					
+					CustomFieldVO customFieldVO = new CustomFieldVO();
+					customFieldVO.setCustomField(customField);
+
+					iArkCommonService.updateCustomField(customFieldVO);
 
 				}
 				else if (canUpdate(subjectCustomFieldData)) {
@@ -1335,10 +1314,9 @@ public class StudyServiceImpl implements IStudyService {
 						// loaded
 						CustomField customField = iArkCommonService.getCustomField(id);
 						customField.setCustomFieldHasData(false);
-						//CustomFieldVO customFieldVO = new CustomFieldVO();
-						//customFieldVO.setCustomField(customField);
-						//iArkCommonService.updateCustomField(customFieldVO); // Update it
-						iCustomFieldDao.updateCustomField(customField);
+						CustomFieldVO customFieldVO = new CustomFieldVO();
+						customFieldVO.setCustomField(customField);
+						iArkCommonService.updateCustomField(customFieldVO); // Update it
 
 					}
 				}
@@ -1350,67 +1328,6 @@ public class StudyServiceImpl implements IStudyService {
 
 		return listOfExceptions;
 	}
-	
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public List<FamilyCustomFieldData> createOrUpdateFamilyCustomFieldData(List<FamilyCustomFieldData> familyCustomFieldDataList) {
-
-		List<FamilyCustomFieldData> listOfExceptions = new ArrayList<FamilyCustomFieldData>();
-		/* Iterate the list and call DAO to persist each Item */
-		for (FamilyCustomFieldData familyCustomFieldData : familyCustomFieldDataList) {
-			
-			try {
-				/* Insert the Field if it does not have a ID and has the required fields */
-				if (canInsert(familyCustomFieldData)) {
-
-					iStudyDao.createOrUpdateFamilyCustomFieldData(familyCustomFieldData);
-					Long id = familyCustomFieldData.getCustomFieldDisplay().getCustomField().getId();
-
-					CustomField customField = iArkCommonService.getCustomField(id);
-					customField.setCustomFieldHasData(true);
-					//CustomFieldVO customFieldVO = new CustomFieldVO();
-					//customFieldVO.setCustomField(customField);
-					//iArkCommonService.updateCustomField(customFieldVO);
-					iCustomFieldDao.updateCustomField(customField);
-
-				}
-				else if (canUpdate(familyCustomFieldData)) {
-
-					// If there was bad data uploaded and the user has now corrected it on the front end then set/blank out the error data value and
-					// updated the record.
-					if (familyCustomFieldData.getErrorDataValue() != null) {
-						familyCustomFieldData.setErrorDataValue(null);
-					}
-					iStudyDao.createOrUpdateFamilyCustomFieldData(familyCustomFieldData);
-
-				}
-				else if (canDelete(familyCustomFieldData)) {
-					// Check if the CustomField is used by anyone else and if not set the customFieldHasData to false;
-					Long count = iStudyDao.isFamilyCustomFieldUsed(familyCustomFieldData);
-
-					iStudyDao.deleteFamilyCustomFieldData(familyCustomFieldData);
-					if (count <= 1) {
-						// Then update the CustomField's hasDataFlag to false;
-						Long id = familyCustomFieldData.getCustomFieldDisplay().getCustomField().getId();// Reload since the session was closed in the
-						// front end and the child objects won't be lazy
-						// loaded
-						CustomField customField = iArkCommonService.getCustomField(id);
-						customField.setCustomFieldHasData(false);
-						//CustomFieldVO customFieldVO = new CustomFieldVO();
-						//customFieldVO.setCustomField(customField);
-						//iArkCommonService.updateCustomField(customFieldVO); // Update it
-						iCustomFieldDao.updateCustomField(customField);
-
-					}
-				}
-			}
-			catch (Exception someException) {
-				listOfExceptions.add(familyCustomFieldData);// Continue with rest of the list
-			}
-		}
-
-		return listOfExceptions;
-	}
-
 
 	/**
 	 * In order to delete it must satisfy the following conditions 1. SubjectCustomFieldData must be a persistent entity(with a valid primary key/ID)
@@ -1426,20 +1343,6 @@ public class StudyServiceImpl implements IStudyService {
 
 		if (subjectCustomFieldData.getId() != null
 				&& subjectCustomFieldData.getLinkSubjectStudy() != null
-				&& (subjectCustomFieldData.getTextDataValue() == null || subjectCustomFieldData.getTextDataValue().isEmpty() || subjectCustomFieldData.getNumberDataValue() == null || subjectCustomFieldData
-						.getDateDataValue() == null)) {
-
-			flag = true;
-
-		}
-		return flag;
-	}
-	
-	private Boolean canDelete(FamilyCustomFieldData subjectCustomFieldData) {
-		Boolean flag = false;
-
-		if (subjectCustomFieldData.getId() != null
-				&& subjectCustomFieldData.getFamilyUid() != null
 				&& (subjectCustomFieldData.getTextDataValue() == null || subjectCustomFieldData.getTextDataValue().isEmpty() || subjectCustomFieldData.getNumberDataValue() == null || subjectCustomFieldData
 						.getDateDataValue() == null)) {
 
@@ -1471,20 +1374,6 @@ public class StudyServiceImpl implements IStudyService {
 		}
 		return flag;
 	}
-	
-	private Boolean canUpdate(FamilyCustomFieldData subjectCustomFieldData) {
-		Boolean flag = false;
-
-		if (subjectCustomFieldData.getId() != null
-				&& subjectCustomFieldData.getFamilyUid() != null
-				&& ((subjectCustomFieldData.getTextDataValue() != null && !subjectCustomFieldData.getTextDataValue().isEmpty()) || subjectCustomFieldData.getDateDataValue() != null || subjectCustomFieldData
-						.getNumberDataValue() != null)) {
-
-			flag = true;
-
-		}
-		return flag;
-	}
 
 	/**
 	 * In order to Insert a SubjectCustomFieldData instance the following conditions must be met. 1. SubjectCustomFieldData must be a transient
@@ -1506,19 +1395,6 @@ public class StudyServiceImpl implements IStudyService {
 		}
 		return flag;
 	}
-	
-	private Boolean canInsert(FamilyCustomFieldData familyCustomFieldData) {
-		Boolean flag = false;
-
-		if (familyCustomFieldData.getId() == null && familyCustomFieldData.getFamilyUid() != null
-				&& (familyCustomFieldData.getNumberDataValue() != null || familyCustomFieldData.getTextDataValue() != null || familyCustomFieldData.getDateDataValue() != null)) {
-
-			flag = true;
-
-		}
-		return flag;
-	}
-
 
 	public boolean isStudyComponentHasAttachments(StudyComp studyComp) {
 		return iStudyDao.isStudyComponentHasAttachments(studyComp);
@@ -1532,6 +1408,7 @@ public class StudyServiceImpl implements IStudyService {
 		ah.setComment("Cloned Subject " + linkSubjectStudy.getSubjectUID());
 		ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_SUBJECT);
 		ah.setEntityId(linkSubjectStudy.getId());
+		ah.setArkUserId("arksuperuser@ark.core.wits.ac.za");
 		iArkCommonService.createAuditHistory(ah);
 	}
 
@@ -1557,6 +1434,10 @@ public class StudyServiceImpl implements IStudyService {
 
 	public Upload refreshUpload(Upload upload) {
 		return iStudyDao.refreshUpload(upload);
+	}
+	
+	public EthnicityType getDefaultEthnicityType() {
+		return iStudyDao.getDefaultEthnicityType();
 	}
 
 	public GenderType getDefaultGenderType() {
@@ -2007,8 +1888,6 @@ public class StudyServiceImpl implements IStudyService {
 			}
 
 			processTwinRelationships(relativeSubjects, studyId);
-			
-			processInbreeds(relativeSubjects);
 
 			// Remove proband from the list
 			relativeSubjects.remove(0);
@@ -2107,37 +1986,6 @@ public class StudyServiceImpl implements IStudyService {
 		age = "" + (years < 1 ? "&lt;1" : years);
 
 		return age;
-	}
-	
-	public List<RelationshipVo> getSubjectChildren(String subjectUID, long studyId){
-		List<RelationshipVo> relativeSubjects = new ArrayList<RelationshipVo>();
-		Queue<RelationshipVo> relativeSubjectQueue = new LinkedList<RelationshipVo>();
-		RelationshipVo probandRelationship = iStudyDao.getSubjectRelative(subjectUID, studyId);
-		
-		if(probandRelationship!=null){
-			relativeSubjectQueue.add(probandRelationship);
-		}
-		RelationshipVo relativeSubject = null;
-		while ((relativeSubject = relativeSubjectQueue.poll()) != null) {
-			List<RelationshipVo> relationships = iStudyDao.getSubjectChildRelatives(relativeSubject.getIndividualId(), studyId);
-			for (RelationshipVo childRelativeVo : relationships) {
-				if (relativeSubjects.contains(childRelativeVo)) {
-					childRelativeVo = relativeSubjects.get(relativeSubjects.indexOf(childRelativeVo));
-				}
-				else {
-					relativeSubjectQueue.add(childRelativeVo);
-					relativeSubjects.add(childRelativeVo);
-				}
-
-				if ("Male".equalsIgnoreCase(relativeSubject.getGender())) {
-					childRelativeVo.setFatherId(relativeSubject.getIndividualId());
-				}
-				else {
-					childRelativeVo.setMotherId(relativeSubject.getIndividualId());
-				}
-			}
-		}
-		return relativeSubjects;
 	}
 
 	public void create(LinkSubjectPedigree pedigree) {
@@ -2247,21 +2095,6 @@ public class StudyServiceImpl implements IStudyService {
 			}
 		}
 	}
-	
-	public void processInbreeds(List<RelationshipVo> existingRelatives){
-		StringBuilder pedigree = PedigreeUploadValidator.generatePedigreeGraph(existingRelatives); 
-		Set<String> circularUIDs = PedigreeUploadValidator.getCircularUIDs(pedigree);
-		if (circularUIDs.size() > 0) {
-			circularIdLoop:for (String uid : circularUIDs) {
-					relativesLoop:for(RelationshipVo relative : existingRelatives){
-						if(uid.equalsIgnoreCase(relative.getIndividualId())){
-							relative.setInbreed(true);
-							break relativesLoop;
-						}
-					}
-			}
-		}
-	}
 
 	public List<TwinType> getTwinTypes() {
 		// TODO Auto-generated method stub
@@ -2338,76 +2171,7 @@ public class StudyServiceImpl implements IStudyService {
 	public List<Address> pageablePersonAddressList(Long personId, Address adressCriteria, int first, int count) {
 		return iStudyDao.pageablePersonAddressLst(personId,adressCriteria, first, count);
 	}
+
 	
-	public List<CustomField> getFamilyUIdCustomFieldsForPedigreeRelativesList(Long studyId){
-		return iStudyDao.getFamilyUIdCustomFieldsForPedigreeRelativesList(studyId);
-	}
-	
-	public List<FamilyCustomFieldData> getFamilyCustomFieldDataList(LinkSubjectStudy linkSubjectStudyCriteria, ArkFunction arkFunction,CustomFieldCategory customFieldCategory,CustomFieldType customFieldType, int first, int count){
-		return iStudyDao.getFamilyCustomFieldDataList(linkSubjectStudyCriteria, arkFunction, customFieldCategory, customFieldType, first, count);
-	}
-	public String getSubjectFamilyId(Long studyId, String subjectUID){
-		return iStudyDao.getSubjectFamilyUId(studyId, subjectUID);
-	}
 
-	@Override
-	public List<SubjectCustomFieldData> getSubjectCustomFieldDataList(LinkSubjectStudy linkSubjectStudyCriteria, ArkFunction arkFunction,
-			CustomFieldCategory customFieldCategory,CustomFieldType customFieldType, int first, int count) {
-		return iStudyDao.getSubjectCustomFieldDataList(linkSubjectStudyCriteria, arkFunction, customFieldCategory,customFieldType, first, count);
-	}
-
-	@Override
-	public void setPreferredPhoneNumberToFalse(Person person) {
-		iStudyDao.setPreferredPhoneNumberToFalse(person);
-	}
-
-	@Override
-	public void saveOrUpdate(StudyCalendar studyCalendar) {
-		iStudyDao.saveOrUpdate(studyCalendar);
-	}
-	
-	@Override
-	public void saveOrUpdate(StudyCalendarVo studyCalendarVo) {
-		iStudyDao.saveOrUpdate(studyCalendarVo);
-	}
-
-	@Override
-	public void delete(StudyCalendar studyCalendar) {
-		iStudyDao.delete(studyCalendar);
-	}
-
-	@Override
-	public List<StudyCalendar> searchStudyCalenderList(StudyCalendar studyCalendar) {
-		return iStudyDao.searchStudyCalenderList(studyCalendar);
-	}
-	
-	public List<CustomField> getStudySubjectCustomFieldList(Long studyId){
-		return iStudyDao.getStudySubjectCustomFieldList(studyId);
-	}
-	
-	public List<CustomField> getSelectedCalendarCustomFieldList(StudyCalendar studyCalendar){
-		return iStudyDao.getSelectedCalendarCustomFieldList(studyCalendar);
-	}
-	public void delete(OtherID otherID) {
-		iStudyDao.delete(otherID);
-	}
-	@Override
-	public boolean isStudyComponentBeingUsedInConsent(StudyComp studyComp) {
-		return iStudyDao.isStudyComponentBeingUsedInConsent(studyComp);
-	}
-
-	@Override
-	public List<CorrespondenceOutcomeType> getCorrespondenceOutcomeTypesForModeAndDirection(CorrespondenceModeType correspondenceModeType,CorrespondenceDirectionType correspondenceDirectionType) {
-		return iStudyDao.getCorrespondenceOutcomeTypesForModeAndDirection(correspondenceModeType, correspondenceDirectionType);
-	}
-
-	@Override
-	public boolean isAlreadyHasFileAttached(LinkSubjectStudy linkSubjectStudy,StudyComp studyComp) {
-		return iStudyDao.isAlreadyHasFileAttached(linkSubjectStudy, studyComp);
-	}
-
-	@Override
-	public SubjectFile getSubjectFileParticularConsent(LinkSubjectStudy linkSubjectStudy, StudyComp studyComp) {
-		return iStudyDao.getSubjectFileParticularConsent(linkSubjectStudy, studyComp);
-	}
 }

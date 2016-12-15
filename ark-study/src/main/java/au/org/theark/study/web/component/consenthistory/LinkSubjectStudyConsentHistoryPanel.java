@@ -95,7 +95,7 @@ public class LinkSubjectStudyConsentHistoryPanel extends Panel {
 
 	@SuppressWarnings("unchecked")
 	public PageableListView<LssConsentHistory> buildListView(IModel iModel) {
-		PageableListView<LssConsentHistory> listView = new PageableListView<LssConsentHistory>("resultList", iModel, iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue()) {
+		PageableListView<LssConsentHistory> listView = new PageableListView<LssConsentHistory>("resultList", iModel, iArkCommonService.getRowsPerPage()) {
 
 
 			private static final long	serialVersionUID	= 1L;
@@ -124,40 +124,40 @@ public class LinkSubjectStudyConsentHistoryPanel extends Panel {
 				else {
 					item.add(new Label("consentStatus"));
 				}
-
-				if (consentHistory.getConsentType() != null) {
-					item.add(new Label("consentType", consentHistory.getConsentType().getName()));
-				}
-				else {
-					item.add(new Label("consentType"));
-				}
-
-				if (consentHistory.getConsentDownloaded() != null) {
-					item.add(new Label("consentDownloaded", consentHistory.getConsentDownloaded().getName()));
-				}
-				else {
-					item.add(new Label("consentDownloaded"));
-				}
-
-				if (consentHistory.getConsentToPassiveDataGathering() != null) {
-					item.add(new Label("consentToPassiveDataGathering", consentHistory.getConsentToPassiveDataGathering().getName()));
-				}
-				else {
-					item.add(new Label("consentToPassiveDataGathering"));
-				}
-
-				if (consentHistory.getConsentToActiveContact() != null) {
-					item.add(new Label("consentToActiveContact", consentHistory.getConsentToActiveContact().getName()));
-				}
-				else {
-					item.add(new Label("consentToActiveContact"));
-				}
-
+				
 				if (consentHistory.getConsentToUseData() != null) {
 					item.add(new Label("consentToUseData", consentHistory.getConsentToUseData().getName()));
 				}
 				else {
 					item.add(new Label("consentToUseData"));
+				}
+
+				if (consentHistory.getConsentToUseBiospecimen() != null) {
+					item.add(new Label("consentToUseBiospecimen", consentHistory.getConsentToUseBiospecimen().getName()));
+				}
+				else {
+					item.add(new Label("consentToUseBiospecimen"));
+				}
+
+				if (consentHistory.getConsentToShareData() != null) {
+					item.add(new Label("consentToShareData", consentHistory.getConsentToShareData().getName()));
+				}
+				else {
+					item.add(new Label("consentToShareData"));
+				}
+
+				if (consentHistory.getConsentToShareBiospecimen() != null) {
+					item.add(new Label("consentToShareBiospecimen", consentHistory.getConsentToShareBiospecimen().getName()));
+				}
+				else {
+					item.add(new Label("consentToShareBiospecimen"));
+				}
+				
+				if (consentHistory.getConsentDownloaded() != null) {
+					item.add(new Label("consentDownloaded", consentHistory.getConsentDownloaded().getName()));
+				}
+				else {
+					item.add(new Label("consentDownloaded"));
 				}
 
 				item.add(new AttributeModifier(Constants.CLASS, new AbstractReadOnlyModel<String>() {

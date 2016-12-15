@@ -77,22 +77,25 @@ public class StudySummaryFilterForm extends AbstractReportFilterForm<GenericRepo
 		reportFile = new File(context.getRealPath("/reportTemplates/" + reportTemplate.getTemplatePath()));
 		JasperDesign design = null;
 		JasperReport report = null;
+				
 		try {
 			design = JRXmlLoader.load(reportFile);
-			 System.out.println(" design -- created " );
+			// System.out.println(" design -- created " );
 			if (design != null) {
 				design.setName(reportTitle); // set the output file name to match report title
 				if (reportOutputFormat.getName().equals(au.org.theark.report.service.Constants.CSV_REPORT_FORMAT)) {
 					design.setIgnorePagination(true); // don't paginate CSVs
 				}
 				report = JasperCompileManager.compileReport(design);
-				 System.out.println(" design -- compiled " );
+				// System.out.println(" design -- compiled " );
 			}
 		}
 		catch (JRException e) {
 			reportFile = null;
-			e.printStackTrace();
+			e.getMessage();
+			//e.printStackTrace();
 		}
+		
 		// templateIS = getClass().getResourceAsStream("/reportTemplates/WebappReport.jrxml");
 		final Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("BaseDir", new File(context.getRealPath("/reportTemplates")));
@@ -104,7 +107,7 @@ public class StudySummaryFilterForm extends AbstractReportFilterForm<GenericRepo
 		}
 		parameters.put("UserName", userName);
 		StudySummaryReportDataSource reportDS = new StudySummaryReportDataSource(reportService, study);
-
+		
 		JRResource reportResource = null;
 		if (reportOutputFormat.getName().equals(au.org.theark.report.service.Constants.PDF_REPORT_FORMAT)) {
 			final JRResource pdfResource = new JRConcreteResource<PdfResourceHandler>(new PdfResourceHandler());
@@ -140,6 +143,7 @@ public class StudySummaryFilterForm extends AbstractReportFilterForm<GenericRepo
 			// add(new ResourceLink<Void>("linkToCsv", csvResource));
 			reportResource = csvResource;
 		}
+		
 		if (reportResource != null) {
 			reportOutputPanel.setReportResource(reportResource);
 			reportOutputPanel.setVisible(true);

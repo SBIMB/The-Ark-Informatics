@@ -82,7 +82,7 @@ public class AdminDao extends HibernateSessionDao implements IAdminDao {
 		Criteria criteria = getSession().createCriteria(ArkFunction.class);
 		return criteria.list();
 	}
-
+	
 	public ArkRolePolicyTemplate getArkRolePolicyTemplate(Long id) {
 		Criteria criteria = getSession().createCriteria(ArkRolePolicyTemplate.class);
 		criteria.add(Restrictions.eq("id", id));
@@ -127,7 +127,7 @@ public class AdminDao extends HibernateSessionDao implements IAdminDao {
 		criteria.add(Restrictions.eq("id", id));
 		return (ArkFunction)  criteria.uniqueResult();
 	}
-
+	
 	public ArkModule getArkModule(Long id) {
 		Criteria criteria = getSession().createCriteria(ArkModule.class);
 		criteria.add(Restrictions.eq("id", id));
@@ -137,7 +137,7 @@ public class AdminDao extends HibernateSessionDao implements IAdminDao {
 	public void createOrUpdateArkFunction(ArkFunction arkFunction) {
 		getSession().saveOrUpdate(arkFunction);
 	}
-
+	
 	public void createOrUpdateArkModule(ArkModule arkModule) {
 		getSession().saveOrUpdate(arkModule);
 	}
@@ -145,7 +145,7 @@ public class AdminDao extends HibernateSessionDao implements IAdminDao {
 	public void deleteArkFunction(ArkFunction arkFunction) {
 		getSession().delete(arkFunction);
 	}
-
+	
 	public void deleteArkModule(ArkModule arkModule) {
 		getSession().delete(arkModule);
 	}
@@ -166,7 +166,7 @@ public class AdminDao extends HibernateSessionDao implements IAdminDao {
 		}
 		return criteria.list();
 	}
-
+	
 	public List<ArkModule> searchArkModule(ArkModule arkModule) {
 		Criteria criteria = getSession().createCriteria(ArkFunction.class);
 		if (arkModule.getId() != null) {
@@ -215,7 +215,7 @@ public class AdminDao extends HibernateSessionDao implements IAdminDao {
 		Long totalCount = (Long) criteria.uniqueResult();
 		return totalCount;
 	}
-
+	
 	public List<ArkFunction> searchPageableArkFunctions(ArkFunction arkFunctionCriteria, int first, int count) {
 		Criteria criteria = buildArkFunctionCriteria(arkFunctionCriteria);
 		criteria.setFirstResult(first);
@@ -224,7 +224,7 @@ public class AdminDao extends HibernateSessionDao implements IAdminDao {
 
 		return list;
 	}
-
+	
 	protected Criteria buildArkFunctionCriteria(ArkFunction arkFunctionCriteria) {
 		Criteria criteria = getSession().createCriteria(ArkFunction.class);
 
@@ -239,7 +239,7 @@ public class AdminDao extends HibernateSessionDao implements IAdminDao {
 
 		return criteria;
 	}
-
+	
 	public long getArkRoleModuleFunctionVOCount(ArkRoleModuleFunctionVO arkRoleModuleFunctionVoCriteria) {
 		Criteria criteria = buildArkRoleModuleFunctionVoCriteria(arkRoleModuleFunctionVoCriteria);
 		criteria.setProjection(Projections.rowCount());
@@ -314,7 +314,7 @@ public class AdminDao extends HibernateSessionDao implements IAdminDao {
 		criteria.add(Restrictions.eq("name", name));
 		return (ArkRole) criteria.list().get(0);
 	}
-
+	
 	public List<ArkRoleModuleFunctionVO> getArkRoleModuleFunctionVoList(ArkRole arkRole) {
 		Criteria criteria = getSession().createCriteria(ArkRolePolicyTemplate.class, "arpt");
 		criteria.add(Restrictions.eq("arpt.arkRole", arkRole));

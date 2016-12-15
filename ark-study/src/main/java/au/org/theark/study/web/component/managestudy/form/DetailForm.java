@@ -35,7 +35,9 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.AjaxFormValidatingBehavior;
+import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.markup.html.form.palette.Palette;
 import org.apache.wicket.extensions.markup.html.form.palette.component.Recorder;
@@ -61,7 +63,9 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.time.Duration;
+import org.apache.wicket.validation.IValidationError;
 import org.apache.wicket.validation.validator.DateValidator;
+import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.RangeValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
@@ -97,7 +101,6 @@ import au.org.theark.core.vo.SubjectVO;
 import au.org.theark.core.web.StudyHelper;
 import au.org.theark.core.web.behavior.ArkDefaultFormFocusBehavior;
 import au.org.theark.core.web.component.ArkDatePicker;
-import au.org.theark.core.web.component.audit.button.HistoryButtonPanel;
 import au.org.theark.core.web.component.button.ArkBusyAjaxButton;
 import au.org.theark.core.web.component.palette.ArkPalette;
 import au.org.theark.core.web.form.AbstractArchiveDetailForm;
@@ -122,17 +125,24 @@ public class DetailForm extends AbstractArchiveDetailForm<StudyModelVO> {
 	private TextField<String>								studyIdTxtFld;
 	private TextField<String>								studyNameTxtFld;
 	private TextArea<String>								studyDescriptionTxtArea;
+	private Model<String> 									strMdl; 
 	private TextField<String>								estYearOfCompletionTxtFld;
 	private TextField<String>								principalContactTxtFld;
 	private TextField<String>								principalContactPhoneTxtFld;
+	private TextField<String>								principalContactEmailTxtFld;
 	private TextField<String>								chiefInvestigatorTxtFld;
+	private TextField<String>								chiefInvestigatorPhoneTxtFld;
+	private TextField<String>								chiefInvestigatorEmailTxtFld;
 	private TextField<String>								coInvestigatorTxtFld;
+	private TextField<String>								coInvestigatorPhoneTxtFld;
+	private TextField<String>								coInvestigatorEmailTxtFld;
 	private TextField<String>								subjectUidPrefixTxtFld;
 	private TextField<String>								subjectUidTokenTxtFld;
 	private DropDownChoice<SubjectUidToken>			subjectUidTokenDpChoices;
 	private DropDownChoice<SubjectUidPadChar>			subjectUidPadCharsDpChoices;
 	private TextField<Integer>								subjectUidStartTxtFld;
 	private Label												subjectUidExampleLbl;
+	private Label												wordCounterLbl;
 	private DateTextField									dateOfApplicationDp;
 	private DropDownChoice<StudyStatus>					studyStatusDpChoices;
 	private CheckBox											autoGenSubIdChkBox;
@@ -186,8 +196,6 @@ public class DetailForm extends AbstractArchiveDetailForm<StudyModelVO> {
 	private ArkBusyAjaxButton								newChildStudyButton;
 	private static final PackageResourceReference	NO_STUDY_LOGO		= new PackageResourceReference(DetailForm.class, "no_study_logo.gif");
 
-	private HistoryButtonPanel historyButtonPanel;
-	
 	/**
 	 * Constructor
 	 * 
@@ -218,9 +226,6 @@ public class DetailForm extends AbstractArchiveDetailForm<StudyModelVO> {
 		parentStudyContainer.setEnabled(isNew());
 		parentStudyContainer.setVisible(isChildStudy);
 		subjectFileUploadContainer.setVisible(!isNew() && isChildStudy);
-		
-		historyButtonPanel.setVisible(!isNew());
-		
 		super.onBeforeRender();
 	}
 
@@ -238,12 +243,21 @@ public class DetailForm extends AbstractArchiveDetailForm<StudyModelVO> {
 		studyNameTxtFld.add(new ArkDefaultFormFocusBehavior());
 
 		studyDescriptionTxtArea = new TextArea<String>(Constants.STUDY_DESCRIPTION);
+		strMdl = Model.of("");
+		wordCounterLbl = new Label("study.description.wordCount", strMdl);
+		wordCounterLbl.setOutputMarkupId(true);
+		
 		estYearOfCompletionTxtFld = new TextField<String>(Constants.STUDY_ESTIMATED_YEAR_OF_COMPLETION);
 		principalContactTxtFld = new TextField<String>(Constants.STUDY_CONTACT_PERSON);
 		principalContactPhoneTxtFld = new TextField<String>(Constants.STUDY_CONTACT_PERSON_PHONE);
+		principalContactEmailTxtFld = new TextField<String>(Constants.STUDY_CONTACT_PERSON_EMAIL);
 		chiefInvestigatorTxtFld = new TextField<String>(Constants.STUDY_CHIEF_INVESTIGATOR);
+		chiefInvestigatorPhoneTxtFld = new TextField<String>(Constants.STUDY_CHIEF_INVESTIGATOR_PHONE);
+		chiefInvestigatorEmailTxtFld = new TextField<String>(Constants.STUDY_CHIEF_INVESTIGATOR_EMAIL);
 		coInvestigatorTxtFld = new TextField<String>(Constants.STUDY_CO_INVESTIGATOR);
-
+		coInvestigatorPhoneTxtFld	 = new TextField<String>(Constants.STUDY_CO_INVESTIGATOR_PHONE);
+		coInvestigatorEmailTxtFld = new TextField<String>(Constants.STUDY_CO_INVESTIGATOR_EMAIL);
+		
 		// Container for SubjectUID auto-generation yes/no
 		autoSubjectUidContainer = new WebMarkupContainer("autoSubjectUidContainer");
 		autoSubjectUidContainer.setOutputMarkupPlaceholderTag(true);
@@ -497,8 +511,6 @@ public class DetailForm extends AbstractArchiveDetailForm<StudyModelVO> {
 			}
 		};
 
-		historyButtonPanel = new HistoryButtonPanel(containerForm, studyCrudVO.getEditButtonContainer(), studyCrudVO.getDetailPanelFormContainer());
-		
 		attachValidators();
 		addComponents();
 	}
@@ -1031,14 +1043,20 @@ public class DetailForm extends AbstractArchiveDetailForm<StudyModelVO> {
 		studyCrudVO.getDetailPanelFormContainer().add(studyIdTxtFld);
 		studyCrudVO.getDetailPanelFormContainer().add(studyNameTxtFld);
 		studyCrudVO.getDetailPanelFormContainer().add(studyDescriptionTxtArea);
+		studyCrudVO.getDetailPanelFormContainer().add(wordCounterLbl);
 		studyCrudVO.getDetailPanelFormContainer().add(estYearOfCompletionTxtFld);
 		studyCrudVO.getDetailPanelFormContainer().add(studyStatusDpChoices);
 		studyCrudVO.getDetailPanelFormContainer().add(dateOfApplicationDp);
 		studyCrudVO.getDetailPanelFormContainer().add(principalContactPhoneTxtFld);
 		studyCrudVO.getDetailPanelFormContainer().add(principalContactTxtFld);
+		studyCrudVO.getDetailPanelFormContainer().add(principalContactEmailTxtFld);
 		studyCrudVO.getDetailPanelFormContainer().add(chiefInvestigatorTxtFld);
+		studyCrudVO.getDetailPanelFormContainer().add(chiefInvestigatorPhoneTxtFld);
+		studyCrudVO.getDetailPanelFormContainer().add(chiefInvestigatorEmailTxtFld);
 		studyCrudVO.getDetailPanelFormContainer().add(coInvestigatorTxtFld);
-
+		studyCrudVO.getDetailPanelFormContainer().add(coInvestigatorPhoneTxtFld);
+		studyCrudVO.getDetailPanelFormContainer().add(coInvestigatorEmailTxtFld);
+		
 		// SubjectUID auto-generator fields need own container to be disabled on certain criteria
 		subjectUidContainer.add(subjectUidPrefixTxtFld);
 		subjectUidContainer.add(subjectUidTokenTxtFld);
@@ -1094,7 +1112,52 @@ public class DetailForm extends AbstractArchiveDetailForm<StudyModelVO> {
 	protected void attachValidators() {
 		studyNameTxtFld.setRequired(true).setLabel(new StringResourceModel("error.study.name.required", this, new Model<String>("Study Name")));
 		// TODO Have to stop the validator posting the content with the error message
-		studyDescriptionTxtArea.add(StringValidator.lengthBetween(1, 255)).setLabel(new StringResourceModel("study.description.length.exceeded", this, new Model<String>("Study Synopsis")));
+		//studyDescriptionTxtArea.add(StringValidator.lengthBetween(1, 255)).setLabel(new StringResourceModel("study.description.length.exceeded", this, new Model<String>("Study Synopsis")));
+		studyDescriptionTxtArea.add(new OnChangeAjaxBehavior(){
+
+			/**
+			 * 
+			 */
+			private static final long	serialVersionUID	= 3236675007589309615L;
+
+			@Override
+			protected void onUpdate(AjaxRequestTarget target) {
+				// TODO Auto-generated method stub
+				int wordCounter = 0;
+				
+				final String value = ((TextArea<String>)getComponent()).getModelObject();
+				
+				for(String s : value.split(" ")){
+					if (s!=null){
+						wordCounter++;						
+					}
+				}
+				
+				target.add(wordCounterLbl);
+				if(wordCounter > 200){
+					strMdl.setObject("You have exceeded the maximum number of words supported.");
+					wordCounterLbl.add(new SimpleAttributeModifier("style", "color:red"));
+					log.error("excess");
+				}else{
+					log.error(" " + wordCounter);
+					wordCounterLbl.add(new SimpleAttributeModifier("style", "color:green"));
+					strMdl.setObject(String.valueOf(wordCounter));
+				}
+				
+				
+				target.add(wordCounterLbl);
+			
+				/*if(wordCounter > 200){
+					wordCounterLbl = new Label("You have exceeded the maximum number of words supported.");
+					target.add(wordCounterLbl);
+				}else{
+					wordCounterLbl = new Label("");
+					target.add(wordCounterLbl);
+				}*/
+			}		
+			
+		});
+	
 		studyStatusDpChoices.setRequired(true).setLabel(new StringResourceModel("error.study.status.required", this, new Model<String>("Status")));
 
 		// Max dateOfApplicationDp can be only today
@@ -1107,8 +1170,24 @@ public class DetailForm extends AbstractArchiveDetailForm<StudyModelVO> {
 
 		chiefInvestigatorTxtFld.setRequired(true).setLabel(new StringResourceModel("error.study.chief", this, new Model<String>("Chief Investigator")));
 		chiefInvestigatorTxtFld.add(StringValidator.lengthBetween(3, 50));
-
+		
+		chiefInvestigatorPhoneTxtFld.setRequired(true).setLabel(new StringResourceModel("error.study.chief.phone", this, new Model<String>("Chief Investigator Phone")));
+		chiefInvestigatorPhoneTxtFld.add(StringValidator.lengthBetween(10, 15));
+		
+		chiefInvestigatorEmailTxtFld.setRequired(true).setLabel(new StringResourceModel("error.study.chief.email", this, new Model<String>("Chief Investigator Email")));
+		chiefInvestigatorEmailTxtFld.add(EmailAddressValidator.getInstance());
+		
 		coInvestigatorTxtFld.add(StringValidator.lengthBetween(3, 50)).setLabel(new StringResourceModel("error.study.co.investigator", this, new Model<String>("Co Investigator")));
+		
+		principalContactTxtFld.setRequired(true).setLabel(new StringResourceModel("error.study.contact", this, new Model<String>("Contact Person")));
+		principalContactTxtFld.add(StringValidator.lengthBetween(3, 50));
+		
+		principalContactPhoneTxtFld.setRequired(true).setLabel(new StringResourceModel("error.study.contact.phone", this, new Model<String>("Contact Person Phone")));
+		principalContactPhoneTxtFld.add(StringValidator.lengthBetween(10, 15));
+		
+		principalContactEmailTxtFld.setRequired(true).setLabel(new StringResourceModel("error.study.contact.email", this, new Model<String>("Contact Person Email")));
+		principalContactEmailTxtFld.add(EmailAddressValidator.getInstance());
+		
 		// selectedApplicationsLmc.setRequired(true).setLabel( new StringResourceModel("error.study.selected.app", this, null));
 		subjectUidStartTxtFld.add(new RangeValidator<Integer>(1, Integer.MAX_VALUE)).setLabel(new StringResourceModel("error.study.subject.key.prefix", this, null));
 		// file image validator, checking size, type etc
@@ -1146,7 +1225,8 @@ public class DetailForm extends AbstractArchiveDetailForm<StudyModelVO> {
 
 		return validFlag;
 	}
-
+	
+	
 	@Override
 	protected void onSave(Form<StudyModelVO> containerForm, AjaxRequestTarget target) {
 		try {

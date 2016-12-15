@@ -19,6 +19,7 @@
 package au.org.theark.study.web.component.subject.form;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.theark.core.exception.EntityNotFoundException;
 import au.org.theark.core.model.study.entity.ArkUser;
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.GenderType;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
 import au.org.theark.core.model.study.entity.OtherID;
@@ -89,7 +91,9 @@ public class SearchForm extends AbstractSearchForm<SubjectVO> {
 	private DropDownChoice<GenderType>			genderTypeDdc;
 	private DropDownChoice<SubjectStatus>		subjectStatusDdc;
 	private DateTextField							dateOfBirthTxtFld;
-	private TextField<String> otherIDTxtFld;
+	private TextField<String> 						otherIDTxtFld;
+	protected TextField<String>					ageAtEnrollmentTxtFld;
+	protected DropDownChoice<EthnicityType>	ethnicityTypeDdc;
 
 	// TODO get explanation never accessed, yet we can set it - maybe wicket can access?
 	//private PageableListView<SubjectVO>			listView;
@@ -121,31 +125,36 @@ public class SearchForm extends AbstractSearchForm<SubjectVO> {
 	protected void addSearchComponentsToForm() {
 		add(studyDdc);
 		add(subjectUIDTxtFld);
-		add(firstNameTxtFld);
-		add(middleNameTxtFld);
-		add(lastNameTxtFld);
-		add(vitalStatusDdc);
+		add(ethnicityTypeDdc);
+		//add(firstNameTxtFld);
+		//add(middleNameTxtFld);
+		//add(lastNameTxtFld);
+		//add(vitalStatusDdc);
 		add(subjectStatusDdc);
 		add(genderTypeDdc);
-		add(dateOfBirthTxtFld);
+		//add(dateOfBirthTxtFld);
 		add(otherIDTxtFld);
+		add(ageAtEnrollmentTxtFld);
 	}
 
 	protected void initialiseSearchForm() {
 		initStudyDdc();
 		subjectUIDTxtFld = new TextField<String>(Constants.SUBJECT_UID);
-		firstNameTxtFld = new TextField<String>(Constants.PERSON_FIRST_NAME);
+		/*firstNameTxtFld = new TextField<String>(Constants.PERSON_FIRST_NAME);
 		middleNameTxtFld = new TextField<String>(Constants.PERSON_MIDDLE_NAME);
-		lastNameTxtFld = new TextField<String>(Constants.PERSON_LAST_NAME);
-		otherIDTxtFld = new TextField<String>("linkSubjectStudy.person.otherIDs", new Model<String>(""));
-		initVitalStatusDdc();
+		lastNameTxtFld = new TextField<String>(Constants.PERSON_LAST_NAME);*/
+		otherIDTxtFld = new TextField<String>("otherID", new Model(""));
+		ageAtEnrollmentTxtFld= new TextField<String>(Constants.SUBJECT_AGE_AT_ENROLLMENT);
+		//initVitalStatusDdc();
 		initSubjectStatusDdc();
 		initGenderTypeDdc();
+		initEthnicityTypeDdc();
+		
 
-		dateOfBirthTxtFld = new DateTextField(Constants.PERSON_DOB, au.org.theark.core.Constants.DD_MM_YYYY);
-		ArkDatePicker dobDatePicker = new ArkDatePicker();
-		dobDatePicker.bind(dateOfBirthTxtFld);
-		dateOfBirthTxtFld.add(dobDatePicker);
+		//dateOfBirthTxtFld = new DateTextField(Constants.PERSON_DOB, au.org.theark.core.Constants.DD_MM_YYYY);
+		//ArkDatePicker dobDatePicker = new ArkDatePicker();
+		//dobDatePicker.bind(dateOfBirthTxtFld);
+		//dateOfBirthTxtFld.add(dobDatePicker);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -227,6 +236,17 @@ public class SearchForm extends AbstractSearchForm<SubjectVO> {
 		ChoiceRenderer genderTypeRenderer = new ChoiceRenderer(Constants.NAME, Constants.ID);
 		genderTypeDdc = new DropDownChoice<GenderType>(Constants.GENDER_TYPE, genderTypePm, (List) genderTypeList, genderTypeRenderer);
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void initEthnicityTypeDdc() {
+		CompoundPropertyModel<SubjectVO> subjectCpm = cpmModel;
+		PropertyModel<LinkSubjectStudy> linkSubjectStudyPm = new PropertyModel<LinkSubjectStudy>(subjectCpm, "linkSubjectStudy");
+		PropertyModel<Person> personPm = new PropertyModel<Person>(linkSubjectStudyPm, Constants.PERSON);
+		PropertyModel<EthnicityType> ethnicityTypePm = new PropertyModel<EthnicityType>(personPm, Constants.ETHNICITY_TYPE);
+		Collection<EthnicityType> ethnicityTypeList = iArkCommonService.getEthnicityTypes();
+		ChoiceRenderer ethnicityTypeRenderer = new ChoiceRenderer(Constants.NAME, Constants.ID);
+		ethnicityTypeDdc = new DropDownChoice<EthnicityType>(Constants.ETHNICITY_TYPE, ethnicityTypePm, (List) ethnicityTypeList, ethnicityTypeRenderer);
+	}
 
 	@SuppressWarnings("unchecked")
 	protected void onNew(AjaxRequestTarget target) {
@@ -252,14 +272,6 @@ public class SearchForm extends AbstractSearchForm<SubjectVO> {
 		}
 		getModelObject().setAvailableChildStudies(availableChildStudies);
 
-		getModelObject().getLinkSubjectStudy().getPerson().getOtherIDs().clear();
-		if(!otherIDTxtFld.getValue().isEmpty()) {
-			OtherID searchedOtherID = new OtherID();
-			searchedOtherID.setOtherID(otherIDTxtFld.getValue());
-			searchedOtherID.setPerson(cpmModel.getObject().getLinkSubjectStudy().getPerson());
-			getModelObject().getLinkSubjectStudy().getPerson().getOtherIDs().add(searchedOtherID);
-		}
-		
 		preProcessDetailPanel(target);
 	}
 
@@ -274,11 +286,9 @@ public class SearchForm extends AbstractSearchForm<SubjectVO> {
 		if(otherIDSearch != null) {
 			OtherID o = new OtherID();
 			o.setOtherID(otherIDSearch);
-			List<OtherID> otherIDs = new ArrayList<OtherID>();
+			Set<OtherID> otherIDs = new HashSet<OtherID>();
 			otherIDs.add(o);
-			cpmModel.getObject().getLinkSubjectStudy().getPerson().getOtherIDs().clear();//setOtherIDs(otherIDs);
-			log.info("onsearch otherids: " + cpmModel.getObject().getLinkSubjectStudy().getPerson().getOtherIDs());
-			cpmModel.getObject().getLinkSubjectStudy().getPerson().getOtherIDs().add(o);
+			cpmModel.getObject().getLinkSubjectStudy().getPerson().setOtherIDs(otherIDs);
 		}
 		long count = iArkCommonService.getStudySubjectCount(cpmModel.getObject());
 		if (count == 0L) {

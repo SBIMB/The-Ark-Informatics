@@ -57,7 +57,7 @@ public class RackDetailPanel extends Panel {
 	}
 
 	public void initialisePanel() {
-		detailForm = new RackDetailForm("detailForm", feedbackPanel, detailContainer, containerForm, tree, node, this);
+		detailForm = new RackDetailForm("detailForm", feedbackPanel, detailContainer, containerForm, tree, node);
 		detailForm.initialiseDetailForm();
 		
 		addBox = new ArkBusyAjaxButton("addBox") {

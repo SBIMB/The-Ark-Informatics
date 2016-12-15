@@ -65,11 +65,13 @@ public class XLStoCSV {
 
 				if (row.length > 0) {
 					osw.write(row[0].getContents());
+					
 					for (int j = 1; j < row.length; j++) {
 						osw.write(delimiterCharacter);
 						Cell cell = row[j];
 						if (row[j].getContents().contains(",")) {  
 							osw.write('"');  
+							
 							if(cell instanceof DateCell) {
 								DateCell dc = (DateCell) cell;
 							   Date d = dc.getDate();

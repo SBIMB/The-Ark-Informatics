@@ -18,29 +18,26 @@
  ******************************************************************************/
 package au.org.theark.core.service;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.File;
+import java.io.StringWriter;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.mail.internet.MimeMessage;
 import javax.naming.InvalidNameException;
@@ -49,9 +46,7 @@ import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.VelocityException;
@@ -74,6 +69,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import za.ac.theark.core.model.study.entity.UploadMethod;
 import au.org.theark.core.Constants;
 import au.org.theark.core.dao.ArkLdapContextSource;
 import au.org.theark.core.dao.IArkAuthorisation;
@@ -82,13 +78,6 @@ import au.org.theark.core.dao.ICustomFieldDao;
 import au.org.theark.core.dao.IGenoDao;
 import au.org.theark.core.dao.IStudyDao;
 import au.org.theark.core.dao.ReCaptchaContextSource;
-import au.org.theark.core.exception.ArkAlreadyBeingUsedException;
-import au.org.theark.core.exception.ArkBaseException;
-import au.org.theark.core.exception.ArkCheckSumNotSameException;
-import au.org.theark.core.exception.ArkFileNotFoundException;
-import au.org.theark.core.exception.ArkNotAllowedToUpdateException;
-import au.org.theark.core.exception.ArkRunTimeException;
-import au.org.theark.core.exception.ArkRunTimeUniqueException;
 import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.ArkUniqueException;
 import au.org.theark.core.exception.EntityCannotBeRemoved;
@@ -105,7 +94,6 @@ import au.org.theark.core.model.lims.entity.BioCollectionUidToken;
 import au.org.theark.core.model.lims.entity.BiospecimenUidPadChar;
 import au.org.theark.core.model.lims.entity.BiospecimenUidTemplate;
 import au.org.theark.core.model.lims.entity.BiospecimenUidToken;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetFieldDisplay;
 import au.org.theark.core.model.report.entity.BiocollectionField;
 import au.org.theark.core.model.report.entity.BiospecimenField;
 import au.org.theark.core.model.report.entity.ConsentStatusField;
@@ -120,7 +108,6 @@ import au.org.theark.core.model.study.entity.AddressType;
 import au.org.theark.core.model.study.entity.ArkFunction;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkModuleRole;
-import au.org.theark.core.model.study.entity.ArkPermission;
 import au.org.theark.core.model.study.entity.ArkRole;
 import au.org.theark.core.model.study.entity.ArkRolePolicyTemplate;
 import au.org.theark.core.model.study.entity.ArkUser;
@@ -132,14 +119,12 @@ import au.org.theark.core.model.study.entity.ConsentStatus;
 import au.org.theark.core.model.study.entity.ConsentType;
 import au.org.theark.core.model.study.entity.Country;
 import au.org.theark.core.model.study.entity.CustomField;
-import au.org.theark.core.model.study.entity.CustomFieldCategory;
-import au.org.theark.core.model.study.entity.CustomFieldCategoryUpload;
 import au.org.theark.core.model.study.entity.CustomFieldDisplay;
 import au.org.theark.core.model.study.entity.CustomFieldGroup;
-import au.org.theark.core.model.study.entity.CustomFieldType;
 import au.org.theark.core.model.study.entity.CustomFieldUpload;
 import au.org.theark.core.model.study.entity.DelimiterType;
 import au.org.theark.core.model.study.entity.EmailStatus;
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.FieldType;
 import au.org.theark.core.model.study.entity.FileFormat;
 import au.org.theark.core.model.study.entity.GenderType;
@@ -166,7 +151,6 @@ import au.org.theark.core.model.study.entity.SubjectUidToken;
 import au.org.theark.core.model.study.entity.TitleType;
 import au.org.theark.core.model.study.entity.UnitType;
 import au.org.theark.core.model.study.entity.Upload;
-import au.org.theark.core.model.study.entity.UploadLevel;
 import au.org.theark.core.model.study.entity.UploadStatus;
 import au.org.theark.core.model.study.entity.UploadType;
 import au.org.theark.core.model.study.entity.VitalStatus;
@@ -174,11 +158,11 @@ import au.org.theark.core.model.study.entity.YesNo;
 import au.org.theark.core.security.RoleConstants;
 import au.org.theark.core.vo.ArkModuleVO;
 import au.org.theark.core.vo.ArkUserVO;
-import au.org.theark.core.vo.CustomFieldCategoryVO;
 import au.org.theark.core.vo.CustomFieldVO;
 import au.org.theark.core.vo.QueryFilterVO;
 import au.org.theark.core.vo.SearchVO;
 import au.org.theark.core.vo.SubjectVO;
+import au.org.theark.core.vo.UserConfigVO;
 
 /**
  * The implementation of IArkCommonService. We want to auto-wire and hence use
@@ -204,9 +188,7 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 	private JavaMailSender javaMailSender;
 	private VelocityEngine velocityEngine;
 	private IGenoDao genoDao;
-	
-	
-	
+
 	@Value("${file.attachment.dir}")
 	private String fileAttachmentDir;
 
@@ -218,7 +200,7 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 	public void setGenoDao(IGenoDao genoDao) {
 		this.genoDao = genoDao;
 	}
-	
+
 	public ICustomFieldDao getCustomFieldDao() {
 		return customFieldDao;
 	}
@@ -389,6 +371,15 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		return studyDao.getSubject(subjectVO);
 	}
 
+	/* (non-Javadoc)
+	 * 
+	 * @see au.org.theark.core.service.IArkCommonService#getGenderType()
+	 */
+	public Collection<EthnicityType> getEthnicityTypes() {
+
+		return studyDao.getEthnicityTypes();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -538,6 +529,10 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 	public void createAuditHistory(AuditHistory auditHistory, String userId, Study study) {
 		studyDao.createAuditHistory(auditHistory, userId, study);
 	}
+	
+	public void createAuditHistory(AuditHistory auditHistory, String userId, StudyStatus studyStatus, String s) {
+		studyDao.createAuditHistory(auditHistory, userId, studyStatus, new String());
+	}
 
 	public List<PersonContactMethod> getPersonContactMethodList() {
 		return studyDao.getPersonContactMethodList();
@@ -593,12 +588,16 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 	public GenderType getGenderType(String name) {
 		return studyDao.getGenderType(name);
 	}
+	
+	public EthnicityType getEthnicityType(String name) {
+		return studyDao.getEthnicityType(name);
+	}
 
 	public VitalStatus getVitalStatus(String name) {
 		return studyDao.getVitalStatus(name);
 	}
 
-	public TitleType getTitleType(String name) {
+	public TitleType getTitleTypes(String name) {
 		return studyDao.getTitleType(name);
 	}
 
@@ -830,78 +829,85 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 	 * Field display details.
 	 */
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public void updateCustomField(CustomFieldVO customFieldVO) throws ArkSystemException, ArkUniqueException ,ArkNotAllowedToUpdateException {
+	public void updateCustomField(CustomFieldVO customFieldVO) throws ArkSystemException, ArkUniqueException {
+
 		boolean isUnique = customFieldDao.isCustomFieldUnqiue(customFieldVO.getCustomField().getName(), customFieldVO.getCustomField().getStudy(), customFieldVO.getCustomField());
 		if (!isUnique) {
 			log.error("Custom Field of this name Already Exists.: ");
 			throw new ArkUniqueException("A Custom Field of this name already exists.");
 		}
-		if (!customFieldVO.getCustomField().getCustomFieldHasData()) {
-			String fieldName = customFieldVO.getCustomField().getName();
-			try {
-				// Remove any encoded values if DATE or NUMBER
-				if (customFieldVO.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_DATE) || customFieldVO.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_NUMBER)) {
-					customFieldVO.getCustomField().setEncodedValues(null);
-				}
-				customFieldDao.updateCustomField(customFieldVO.getCustomField());
-				// Custom Field History
-				AuditHistory ah = new AuditHistory();
+		try {
+			// Remove any encoded values if DATE or NUMBER
+			if (customFieldVO.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_DATE) || customFieldVO.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_NUMBER)) {
+				customFieldVO.getCustomField().setEncodedValues(null);
+			}
+
+			customFieldDao.updateCustomField(customFieldVO.getCustomField());
+			// Custom Field History
+			AuditHistory ah = new AuditHistory();
+			ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_UPDATED);
+			ah.setComment("Updated Custom Field " + customFieldVO.getCustomField().getName());
+			ah.setEntityId(customFieldVO.getCustomField().getId());
+			ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_CUSTOM_FIELD);
+			createAuditHistory(ah);
+
+			// Only Update CustomFieldDisplay when it is allowed
+			if (customFieldVO.isUseCustomFieldDisplay()) {
+				customFieldVO.getCustomFieldDisplay().setCustomField(customFieldVO.getCustomField());
+				customFieldDao.updateCustomFieldDisplay(customFieldVO.getCustomFieldDisplay());
+				// Custom Field Display History
+				ah = new AuditHistory();
 				ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_UPDATED);
-				ah.setComment("Updated Custom Field " +fieldName);
+				ah.setComment("Updated Custom Field Display " + customFieldVO.getCustomField().getName());
 				ah.setEntityId(customFieldVO.getCustomField().getId());
-				ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_CUSTOM_FIELD);
+				ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_CUSTOM_FIELD_DISPLAY);
 				createAuditHistory(ah);
-				// Only Update CustomFieldDisplay when it is allowed
+			}
+
+		} catch (ConstraintViolationException cvex) {
+			log.error("Custom Field Already Exists.: " + cvex);
+			throw new ArkUniqueException("A Custom Field already exits.");
+		} catch (Exception ex) {
+			log.error("Problem updating Custom Field: " + ex);
+			throw new ArkSystemException("Problem updating Custom Field: " + ex.getMessage());
+		}
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public void deleteCustomField(CustomFieldVO customFieldVO) throws ArkSystemException, EntityCannotBeRemoved {
+		try {
+			if (!customFieldVO.getCustomField().getCustomFieldHasData()) {
+				String fieldName = customFieldVO.getCustomField().getName();
+
 				if (customFieldVO.isUseCustomFieldDisplay()) {
-					customFieldVO.getCustomFieldDisplay().setCustomField(customFieldVO.getCustomField());
-					customFieldDao.updateCustomFieldDisplay(customFieldVO.getCustomFieldDisplay());
-					// Custom Field Display History
-					ah = new AuditHistory();
-					ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_UPDATED);
-					ah.setComment("Updated Custom Field Display " + fieldName);
-					ah.setEntityId(customFieldVO.getCustomField().getId());
+					customFieldDao.deleteCustomDisplayField(customFieldVO.getCustomFieldDisplay());
+
+					// History for Custom Field Display
+					AuditHistory ah = new AuditHistory();
+					ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_DELETED);
+					ah.setComment("Deleted Custom Display Field For Custom Field " + fieldName);
+					ah.setEntityId(customFieldVO.getCustomFieldDisplay().getId());
 					ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_CUSTOM_FIELD_DISPLAY);
 					createAuditHistory(ah);
 				}
-			}catch (Exception ex) {
-				log.error("Problem updating Custom Field: " + ex);
-				throw new ArkSystemException("Problem updating Custom Field: " + ex.getMessage());
-			}	
-		}else{
-				throw new ArkNotAllowedToUpdateException("Custom Field cannot be updated, it is used in the system");
-		}	
-	}
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public void deleteCustomField(CustomFieldVO customFieldVO) throws ArkSystemException, EntityCannotBeRemoved {
-			if (!customFieldVO.getCustomField().getCustomFieldHasData()) {
-				String fieldName = customFieldVO.getCustomField().getName();
-				try{
-					/*if (customFieldVO.isUseCustomFieldDisplay()) {
-						customFieldDao.deleteCustomDisplayField(customFieldVO.getCustomFieldDisplay());
-						// History for Custom Field Display
-						AuditHistory ah = new AuditHistory();
-						ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_DELETED);
-						ah.setComment("Deleted Custom Display Field For Custom Field " + fieldName);
-						ah.setEntityId(customFieldVO.getCustomFieldDisplay().getId());
-						ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_CUSTOM_FIELD_DISPLAY);
-						createAuditHistory(ah);
-					}*/
-					customFieldDao.deleteCustomField(customFieldVO.getCustomField());
-					// History for Custom Field
-					AuditHistory ah = new AuditHistory();
-					ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_DELETED);
-					ah.setComment("Deleted Custom Field " + fieldName);
-					ah.setEntityId(customFieldVO.getCustomField().getId());
-					ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_CUSTOM_FIELD);
-					createAuditHistory(ah);
-					}catch(Exception ex) {
-						log.error("Unable to delete CustomField. " + ex);
-						throw new ArkSystemException("Unable to delete Custom Field: " + ex.getMessage());
-					}
+				customFieldDao.deleteCustomField(customFieldVO.getCustomField());
+
+				// History for Custom Field
+				AuditHistory ah = new AuditHistory();
+				ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_DELETED);
+				ah.setComment("Deleted Custom Field " + fieldName);
+				ah.setEntityId(customFieldVO.getCustomField().getId());
+				ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_CUSTOM_FIELD);
+				createAuditHistory(ah);
 			} else {
 				throw new EntityCannotBeRemoved("Custom Field cannot be removed, it is used in the system");
 			}
+		} catch (Exception ex) {
+			log.error("Unable to delete CustomField. " + ex);
+			throw new ArkSystemException("Unable to delete Custom Field: " + ex.getMessage());
+		}
 	}
+
 	public List<ArkUserRole> getArkRoleListByUser(ArkUserVO arkUserVo) {
 		return arkAuthorisationDao.getArkRoleListByUser(arkUserVo);
 	}
@@ -971,7 +977,7 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 
 				// The "from" field is required
 				if (simpleMailMessage.getFrom() == null) {
-					simpleMailMessage.setFrom(Constants.ARK_ADMIN_EMAIL);
+					simpleMailMessage.setFrom(Constants.ARK_NOREPLY_EMAIL);
 				}
 
 				message.setFrom(simpleMailMessage.getFrom());
@@ -984,9 +990,9 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 				String host = InetAddress.getLocalHost().getHostName();
 
 				// Message title
-				model.put("title", "Message from The ARK");
+				model.put("title", "Message from The ARK INFORMATICS");
 				// Message header
-				model.put("header", "Message from The ARK");
+				model.put("header", "Message from The ARK INFORMATICS");
 				// Message subject
 				model.put("subject", simpleMailMessage.getSubject());
 				// Message text
@@ -1015,11 +1021,15 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("fullName", fullName);
 		model.put("password", password);
+		StringWriter stringWriter = new StringWriter();
 
 		/* get the text and replace all the mapped fields */
-		String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "au/org/theark/core/velocity/resetPasswordMessage.vm","UTF-8", model);
+		String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "au/org/theark/core/velocity/resetPasswordMessage.vm", model);
+		//VelocityEngineUtils.mergeTemplate("au/org/theark/core/velocity/resetPasswordMessage.vm", model,stringWriter);
+		//velocityEngine.mergeTemplate("au/org/theark/core/velocity/resetPasswordMessage.vm", context, writer
 		/* send out the email */
 		return text;
+		
 	}
 
 	public void updateCustomFieldDisplay(CustomFieldDisplay customFieldDisplay) throws ArkSystemException {
@@ -1066,9 +1076,9 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		return customFieldDao.getCustomFieldByNameStudyArkFunction(customFieldName, study, arkFunction);
 	}
 
-	/*public CustomField getCustomFieldByNameStudyCFG(String customFieldName, Study study, ArkFunction arkFunction, CustomFieldGroup customFieldGroup) {
+	public CustomField getCustomFieldByNameStudyCFG(String customFieldName, Study study, ArkFunction arkFunction, CustomFieldGroup customFieldGroup) {
 		return customFieldDao.getCustomFieldByNameStudyCFG(customFieldName, study, arkFunction, customFieldGroup);
-	}*/
+	}
 
 	public UnitType getUnitTypeByNameAndArkFunction(String name, ArkFunction arkFunction) {
 		return customFieldDao.getUnitTypeByNameAndArkFunction(name, arkFunction);
@@ -1082,7 +1092,7 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		return studyDao.searchUploadsForBio(uploadCriteria);
 	}
 
-	public void createUpload(Upload studyUpload) throws Exception {
+	public void createUpload(Upload studyUpload) {
 		// log.debug("about to studydao.createupload");
 		studyDao.createUpload(studyUpload);
 
@@ -1091,6 +1101,7 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		ah.setComment("Created studyUpload " + studyUpload.getId());
 		ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_STUDY_UPLOAD);
 		ah.setEntityId(studyUpload.getId());
+		ah.setArkUserId("arkadmin@ark.core.wits.ac.za");
 		this.createAuditHistory(ah);
 
 	}
@@ -1170,8 +1181,8 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		studyDao.updateBioCollectionUidTemplate(bioCollectionUidTemplate);
 	}
 
-	public List<ArkUser> getArkUserListByStudy(ArkUser arkUser,Study study) {
-		return arkAuthorisationDao.getArkUserListByStudy(arkUser,study);
+	public List<ArkUser> getArkUserListByStudy(Study study) {
+		return arkAuthorisationDao.getArkUserListByStudy(study);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1266,7 +1277,10 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		return new ArrayList<String>();// maybe exception actually good here
 	}
 
-	//Used in  BioCustomFieldUploadValidator
+	public List<CustomFieldDisplay> getCustomFieldDisplaysIn(List fieldNameCollection, Study study, ArkFunction arkFunction, CustomFieldGroup customFieldGroup) {
+		return studyDao.getCustomFieldDisplaysIn(fieldNameCollection, study, arkFunction, customFieldGroup);
+	}
+
 	public List<CustomFieldDisplay> getCustomFieldDisplaysIn(List fieldNameCollection, Study study, ArkFunction arkFunction) {
 		return studyDao.getCustomFieldDisplaysIn(fieldNameCollection, study, arkFunction);
 	}
@@ -1275,8 +1289,8 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		return studyDao.getCustomFieldDisplaysIn(study, arkFunction);
 	}
 
-	public List<SubjectCustomFieldData> getSubjectCustomFieldDataFor(List customFieldDisplaysThatWeNeed, List subjectUIDsToBeIncluded) {
-		return studyDao.getSubjectCustomFieldDataFor(customFieldDisplaysThatWeNeed, subjectUIDsToBeIncluded);
+	public List<SubjectCustomFieldData> getCustomFieldDataFor(List customFieldDisplaysThatWeNeed, List subjectUIDsToBeIncluded) {
+		return studyDao.getCustomFieldDataFor(customFieldDisplaysThatWeNeed, subjectUIDsToBeIncluded);
 	}
 
 	public Payload createPayload(byte[] bytes) {
@@ -1288,19 +1302,27 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 	}
 
 	public UploadStatus getUploadStatusForUploaded() {
-		return studyDao.getUploadStatusFor(Constants.UPLOAD_STATUS_COMPLETED);
+		return studyDao.getUploadStatusForUploaded();
 	}
 
 	public UploadStatus getUploadStatusForAwaitingValidation() {
-		return studyDao.getUploadStatusFor(Constants.UPLOAD_STATUS_AWAITING_VALIDATION);
+		return studyDao.getUploadStatusForAwaitingValidation();
 	}
 
 	public UploadStatus getUploadStatusFor(String uploadStatusConstant) {
 		return studyDao.getUploadStatusFor(uploadStatusConstant);
 	}
 
-	public Collection<UploadType> getUploadTypesForSubject(Study study) {
-		return studyDao.getUploadTypesForSubject(study);
+	public UploadMethod getUploadMethod(Long id){
+		return studyDao.getUploadMethod(id);
+	}
+	
+	public UploadType getUploadType(Long id){
+		return studyDao.getUploadType(id);
+	}
+	
+	public Collection<UploadType> getUploadTypesForSubject() {
+		return studyDao.getUploadTypesForSubject();
 	}
 
 	public Collection<UploadType> getUploadTypesForLims() {
@@ -1326,7 +1348,23 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 	public Collection<EmailStatus> getAllEmailStatuses() {
 		return studyDao.getAllEmailStatuses();
 	}
+	
+	public List<Study> getAllStudies(){
+		return studyDao.getAllStudies();
+	}
+	
+	public List<Study> getAllParentStudies(){
+		return studyDao.getAllParentStudies();
+	}
+	
+	public List<Study> getAllSubStudiesList(Study study){
+		return studyDao.getAllSubStudiesList(study);
+	}
 
+	public Hashtable<String, Study> getAllSubStudiesHashTable(Study study){
+		return studyDao.getAllSubStudiesHashTable(study);
+	}
+	
 	public List<Upload> searchUploadsForBiospecimen(Upload uploadCriteria, List studyListForUser) {
 		return studyDao.searchUploadsForBiospecimen(uploadCriteria, studyListForUser);
 	}
@@ -1396,13 +1434,8 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 	 * }
 	 */
 
-	@Deprecated
 	public Collection<CustomFieldDisplay> getSelectedPhenoCustomFieldDisplaysForSearch(Search search) {
 		return studyDao.getSelectedPhenoCustomFieldDisplaysForSearch(search);
-	}
-
-	public Collection<PhenoDataSetFieldDisplay> getSelectedPhenoDataSetFieldDisplaysForSearch(Search search) {
-		return studyDao.getSelectedPhenoDataSetFieldDisplaysForSearch(search);
 	}
 
 	public Collection<CustomFieldDisplay> getSelectedSubjectCustomFieldDisplaysForSearch(Search search) {
@@ -1491,10 +1524,6 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		studyDao.delete(search);
 	}
 
-	public void delete(SearchResult result) {
-		studyDao.delete(result);
-	}
-
 	public List<OtherID> getOtherIDs(Person person) {
 		return studyDao.getOtherIDs(person);
 	}
@@ -1553,6 +1582,7 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 
 	public void updateProcess(Process p) {
 		genoDao.updateProcess(p);
+
 	}
 
 	public List<Command> getCommands() {
@@ -1571,36 +1601,22 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		studyDao.createUserConfigs(userConfigList);
 	}
 
-	public List<ConfigField> getAllConfigFields() {
+	public Collection<ConfigField> getAllConfigFields() {
 		return studyDao.getAllConfigFields();
 	}
 
-	public List<UserConfig> getUserConfigs(ArkUser arkUser) {
-		return studyDao.getUserConfigs(arkUser);
+	public List<UserConfigVO> getUserConfigVOs(ArkUser arkUser) {
+		return studyDao.getUserConfigVOs(arkUser);
 	}
-	
-	public UserConfig getUserConfig(ArkUser arkUser, ConfigField configField) {
-		return studyDao.getUserConfig(arkUser, configField);
+
+	public int getRowsPerPage() {
+		return studyDao.getRowsPerPage();
 	}
-	
-	public UserConfig getUserConfig(String configName) {
-		String currentUser = SecurityUtils.getSubject().getPrincipal().toString();
-		ArkUser arkUser = null;
-		try {
-			arkUser = getArkUser(currentUser);
-			
-		} catch (EntityNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		ConfigField configField = studyDao.getConfigFieldByName(configName);
-		
-		UserConfig config = studyDao.getUserConfig(arkUser, configField);
-		
-		return config;
+
+	public int getCustomFieldsPerPage() {
+		return studyDao.getCustomFieldsPerPage();
 	}
-	
+
 	public void deleteUserConfig(UserConfig uc) {
 		studyDao.deleteUserConfig(uc);
 	}
@@ -1673,42 +1689,48 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 
 	/**
 	 * {@inheritDoc}
-	 * @throws ArkFileNotFoundException 
 	 */
-	public byte[] retriveArkFileAttachmentByteArray(final Long studyId, final String subjectUID, final String directoryType, final String fileId, String checksum) throws ArkSystemException, ArkFileNotFoundException,ArkCheckSumNotSameException {
+	public byte[] retriveArkFileAttachmentByteArray(final Long studyId, final String subjectUID, final String directoryType, final String fileId, String checksum) throws ArkSystemException {
 		byte[] data = null;
 		String directoryName = getArkFileDirName(studyId, subjectUID, directoryType);
 		String fileName = directoryName + File.separator + fileId;
+
 		FileInputStream md5input = null;
+		FileInputStream fileInput = null;
+		boolean fileInputIsNull = true;
 		try {
 			md5input = new FileInputStream(new File(fileName));
 			if (DigestUtils.md5Hex(md5input).equalsIgnoreCase(checksum)) {
-//				data = IOUtils.toByteArray(md5input);
-				data = FileUtils.readFileToByteArray(new File(fileName));
+				fileInput = new FileInputStream(new File(fileName));
+				// Convert file to byte array
+				data = IOUtils.toByteArray(fileInput);
+				fileInputIsNull = false;
 			} else {
 				log.error("MD5 Hashes are not matching");
-				throw new ArkCheckSumNotSameException("MD5 Hashes are not matching");
+				throw new ArkSystemException("MD5 Hashes are not matching");
 			}
 		} catch (Exception e) {
 			log.error("Error", e);
-			throw new ArkFileNotFoundException("File not found in: "+e.getMessage());
+			throw new ArkSystemException("exception while getting data" + e.getMessage());
 		} finally {
 			try {
-				if(md5input!=null){
-					md5input.close();
-					}
-				}catch (IOException e) {
-					throw new ArkSystemException("exception while closing stream. " + e.getMessage());
+				md5input.close();
+				if (!fileInputIsNull) {
+					fileInput.close();
 				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				log.error("Error", e);
+				throw new ArkSystemException("exception while closing stream" + e.getMessage());
+			}
 		}
 		return data;
 	}
+
 	/**
 	 * {@inheritDoc}
-	 * @throws ArkFileNotFoundException 
-	 * @throws ArkBaseException 
 	 */
-	public boolean deleteArkFileAttachment(Long studyId, String subjectUID, String fileId, String attachmentType, String checksum) throws ArkSystemException, ArkFileNotFoundException {
+	public boolean deleteArkFileAttachment(Long studyId, String subjectUID, String fileId, String attachmentType, String checksum) throws ArkSystemException {
 		String directory = getArkFileDirName(studyId, subjectUID, attachmentType);
 		String location = directory + File.separator + fileId;
 		File file = new File(location);
@@ -1723,19 +1745,21 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 				if (delete = file.delete()) {
 					log.info("File deleted successfully");
 				} else {
-					throw new ArkFileNotFoundException("Could not find the attachment");
+					log.error("Could not find the file in " + location);
+					throw new ArkSystemException("Could not find the attachment");
 				}
 			} else {
-				throw new ArkCheckSumNotSameException("Attachment hash value mismatch");
+				log.error("Checksum -- " + checksum);
+				throw new ArkSystemException("Attachment hash value mismatch");
 			}
 		} catch (Exception e) {
-			throw new ArkFileNotFoundException(e.getMessage());
+			log.error("Error", e);
+			throw new ArkSystemException(e.getMessage());
 		} finally {
 			try {
-				if(md5input!=null){
-					md5input.close();
-				}
+				md5input.close();
 			} catch (Exception e) {
+				log.error("Error", e);
 				throw new ArkSystemException(e.getMessage());
 			}
 		}
@@ -1803,384 +1827,4 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		return stringBuffer.toString().toUpperCase();
 	}
 
-	@Override
-	public long getCustomFieldCategoryCount(CustomFieldCategory customFieldCategoryCriteria) {
-		 return customFieldDao.getCustomFieldCategoryCount(customFieldCategoryCriteria);
-	}
-
-	@Override
-	public void createCustomFieldCategory(CustomFieldCategoryVO CustomFieldCategoryVO)throws ArkSystemException, ArkRunTimeUniqueException,ArkRunTimeException {
-		try {
-			
-			AuditHistory ah = new AuditHistory();
-
-			// Force uppercase and replace erroneous characters
-			CustomFieldCategoryVO.getCustomFieldCategory().getName().toUpperCase();
-			CustomFieldCategoryVO.getCustomFieldCategory().getName().replaceAll(" ", "_");
-
-			/*// Remove any encoded values if DATE or NUMBER
-			if (customFieldVO.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_DATE) || customFieldVO.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_NUMBER)) {
-				customFieldVO.getCustomField().setEncodedValues(null);
-			}*/
-
-			// Field can not have data yet (since it's new)
-			//customFieldVO.getCustomField().setCustomFieldHasData(false);
-			customFieldDao.createCustomFieldCategory(CustomFieldCategoryVO.getCustomFieldCategory());
-
-			// Custom Field History
-			ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_CREATED);
-			ah.setComment("Created Custom " + CustomFieldCategoryVO.getCustomFieldCategory().getName());
-			ah.setEntityId(CustomFieldCategoryVO.getCustomFieldCategory().getId());
-			ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_CUSTOM_FIELD_CATEGORY);
-
-			createAuditHistory(ah);
-			
-			// Create CustomFieldDisplay only if allowed
-			//if (CustomFieldCategoryVO.isUseCustomFieldCategoryDisplay()) {
-				// Set the CustomField this CustomFieldDisplay entity is linked
-				// to
-				//CustomFieldCategoryVO.getCustomFieldDisplay().setCustomField(CustomFieldCategoryVO.getCustomFieldCategory());
-				//customFieldDao.createCustomFieldDisplay(customFieldVO.getCustomFieldDisplay());
-				// Put in the sequence based on the ID
-				//customFieldVO.getCustomFieldDisplay().setSequence(customFieldVO.getCustomFieldDisplay().getId());
-				//customFieldDao.updateCustomFieldDisplay(customFieldVO.getCustomFieldDisplay());
-
-				// Custom Field Display History
-				//ah = new AuditHistory();
-				//ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_CREATED);
-				//ah.setComment("Created Custom Field Display" + customFieldVO.getCustomField().getName());
-				//ah.setEntityId(customFieldVO.getCustomField().getId());
-				//ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_CUSTOM_FIELD_DISPLAY);
-				//createAuditHistory(ah);
-			//}
-		} catch (ConstraintViolationException cvex) {
-			log.error("Custom Field Category Constrain violation" + cvex);
-			if(cvex.getMessage().contains("Duplicate entry")){
-				log.error("Custom Field Category Duplicates" + cvex);
-				throw new ArkRunTimeUniqueException("A Custom Field Category duplicate value violation");
-			}else if(cvex.getMessage().contains("cannot be null")){
-				log.error("Custom Field Category field cannot be null" + cvex);
-				throw new ArkRunTimeException("A Custom Field Category null violation");
-			}
-		} catch (Exception ex) {
-			log.error("Problem creating Custom Field Category: " + ex);
-			throw new ArkSystemException("Problem creating Custom Field Category: " + ex.getMessage());
-		}
-		
-	}
-
-	@Override
-	public void updateCustomFieldCategory(CustomFieldCategoryVO CustomFieldCategoryVO)throws ArkSystemException, ArkUniqueException,ArkAlreadyBeingUsedException,ArkNotAllowedToUpdateException {
-		CustomFieldCategory customFieldCategory=CustomFieldCategoryVO.getCustomFieldCategory();
-		boolean isUnique = customFieldDao.isCustomFieldCategoryUnqiue(customFieldCategory.getName(), customFieldCategory.getStudy(), customFieldCategory);
-		if (!isUnique) {
-			log.error("Custom Field Category of this name already Exists.: ");
-			throw new ArkUniqueException("A Custom Field Category of this name already exists.");
-		}
-		/*boolean isUsedWithCustomFields=customFieldDao.isCustomFieldCategoryBeingUsed(customFieldCategory);
-		if (isUsedWithCustomFields) {
-			log.error(customFieldCategory.getName()+" is already used with one of a customfield not allow to change.");
-			throw new ArkAlreadyBeingUsedException(customFieldCategory.getName()+" is already used with customfields not allow to change.");
-		}
-		if(customFieldDao.isThisCustomCategoryWasAParentCategoryOfAnother(customFieldCategory)){
-			StringBuffer subCategoryNames=getAllChildrenCategoriedBelongToThisParentAsStringArray(customFieldCategory.getStudy(), customFieldCategory.getArkFunction(), customFieldCategory.getCustomFieldType(), customFieldCategory);
-			throw new ArkNotAllowedToUpdateException("is already assiged as a parent category of "+ subCategoryNames.toString());
-		}*/
-		try {
-				customFieldDao.updateCustomFieldCategory(CustomFieldCategoryVO.getCustomFieldCategory());
-			// Custom Field History
-			AuditHistory ah = new AuditHistory();
-			ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_UPDATED);
-			ah.setComment("Updated Custom Field Category" + CustomFieldCategoryVO.getCustomFieldCategory().getName());
-			ah.setEntityId(CustomFieldCategoryVO.getCustomFieldCategory().getId());
-			ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_CUSTOM_FIELD_CATEGORY);
-			createAuditHistory(ah);
-
-			/*// Only Update CustomFieldDisplay when it is allowed
-			if (customFieldVO.isUseCustomFieldDisplay()) {
-				customFieldVO.getCustomFieldDisplay().setCustomField(customFieldVO.getCustomField());
-				customFieldDao.updateCustomFieldDisplay(customFieldVO.getCustomFieldDisplay());
-				// Custom Field Display History
-				ah = new AuditHistory();
-				ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_UPDATED);
-				ah.setComment("Updated Custom Field Display " + customFieldVO.getCustomField().getName());
-				ah.setEntityId(customFieldVO.getCustomField().getId());
-				ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_CUSTOM_FIELD_DISPLAY);
-				createAuditHistory(ah);
-			}*/
-
-		} catch (ConstraintViolationException cvex) {
-			log.error("Custom Field Category Already Exists.: " + cvex);
-			throw new ArkUniqueException("A Custom Field Category already exits.");
-		} catch (Exception ex) {
-			log.error("Problem updating Custom Field: " + ex);
-			throw new ArkSystemException("Problem updating Custom Field Category: " + ex.getMessage());
-		}
-		
-	}
-
-	@Override
-	public void deleteCustomFieldCategory(CustomFieldCategoryVO customFieldCategoryVO)throws EntityCannotBeRemoved, ArkSystemException {
-		String fieldName = customFieldCategoryVO.getCustomFieldCategory().getName();
-		boolean isParent=customFieldDao.isThisCustomCategoryWasAParentCategoryOfAnother(customFieldCategoryVO.getCustomFieldCategory());
-		boolean hasCustomfields=customFieldDao.isCustomFieldCategoryBeingUsed(customFieldCategoryVO.getCustomFieldCategory());
-		if(isParent){
-			throw new EntityCannotBeRemoved("Can not delete Custom field Category \""+fieldName+"\" which already assiged as parent category.");
-		}
-		if(hasCustomfields){
-			throw new EntityCannotBeRemoved("Can not delete Custom field Category \""+fieldName+"\" which already assiged custom fields.");	
-		}
-		if(!(isParent&& hasCustomfields)){
-				customFieldDao.deleteCustomFieldCategory(customFieldCategoryVO.getCustomFieldCategory());
-				// History for Custom Field Category
-				AuditHistory ah = new AuditHistory();
-				ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_DELETED);
-				ah.setComment("Deleted Custom Field Category " + fieldName);
-				ah.setEntityId(customFieldCategoryVO.getCustomFieldCategory().getId());
-				ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_CUSTOM_FIELD_CATEGORY);
-				createAuditHistory(ah);
-		}
-	}
-
-	@Override
-	public CustomFieldCategory getCustomFieldCategory(Long id) {
-		return customFieldDao.getCustomFieldCategory(id);
-	}
-
-	@Override
-	public List<CustomFieldCategory> searchPageableCustomFieldCategories(CustomFieldCategory customFieldCategoryCriteria, int first,int count) {
-		return customFieldDao.searchPageableCustomFieldCategories(customFieldCategoryCriteria, first, count);
-	}
-
-	@Override
-	public List<CustomFieldCategory> getParentCategoryListByCustomFieldType(Study study,ArkFunction arkFunction, CustomFieldType customFieldType)throws ArkSystemException {
-		return customFieldDao.getParentCategoryListByCustomFieldType(study,arkFunction,customFieldType);
-	}
-
-	@Override
-	public List getAvailableAllCategoryListByCustomFieldTypeExceptThis(Study study,ArkFunction arkFunction, CustomFieldType customFieldType,CustomFieldCategory thisCustomFieldCategory)throws ArkSystemException {
-		return customFieldDao.getAvailableAllCategoryListByCustomFieldTypeExceptThis(study, arkFunction, customFieldType,thisCustomFieldCategory);
-	}
-
-	@Override
-	public List getAvailableAllCategoryListByCustomFieldType(Study study,ArkFunction arkFunction, CustomFieldType customFieldType)throws ArkSystemException {
-		return customFieldDao.getAvailableAllCategoryListByCustomFieldType(study, arkFunction, customFieldType);
-	}
-
-	@Override
-	public List getCategoriesListInCustomFieldsByCustomFieldType(Study study,ArkFunction arkFunction, CustomFieldType customFieldType)throws ArkSystemException {
-		return customFieldDao.getCategoriesListInCustomFieldsByCustomFieldType(study, arkFunction, customFieldType);
-	}
-
-	@Override
-	public List getAvailableAllCategoryListInStudyByCustomFieldType(Study study, ArkFunction arkFunction,CustomFieldType customFieldType)throws ArkSystemException {
-		return customFieldDao.getAvailableAllCategoryListInStudyByCustomFieldType(study,arkFunction, customFieldType);
-	}
-
-	@Override
-	public CustomFieldType getCustomFieldTypeByName(String name) {
-		return customFieldDao.getCustomFieldTypeByName(name);
-	}
-	
-	@Override
-	public List getCustomFieldTypes(ArkModule arkModule) {
-		return customFieldDao.getCustomFieldTypes(arkModule);
-	}
-	@Override
-	public List<UploadLevel> getAllUploadLevels(){
-		return customFieldDao.getAllUploadLevels();
-	}
-
-	@Override
-	public List getCustomFieldCategoryByCustomFieldTypeAndStudy(Study study,CustomFieldType customFieldType) {
-		return customFieldDao.getCustomFieldCategoryByCustomFieldTypeAndStudy(study, customFieldType);
-	}
-
-	@Override
-	public CustomFieldCategory getCustomFieldCategotyByName(String name) {
-		return customFieldDao.getCustomFieldCategotyByName(name);
-	}
-	@Override
-	public UploadLevel getUploadLevelByName(String name){
-		return customFieldDao.getUploadLevelByName(name);
-	};
-	@Override
-	public CustomFieldCategory getCustomFieldCategoryByNameStudyAndArkFunction(String name,Study study,ArkFunction arkFunction){
-		return customFieldDao.getCustomFieldCategoryByNameStudyAndArkFunction(name, study, arkFunction);
-	}
-
-	@Override
-	public boolean isCustomFieldCategoryBeingUsed(CustomFieldCategory customFieldCategory) {
-			return customFieldDao.isCustomFieldCategoryBeingUsed(customFieldCategory);
-	}
-	@Override
-	public void createCustomFieldCategoryUpload(CustomFieldCategoryUpload cfcUpload){
-			studyDao.createCustomFieldCategoryUpload(cfcUpload);
-	}
-
-	@Override
-	public List<String> getAllFamilyUIDs(Study study) {
-		return studyDao.getAllFamilyUIDs(study);
-	}
-
-	@Override
-	public List getFamilyCustomFieldDataFor(Study study,List customFieldDisplaysThatWeNeed,List familyUIDsToBeIncluded) {
-		return studyDao.getfamilyCustomFieldDataFor(study,customFieldDisplaysThatWeNeed, familyUIDsToBeIncluded);
-	}
-	@Override
-	public List<CustomFieldDisplay> getCustomFieldDisplaysInWithCustomFieldType(List fieldNameCollection, Study study, ArkFunction arkFunction,CustomFieldType customFieldType) {
-		return studyDao.getCustomFieldDisplaysInWithCustomFieldType(fieldNameCollection, study, arkFunction,customFieldType);
-	}
-
-	@Override
-	public List getAllChildrenCategoriedBelongToThisParent(Study study,ArkFunction arkFunction, CustomFieldType customFieldType,CustomFieldCategory parentCategory, List allChildrenLst) {
-		List<CustomFieldCategory> immediateSubCategories=customFieldDao.getAllSubCategoriesOfThisCategory(study,arkFunction,customFieldType,parentCategory);
-		if(!immediateSubCategories.isEmpty()){
-			allChildrenLst.addAll(immediateSubCategories);
-				for (CustomFieldCategory customFieldCategory : immediateSubCategories) {
-					allChildrenLst.addAll(getAllChildrenCategoriedBelongToThisParent(study, arkFunction, customFieldType, customFieldCategory,allChildrenLst));
-				}
-		}
-		return allChildrenLst;
-	}
-
-	@Override
-	public List getSiblingList(Study study, ArkFunction arkFunction,CustomFieldType customFieldType,CustomFieldCategory customFieldCategory) {
-		return customFieldDao.getSiblingList(study, arkFunction, customFieldType, customFieldCategory);
-	}
-
-	@Override
-	public List<ArkRolePolicyTemplate> getArkRolePolicytemplateList(ArkUserVO arkUserVO) {
-		List<ArkRolePolicyTemplate> allArkRolePolicyTemplates=new ArrayList<ArkRolePolicyTemplate>();
-		List<ArkUserRole> roleLst=arkUserVO.getArkUserRoleList();
-		for (ArkUserRole arkUserRole :roleLst) {
-				allArkRolePolicyTemplates.addAll((List<ArkRolePolicyTemplate>)arkAuthorisationDao.getArkRolePolicytemplateList(arkUserRole));
-		}
-		log.info("RoleSize:"+roleLst.size());
-		log.info("Function Size:"+removeDuplicates(allArkRolePolicyTemplates).size());
-		return removeDuplicates(allArkRolePolicyTemplates);
-		
-		 
-	}
-	@Override
-	public List<ArkPermission> getArkPremissionListForRoleAndModule(ArkRolePolicyTemplate arkRolePolicyTemplate){
-		return arkAuthorisationDao.getArkPremissionListForRoleAndModule(arkRolePolicyTemplate);
-	}
-	/**
-	 * Remove duplicates from list
-	 * @param customFieldLst
-	 * @return
-	 */
-	private  List<ArkRolePolicyTemplate> removeDuplicates(List<ArkRolePolicyTemplate> fieldLst){
-		 return new ArrayList<ArkRolePolicyTemplate>(new LinkedHashSet<ArkRolePolicyTemplate>(fieldLst));
-		
-	}
-
-	@Override
-	public UploadType getUploadTypeByModuleAndName(ArkModule arkModule,String name) {
-		return studyDao.getUploadTypeByModuleAndName(arkModule, name);
-		
-	}
-	
-	private StringBuffer getAllChildrenCategoriedBelongToThisParentAsStringArray(Study study,ArkFunction arkFunction,CustomFieldType customFieldType,CustomFieldCategory parentCategory){
-		StringBuffer subCategoryNames=new StringBuffer();
-		List<CustomFieldCategory> customFieldCategories= customFieldDao.getAllSubCategoriesOfThisCategory(study, arkFunction, customFieldType, parentCategory);
-		for (CustomFieldCategory customFieldCategory : customFieldCategories) {
-			subCategoryNames.append(customFieldCategory.getName());
-		}
-		return subCategoryNames;
-	}
-
-	@Override
-	public boolean isThisCustomCategoryWasAParentCategoryOfAnother(CustomFieldCategory customFieldCategory){
-		return customFieldDao.isThisCustomCategoryWasAParentCategoryOfAnother(customFieldCategory);
-	}
-
-	@Override
-	public CustomFieldCategory getCustomFieldCategotyByNameAndCustomFieldType(String name, CustomFieldType customFieldType) {
-		return customFieldDao.getCustomFieldCategotyByNameAndCustomFieldType(name, customFieldType);
-	}
-
-	@Override
-	public List getSearchesForSearch(Search search) {
-		return studyDao.getSearchesForSearch(search);
-	}
-
-	@Override
-	public List getStudyComponentsNotInThisSubject(Study study,LinkSubjectStudy linkSubjectStudy) {
-		return studyDao.getStudyComponentsNeverUsedInThisSubject(study, linkSubjectStudy);
-	}
-
-	@Override
-	public List getDifferentStudyComponentsInConsentForSubject(Study study,LinkSubjectStudy linkSubjectStudy) {
-		return studyDao.getDifferentStudyComponentsInConsentForSubject(study, linkSubjectStudy);
-	}
-	/**
-	 * {@inheritDoc}
-	 * @throws ArkFileNotFoundException 
-	 */
-	public File retriveArkFileAttachmentAsFile(final Long studyId, final String subjectUID, final String directoryType, final String fileId, String checksum) throws ArkSystemException, ArkFileNotFoundException,ArkCheckSumNotSameException {
-		String directoryName = getArkFileDirName(studyId, subjectUID, directoryType);
-		String fileName = directoryName + File.separator + fileId;
-		FileInputStream md5input = null;
-		File file;
-		try {
-			file=new File(fileName);
-			md5input = new FileInputStream(file);
-			if (DigestUtils.md5Hex(md5input).equalsIgnoreCase(checksum)) {
-			} else {
-				log.error("MD5 Hashes are not matching");
-				throw new ArkCheckSumNotSameException("MD5 Hashes are not matching");
-			}
-		} catch (Exception e) {
-			log.error("Error", e);
-			throw new ArkFileNotFoundException("File not found in: "+e.getMessage());
-		} finally {
-			try {
-				if(md5input!=null){
-					md5input.close();
-					}
-				}catch (IOException e) {
-					throw new ArkSystemException("exception while closing stream. " + e.getMessage());
-				}
-		}
-		return file;
-	}
-
-	@Override
-	public List<StudyCompStatus> getConsentStudyComponentStatusForStudyAndStudyComp(Study study, StudyComp studyComp) {
-		return studyDao.getConsentStudyComponentStatusForStudyAndStudyComp(study, studyComp);
-	}
-
-	@Override
-	public List<ConsentStatus> getConsentStatusForStudyStudyCompAndStudyCompStatus(Study study, StudyComp studyComp,StudyCompStatus studyCompStatus) {
-		return studyDao.getConsentStatusForStudyStudyCompAndStudyCompStatus(study,studyComp,studyCompStatus);
-	}
-	public String generateNaturalUID(String UID) {
-		StringBuilder natBuilder = new StringBuilder();
-		Matcher matcher = Pattern.compile("\\d+").matcher(UID);
-		int last_end = 0;
-		while (matcher.find()) {
-			if (matcher.start() > last_end) {
-				natBuilder.append(UID.substring(last_end, matcher.start()));
-			}
-			String subjectUIDNumber = StringUtils.leftPad(UID.substring(matcher.start(), matcher.end()), 20, '0');
-			natBuilder.append(subjectUIDNumber);
-			last_end = matcher.end();
-		}
-		return natBuilder.toString();
-	}
-
-	@Override
-	public void deleteUpload(Upload upload) {
-		AuditHistory ah = new AuditHistory();
-			ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_DELETED);
-			ah.setComment("Deleted Upload " + upload.getFilename());
-			ah.setEntityId(upload.getId());
-			ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_STUDY_UPLOAD);
-			this.createAuditHistory(ah, SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal().toString(), upload.getStudy());
-			studyDao.deleteUpload(upload);
-	}
-	
-	
 }

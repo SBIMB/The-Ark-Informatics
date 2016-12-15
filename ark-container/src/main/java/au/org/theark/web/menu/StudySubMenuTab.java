@@ -41,11 +41,9 @@ import au.org.theark.core.model.study.entity.Study;
 import au.org.theark.core.security.ArkPermissionHelper;
 import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.web.component.customfield.CustomFieldContainerPanel;
-import au.org.theark.core.web.component.customfieldcategory.CustomFieldCategoryContainerPanel;
 import au.org.theark.core.web.component.customfieldupload.CustomFieldUploadContainerPanel;
 import au.org.theark.core.web.component.menu.AbstractArkTabPanel;
 import au.org.theark.core.web.component.tabbedPanel.ArkAjaxTabbedPanel;
-import au.org.theark.study.web.component.calendar.CalendarContainerPanel;
 import au.org.theark.study.web.component.managestudy.StudyContainerPanel;
 import au.org.theark.study.web.component.manageuser.UserContainerPanel;
 import au.org.theark.study.web.component.studycomponent.StudyComponentContainerPanel;
@@ -73,7 +71,6 @@ public class StudySubMenuTab extends AbstractArkTabPanel {
 	private WebMarkupContainer			arkContextMarkup;
 	private MainTabProviderImpl		mainTabProvider;
 	private List<ITab>					moduleSubTabsList	= new ArrayList<ITab>();
-	
 
 	/**
 	 * StudySubMenuTab Constructor
@@ -152,22 +149,18 @@ public class StudySubMenuTab extends AbstractArkTabPanel {
 					else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_USER)) {
 						panelToReturn = new UserContainerPanel(panelId);
 					}
-					//Added on 2015-06-22 Categorize  the custom field.
-					//Changed the Constant value from "Subject" to "Study" on 2015-08-17.        
-					else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_FIELD_CATEGORY)){
-						panelToReturn = new CustomFieldCategoryContainerPanel(panelId, true, iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_FIELD_CATEGORY));
-						
-					}else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_FIELD)) {
-						panelToReturn = new CustomFieldContainerPanel(panelId, true, iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_FIELD));
+					else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_FIELD)) {
+						// Clear cache
+						processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_SUBJECT, arkFunction);
+						panelToReturn = new CustomFieldContainerPanel(panelId, true, iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_FIELD),false);
 					}
 					else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_FIELD_UPLOAD)) {
-						panelToReturn = new CustomFieldUploadContainerPanel(panelId, iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_FIELD_UPLOAD));
+						// Clear cache
+						processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_SUBJECT, arkFunction);
+						panelToReturn = new CustomFieldUploadContainerPanel(panelId, iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT));
 					}
-					else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_STUDY_STUDY_DATA_UPLOAD)) {
+					else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_UPLOAD)) {
 						panelToReturn = new SubjectUploadContainerPanel(panelId, arkFunction);
-					}
-					else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_CALENDAR)) {
-						panelToReturn = new CalendarContainerPanel(panelId);
 					}
 					return panelToReturn;
 				}
@@ -182,7 +175,14 @@ public class StudySubMenuTab extends AbstractArkTabPanel {
 						// Other functions require study in context 
 						Long sessionStudyId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.STUDY_CONTEXT_ID);
 						// Subject Upload only visible to parent studies 
-						if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_USER)) {
+						if (sessionStudyId !=null && arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_UPLOAD)) {
+							
+							Study study = iArkCommonService.getStudy(sessionStudyId);
+							boolean childStudy = study.getParentStudy() != null  && (study != study.getParentStudy());
+							return (!childStudy);
+						}
+						// Manage Users only visible to Super Administrators or Study Administrators 
+						else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_USER)) {
 							processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_STUDY, arkFunction);
 							SecurityManager securityManager = ThreadContext.getSecurityManager();
 							Subject currentUser = SecurityUtils.getSubject();

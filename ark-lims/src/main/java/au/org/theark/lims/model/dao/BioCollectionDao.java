@@ -19,11 +19,8 @@
 package au.org.theark.lims.model.dao;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import au.org.theark.core.dao.IStudyDao;
-import au.org.theark.core.service.IArkCommonService;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -46,9 +43,7 @@ import au.org.theark.core.model.lims.entity.BioCollection;
 import au.org.theark.core.model.lims.entity.BioCollectionCustomFieldData;
 import au.org.theark.core.model.lims.entity.BioCollectionUidTemplate;
 import au.org.theark.core.model.lims.entity.BioSampletype;
-import au.org.theark.core.model.lims.entity.BioTransaction;
 import au.org.theark.core.model.lims.entity.Biospecimen;
-import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.model.study.entity.ArkFunction;
 import au.org.theark.core.model.study.entity.CustomField;
 import au.org.theark.core.model.study.entity.CustomFieldDisplay;
@@ -62,16 +57,10 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 	private static Logger		log	= LoggerFactory.getLogger(BioCollection.class);
 
 	private BioCollectionUidGenerator bioCollectionUidGenerator;
-	private IArkCommonService arkCommonService;
 
 	@Autowired
 	public void setBioCollectionUidGenerator(BioCollectionUidGenerator bioCollectionUidGenerator) {
 		this.bioCollectionUidGenerator = bioCollectionUidGenerator;
-	}
-
-	@Autowired
-	public void setArkCommonService(IArkCommonService arkCommonService) {
-		this.arkCommonService = arkCommonService;
 	}
 
 	public BioCollection getBioCollection(Long id) throws EntityNotFoundException {
@@ -103,6 +92,9 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 
 		if (bioCollection.getStudy() != null)
 			criteria.add(Restrictions.eq("study", bioCollection.getStudy()));
+		
+		if (bioCollection.getPatientAge() != null)
+			criteria.add(Restrictions.eq("patientAge", bioCollection.getPatientAge()));
 
 		if (bioCollection.getCollectionDate() != null)
 			criteria.add(Restrictions.eq("collectionDate", bioCollection.getCollectionDate()));
@@ -146,7 +138,6 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 		}
 		
 		biocollection.setBiocollectionUid(biocollectionUid);
-		biocollection.setNaturalUid(arkCommonService.generateNaturalUID(biocollectionUid));
 		getSession().save(biocollection);
 		getSession().refresh(biocollection);
 		return biocollection;
@@ -299,30 +290,43 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 
 		if (bioCollectionCriteria.getId() != null){
 			criteria.add(Restrictions.eq("id", bioCollectionCriteria.getId()));
+			log.info(bioCollectionCriteria.getBiocollectionUid());
 		}
 
 		if (bioCollectionCriteria.getBiocollectionUid() != null){
 			criteria.add(Restrictions.eq("biocollectionUid", bioCollectionCriteria.getBiocollectionUid()));
+			log.info(bioCollectionCriteria.getBiocollectionUid());
 		}
 		
 		if (bioCollectionCriteria.getName() != null){
 			criteria.add(Restrictions.eq("name", bioCollectionCriteria.getName()));
+			log.info(bioCollectionCriteria.getName());
 		}
 
 		if (bioCollectionCriteria.getLinkSubjectStudy() != null){
 			criteria.add(Restrictions.eq("linkSubjectStudy", bioCollectionCriteria.getLinkSubjectStudy()));
+			log.info(bioCollectionCriteria.getLinkSubjectStudy().getSubjectUID());
 		}
 
 		if (bioCollectionCriteria.getStudy() != null) {
 			criteria.add(Restrictions.eq("study", bioCollectionCriteria.getStudy()));
+			log.info(bioCollectionCriteria.getStudy().getName());
 		}
 
 		if (bioCollectionCriteria.getCollectionDate() != null) {
 			criteria.add(Restrictions.eq("collectionDate", bioCollectionCriteria.getCollectionDate()));
+			log.info(bioCollectionCriteria.getCollectionDate().toString());
 		}
+		
+		if (bioCollectionCriteria.getPatientAge() != null) {
+			criteria.add(Restrictions.eq("patientAge", bioCollectionCriteria.getPatientAge()));
+			log.info(bioCollectionCriteria.getPatientAge().toString());
+		}
+
 
 		if (bioCollectionCriteria.getSurgeryDate() != null) {
 			criteria.add(Restrictions.eq("surgeryDate", bioCollectionCriteria.getSurgeryDate()));
+			log.info(bioCollectionCriteria.getSurgeryDate().toString());
 		}
 
 		return criteria;
@@ -342,6 +346,7 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 		if(bioCollectionCriteria.getStudy().getParentStudy() != null && bioCollectionCriteria.getStudy().getParentStudy() != bioCollectionCriteria.getStudy()) {
 			studyList.add(bioCollectionCriteria.getStudy().getParentStudy());
 		}
+		
 		criteria.add(Restrictions.in("cfield.study", studyList));
 		criteria.add(Restrictions.eq("cfield.arkFunction", arkFunction));
 		criteria.setProjection(Projections.rowCount());
@@ -453,7 +458,7 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 		try {
 			Long id  = bioCollectionCFData.getBioCollection().getId();
 			BioCollection bioCollection = getBioCollection(id);
-			//Study subjectStudy = bioCollection.getStudy();
+			Study subjectStudy = bioCollection.getStudy();
 			ArkFunction arkFunction = customField.getArkFunction();
 
 			StringBuffer stringBuffer = new StringBuffer();
@@ -504,6 +509,7 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 		return bioCollection;
 	}
 	
+
 	public List<String> getAllBiocollectionUIDs(Study study){
 		String queryString = "select bio.biocollectionUid " +
 		"from BioCollection bio " +
@@ -513,42 +519,5 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 		query.setParameter("study", study);
 		return query.list();
 	}
-	
-	public BioCollection getBioCollectionForStudySubjectByUID(String biocollectionUid, Study study,LinkSubjectStudy linkSubjectStudy) {
-		Criteria criteria = getSession().createCriteria(BioCollection.class,"biocollection");
-		criteria.add(Restrictions.eq("biocollection.biocollectionUid", biocollectionUid));
-		criteria.add(Restrictions.eq("study", study));
-		criteria.add(Restrictions.eq("linkSubjectStudy", linkSubjectStudy));
-		return (BioCollection)criteria.uniqueResult(); 
-	}
-	/**
-	 * Insert bio collections in a batch.
-	 * @param insertBioCollections
-	 */
-	public void batchInsertBiocollections(Collection<BioCollection> insertBioCollections) {
-		for (BioCollection biocollection : insertBioCollections) {
-			getSession().save(biocollection);
-		}
-			
-	}
-
-	/**
-	 * Update bio collections in batch.
-	 * @param updateBiospecimens
-	 */
-	public void batchUpdateBiocollections(Collection<BioCollection> updateBioCollections) {
-		for (BioCollection biocollection : updateBioCollections) {
-			getSession().update(biocollection);
-		}
-		
-	}
-	public boolean hasBiocllectionGotCustomFieldData(BioCollection bioCollection) {
-		Criteria criteria = getSession().createCriteria(BioCollectionCustomFieldData.class);
-		criteria.add(Restrictions.eq("bioCollection", bioCollection));
-		List<BioCollectionCustomFieldData> list=(List<BioCollectionCustomFieldData>) criteria.list();
-		return (list.size()>0);
-	}
-    
-	
 	
 }

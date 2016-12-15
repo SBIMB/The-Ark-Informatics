@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.wicket.util.io.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +42,7 @@ import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.FileFormatException;
 import au.org.theark.core.exception.SystemDataMismatchException;
 import au.org.theark.core.model.study.entity.ArkFunction;
-import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.CustomField;
-import au.org.theark.core.model.study.entity.CustomFieldCategory;
-import au.org.theark.core.model.study.entity.CustomFieldType;
 import au.org.theark.core.model.study.entity.CustomFieldUpload;
 import au.org.theark.core.model.study.entity.FieldType;
 import au.org.theark.core.model.study.entity.Person;
@@ -58,8 +53,6 @@ import au.org.theark.core.vo.CustomFieldVO;
 
 import com.csvreader.CsvReader;
 
-import freemarker.template.utility.SecurityUtilities;
-
 /**
  * CustomFieldImporter provides support for importing matrix-formatted files for defining custom fields. 
  * It features state-machine behaviour to allow an external class to deal with how to store the data pulled out of the files.
@@ -68,9 +61,7 @@ import freemarker.template.utility.SecurityUtilities;
  * @author elam
  */
 @SuppressWarnings("unused")
-public class CustomFieldImporter implements ICustomImporter,Serializable {
-	
-	private static final long serialVersionUID = 1L;
+public class CustomFieldImporter {
 	private String							fieldName;
 	private long							subjectCount;
 	private long							fieldCount;
@@ -83,18 +74,17 @@ public class CustomFieldImporter implements ICustomImporter,Serializable {
 																																						// delimiter: COMMA
 	private String							fileFormat;
 	private Person							person;
-	private List<CustomField>				fieldList;
+	private List<CustomField>			fieldList;
 	private Study							study;
 	static Logger							log							= LoggerFactory.getLogger(CustomFieldImporter.class);
-	java.util.Collection<String>			fileValidationMessages	= new ArrayList<String>();
-	java.util.Collection<String>			dataValidationMessages	= new ArrayList<String>();
-	private IArkCommonService<Void>			iArkCommonService			= null;
+	java.util.Collection<String>		fileValidationMessages	= new ArrayList<String>();
+	java.util.Collection<String>		dataValidationMessages	= new ArrayList<String>();
+	private IArkCommonService<Void>	iArkCommonService			= null;
 	private StringBuffer					uploadReport				= null;
-	private List<CustomFieldUpload>			fieldUploadList			= new ArrayList<CustomFieldUpload>();
+	private List<CustomFieldUpload>	fieldUploadList			= new ArrayList<CustomFieldUpload>();
 	private Long							phenoCollectionId			= null;
 	private ArkFunction 					arkFunction;
 	private Date							completionTime = null;
-	private ArkModule 						arkModule;
 
 	/**
 	 * PhenotypicImport constructor
@@ -117,8 +107,6 @@ public class CustomFieldImporter implements ICustomImporter,Serializable {
 		this.fileFormat = fileFormat;
 		this.phenotypicDelimChr = delimiterChar;
 		this.arkFunction = arkFunction;
-		Long sessionModuleId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.ARK_MODULE_KEY);
-		this.arkModule= iArkCommonService.getArkModuleById(sessionModuleId);
 	}
 
 
@@ -133,7 +121,6 @@ public class CustomFieldImporter implements ICustomImporter,Serializable {
 	 * @throws FileFormatException
 	 * @throws ArkSystemException
 	 */
-	@Override
 	public StringBuffer uploadAndReportMatrixDataDictionaryFile(InputStream fileInputStream, long inLength) throws FileFormatException, ArkSystemException {
 		uploadReport = new StringBuffer();
 		curPos = 0;
@@ -199,38 +186,28 @@ public class CustomFieldImporter implements ICustomImporter,Serializable {
 					uploadReport.append("\n");
 
 					oldField.setName(fieldName);
-					
-					//Update the Custom field Type and Custom Field Category on 2015-08-24
-					
-					CustomFieldType customFieldType=iArkCommonService.getCustomFieldTypeByName(csvReader.get("CUSTOM_FIELD_TYPE"));
-					oldField.setCustomFieldType(customFieldType);
-					
-					CustomFieldCategory customFieldCategory=iArkCommonService.getCustomFieldCategotyByName(csvReader.get("CUSTOM_FIELD_CATEGORY"));
-					oldField.setCustomFieldCategory(customFieldCategory);
-					
-					FieldType fieldType = iArkCommonService.getFieldTypeByName(csvReader.get("FIELD_TYPE"));
+
+					FieldType fieldType = new FieldType();
+					fieldType = iArkCommonService.getFieldTypeByName(csvReader.get("FIELD_TYPE"));
 					oldField.setFieldType(fieldType);
-				
+
 					oldField.setDescription(csvReader.get("DESCRIPTION"));
 					oldField.setFieldLabel(csvReader.get("QUESTION"));
-					
-					if(!Constants.ARK_MODULE_STUDY.equalsIgnoreCase(arkModule.getName())){
-						if (csvReader.get("UNITS") != null && !csvReader.get("UNITS").isEmpty()) {
-							UnitType unitType = iArkCommonService.getUnitTypeByNameAndArkFunction(csvReader.get("UNITS"), arkFunctionToBeUsed);
-							if (unitType == null) {
-								throw new SystemDataMismatchException("Unit '" + csvReader.get("UNITS") + "' in file do not match known units in internal system table\n");
-							}
-							else  {
-								oldField.setUnitType(unitType);
-							}
+					if (csvReader.get("UNITS") != null && !csvReader.get("UNITS").isEmpty()) {
+						UnitType unitType = iArkCommonService.getUnitTypeByNameAndArkFunction(csvReader.get("UNITS"), arkFunctionToBeUsed);
+						if (unitType == null) {
+							throw new SystemDataMismatchException("Unit '" + csvReader.get("UNITS") + "' in file do not match known units in internal system table\n");
 						}
-					}else{
-						oldField.setUnitTypeInText(csvReader.get("UNITS"));
+						else  {
+							oldField.setUnitType(unitType);
+						}
 					}
+					
 					oldField.setEncodedValues(csvReader.get("ENCODED_VALUES"));
 					oldField.setMinValue(csvReader.get("MINIMUM_VALUE"));
 					oldField.setMaxValue(csvReader.get("MAXIMUM_VALUE"));
 					oldField.setMissingValue(csvReader.get("MISSING_VALUE"));
+
 					// Try to update the oldField
 					CustomFieldVO updateCFVo = new CustomFieldVO();
 					updateCFVo.setCustomField(oldField);
@@ -249,30 +226,18 @@ public class CustomFieldImporter implements ICustomImporter,Serializable {
 					customField.setName(fieldName);
 					customField.setArkFunction(arkFunctionToBeUsed);
 
-					if(!Constants.ARK_MODULE_STUDY.equalsIgnoreCase(arkModule.getName())){
-						if (csvReader.get("UNITS") != null && !csvReader.get("UNITS").isEmpty()) {
-							UnitType unitType = iArkCommonService.getUnitTypeByNameAndArkFunction(csvReader.get("UNITS"), arkFunctionToBeUsed);
-							if (unitType == null) {
-								throw new SystemDataMismatchException("Unit '" + csvReader.get("UNITS") + "' in file do not match known units in internal system table\n");
-							}
-							else  {
-								customField.setUnitType(unitType);
-							}
+					if (csvReader.get("UNITS") != null && !csvReader.get("UNITS").isEmpty()) {
+						UnitType unitType = iArkCommonService.getUnitTypeByNameAndArkFunction(csvReader.get("UNITS"), arkFunctionToBeUsed);
+						if (unitType == null) {
+							throw new SystemDataMismatchException("Unit '" + csvReader.get("UNITS") + "' in file do not match known units in internal system table\n");
 						}
-					}else{
-						customField.setUnitTypeInText(csvReader.get("UNITS"));
-					}	
-					//insert the Custom field Type and Custom Field Category on 2015-08-24
-					CustomFieldType customFieldType=iArkCommonService.getCustomFieldTypeByName(csvReader.get("CUSTOM_FIELD_TYPE"));
-					customField.setCustomFieldType(customFieldType);
-					
-					CustomFieldCategory customFieldCategory=iArkCommonService.getCustomFieldCategotyByName(csvReader.get("CUSTOM_FIELD_CATEGORY"));
-					customField.setCustomFieldCategory(customFieldCategory);
+						else  {
+							customField.setUnitType(unitType);
+						}
+					}
 					
 					FieldType fieldType = iArkCommonService.getFieldTypeByName(csvReader.get("FIELD_TYPE"));
 					customField.setFieldType(fieldType);
-					
-					
 					customField.setDescription(csvReader.get("DESCRIPTION"));
 					customField.setFieldLabel(csvReader.get("QUESTION"));
 					customField.setEncodedValues(csvReader.get("ENCODED_VALUES"));
@@ -383,7 +348,6 @@ public class CustomFieldImporter implements ICustomImporter,Serializable {
 	 * 
 	 * @return inputstream of the converted workbook as csv
 	 */
-	@Override
 	public InputStream convertXlsToCsv(Workbook w) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {

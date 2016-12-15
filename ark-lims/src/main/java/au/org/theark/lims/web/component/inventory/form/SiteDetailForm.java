@@ -29,7 +29,6 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.form.palette.Palette;
 import org.apache.wicket.extensions.markup.html.form.palette.component.Recorder;
@@ -40,19 +39,16 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.EntityNotFoundException;
-import au.org.theark.core.model.lims.entity.Biospecimen;
 import au.org.theark.core.model.lims.entity.InvSite;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkUser;
@@ -103,29 +99,14 @@ public class SiteDetailForm extends AbstractInventoryDetailForm<LimsVO> {
 	 * @param tree
 	 * @param node 
 	 */
-	public SiteDetailForm(String id, FeedbackPanel feedBackPanel, WebMarkupContainer detailContainer, AbstractContainerForm<LimsVO> containerForm, InventoryLinkTree tree, DefaultMutableTreeNode node, Panel containerPanel) {
-		super(id, feedBackPanel, detailContainer, containerForm, tree, node, containerPanel);
+	public SiteDetailForm(String id, FeedbackPanel feedBackPanel, WebMarkupContainer detailContainer, AbstractContainerForm<LimsVO> containerForm, InventoryLinkTree tree, DefaultMutableTreeNode node) {
+		super(id, feedBackPanel, detailContainer, containerForm, tree, node);
 	}
 
 	public void initialiseDetailForm() {
 		idTxtFld = new TextField<String>("invSite.id");
 		initStudyPalette();
 		nameTxtFld = new TextField<String>("invSite.name");
-		// Focus on Name
-		nameTxtFld.add(new ArkDefaultFormFocusBehavior());
-		nameTxtFld.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-		private static final long	serialVersionUID	= 1L;
-		@Override
-		protected void onUpdate(AjaxRequestTarget target) {
-			String siteName = (getComponent().getDefaultModelObject().toString() != null ? getComponent().getDefaultModelObject().toString() : new String());
-			InvSite invSite=iInventoryService.getInvSiteByname(siteName);
-			if (invSite != null && invSite.getId() != null) {
-				error("Site name must be unique. Please try again.");
-				target.focusComponent(getComponent());
-			}
-				target.add(feedbackPanel);
-			}
-		});
 		contactTxtFld = new TextField<String>("invSite.contact");
 		addressTxtAreaFld = new TextArea<String>("invSite.address");
 		phoneTxtFld = new TextField<String>("invSite.phone");
@@ -133,7 +114,8 @@ public class SiteDetailForm extends AbstractInventoryDetailForm<LimsVO> {
 		attachValidators();
 		addComponents();
 
-		
+		// Focus on Name
+		nameTxtFld.add(new ArkDefaultFormFocusBehavior());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -178,10 +160,6 @@ public class SiteDetailForm extends AbstractInventoryDetailForm<LimsVO> {
 
 	protected void attachValidators() {
 		nameTxtFld.setRequired(true).setLabel(new StringResourceModel("error.invSite.name.required", this, new Model<String>("Name")));
-		nameTxtFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_NAME_MAX_LENGTH_50));
-		contactTxtFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_NAME_MAX_LENGTH_50));       
-		addressTxtAreaFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_DESCRIPTIVE_MAX_LENGTH_255));   
-		phoneTxtFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_NAME_MAX_LENGTH_50));         
 	}
 
 	private void addComponents() {

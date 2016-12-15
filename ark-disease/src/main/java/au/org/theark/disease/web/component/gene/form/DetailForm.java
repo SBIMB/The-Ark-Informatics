@@ -216,6 +216,10 @@ public class DetailForm extends AbstractDetailForm<GeneVO> {
 		}
 
 	}
+	
+	@Override
+	protected void onTest(Form<GeneVO> containerForm, AjaxRequestTarget target) {
+	}
 
 	@Override
 	protected void onDeleteConfirmed(AjaxRequestTarget target, String selection) {

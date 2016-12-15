@@ -283,6 +283,10 @@ public class DetailForm extends AbstractDetailForm<BiospecimenUidTemplate> {
 		onSavePostProcess(target);
 		target.add(feedBackPanel);
 	}
+	
+	@Override
+	protected void onTest(Form<BiospecimenUidTemplate> containerForm, AjaxRequestTarget target) {
+	}
 
 	/*
 	 * (non-Javadoc)

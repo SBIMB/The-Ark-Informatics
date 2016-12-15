@@ -164,7 +164,7 @@ public class BiospecimenListForm extends Form<LimsVO> {
 		biospecimenProvider.setCriteriaModel(cpModel);
 
 		dataView = buildDataView(biospecimenProvider);
-		dataView.setItemsPerPage(iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue());
+		dataView.setItemsPerPage(iArkCommonService.getRowsPerPage());
 
 		AjaxPagingNavigator pageNavigator = new AjaxPagingNavigator("navigator", dataView) {
 
@@ -182,12 +182,12 @@ public class BiospecimenListForm extends Form<LimsVO> {
 		columns.add(new ExportableTextColumn<Biospecimen>(Model.of("BiospecimenUID"), "biospecimenUid"));
 		columns.add(new ExportableTextColumn<Biospecimen>(Model.of("Study"), "study.name"));
 		columns.add(new ExportableTextColumn<Biospecimen>(Model.of("SubjectUID"), "linkSubjectStudy.subjectUID"));
-		columns.add(new ExportableTextColumn<Biospecimen>(Model.of("ParentUID"), "parentUid"));
+		columns.add(new ExportableTextColumn<Biospecimen>(Model.of("ParentUID"), "parentUID"));
 		columns.add(new ExportableTextColumn<Biospecimen>(Model.of("Collection"), "bioCollection.name"));
 		columns.add(new ExportableTextColumn<Biospecimen>(Model.of("Sample Type"), "sampleType.name"));
 		columns.add(new ExportableTextColumn<Biospecimen>(Model.of("Quantity"), "quantity"));
 		
-		DataTable table = new DataTable("datatable", columns, dataView.getDataProvider(), iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue());
+		DataTable table = new DataTable("datatable", columns, dataView.getDataProvider(), iArkCommonService.getRowsPerPage());
 		List<String> headers = new ArrayList<String>(0);
 		headers.add("BiospecimenUID");
 		headers.add("Study");
@@ -376,12 +376,7 @@ public class BiospecimenListForm extends Form<LimsVO> {
 					 * 
 					 */
 					private static final long	serialVersionUID	= 1L;
-
-					@Override
-					public boolean isEnabled() {
-						return ArkPermissionHelper.isActionPermitted(au.org.theark.core.Constants.NEW);
-					}
-
+					
 					protected void onSubmit(AjaxRequestTarget target, org.apache.wicket.markup.html.form.Form<?> form) {
 						onBatchAliquot(target, item.getModel());
 						target.add(feedbackPanel);
@@ -399,11 +394,6 @@ public class BiospecimenListForm extends Form<LimsVO> {
 
 				item.add(new AjaxButton("allocateUnallocate"){
 					private static final long	serialVersionUID	= 1L;
-
-					@Override
-					public boolean isEnabled() {
-						return ArkPermissionHelper.isActionPermitted(au.org.theark.core.Constants.EDIT);
-					}
 
 					@Override
 					protected void onSubmit(AjaxRequestTarget target, Form<?> form) {

@@ -28,47 +28,40 @@ public class ConsentDetailsDataRow implements Serializable {
 	protected String				subjectUID;
 	protected String 				otherID_Source;
 	protected String				otherID;
-	protected String				consentStatus;
 	protected String				subjectStatus;
-	protected String				title;
-	protected String				firstName;
-	protected String				lastName;
-	protected String				streetAddress;
-	protected String				suburb;
-	protected String				state;
-	protected String				postcode;
-	protected String				country;
-	protected String				workPhone;
-	protected String				homePhone;
-	protected String				email;
+	protected Date					dateOfEnrollment;
+	protected Integer				ageAtEnrollment;
 	protected String				sex;
+	protected String				ethnicity;
+	protected String				consentStatus;
 	protected Date					consentDate;
-
+	protected String				consentToUseData;
+	protected String				consentToShareData;
+	protected String				consentToUseBiospecimen;
+	protected String				consentToShareBiospecimen;
+	
 	public ConsentDetailsDataRow() {
 
 	}
 
-	public ConsentDetailsDataRow(String subjectUID, String otherID_Source, String otherID, String consentStatus, String subjectStatus, String title, String firstName, String lastName, String streetAddress, String suburb, String state,
-			String postcode, String country, String workPhone, String homePhone, String email, String sex, Date consentDate) {
+	public ConsentDetailsDataRow(String subjectUID, String otherID_Source, String otherID, String subjectStatus, String sex, Date dateOfEnrollment, Integer ageAtEnrollment, String ethnicity, Date consentDate, String consentStatus, String consentToUseData, String consentToShareData, String consentToUseBiospecimen,
+			String consentToShareBiospecimen) {
 		super();
 		this.subjectUID = subjectUID;
 		this.otherID_Source = otherID_Source;
 		this.otherID = otherID;
-		this.consentStatus = consentStatus;
 		this.subjectStatus = subjectStatus;
-		this.title = title;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.streetAddress = streetAddress;
-		this.suburb = suburb;
-		this.state = state;
-		this.postcode = postcode;
-		this.country = country;
-		this.workPhone = workPhone;
-		this.homePhone = homePhone;
-		this.email = email;
+		this.dateOfEnrollment = dateOfEnrollment;
+		this.ageAtEnrollment = ageAtEnrollment;
 		this.sex = sex;
+		this.ethnicity = ethnicity;
+		this.consentStatus = consentStatus;
 		this.consentDate = consentDate;
+		this.consentToUseData = consentToUseData;
+		this.consentToShareData = consentToShareData;
+		this.consentToUseBiospecimen = consentToUseBiospecimen;
+		this.consentToShareBiospecimen = consentToShareBiospecimen;
+		
 	}
 
 	public String getSubjectUID() {
@@ -111,92 +104,60 @@ public class ConsentDetailsDataRow implements Serializable {
 		this.subjectStatus = subjectStatus;
 	}
 
-	public String getTitle() {
-		return title;
+	public Date getDateOfEnrollment() {
+		return dateOfEnrollment;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setDateOfEnrollment(Date dateOfEnrollment) {
+		this.dateOfEnrollment = dateOfEnrollment;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public Integer getAgeAtEnrollment() {
+		return ageAtEnrollment;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setAgeAtEnrollment(Integer ageAtEnrollment) {
+		this.ageAtEnrollment = ageAtEnrollment;
 	}
 
-	public String getLastName() {
-		return lastName;
+	public String getEthnicity() {
+		return ethnicity;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setEthnicity(String ethnicity) {
+		this.ethnicity = ethnicity;
 	}
 
-	public String getStreetAddress() {
-		return streetAddress;
+	public String getConsentToUseData() {
+		return consentToUseData;
 	}
 
-	public void setStreetAddress(String streetAddress) {
-		this.streetAddress = streetAddress;
+	public void setConsentToUseData(String consentToUseData) {
+		this.consentToUseData = consentToUseData;
 	}
 
-	public String getSuburb() {
-		return suburb;
+	public String getConsentToShareData() {
+		return consentToShareData;
 	}
 
-	public void setSuburb(String suburb) {
-		this.suburb = suburb;
+	public void setConsentToShareData(String consentToShareData) {
+		this.consentToShareData = consentToShareData;
 	}
 
-	public String getState() {
-		return state;
+	public String getConsentToUseBiospecimen() {
+		return consentToUseBiospecimen;
 	}
 
-	public void setState(String state) {
-		this.state = state;
+	public void setConsentToUseBiospecimen(String consentToUseBiospecimen) {
+		this.consentToUseBiospecimen = consentToUseBiospecimen;
 	}
 
-	public String getPostcode() {
-		return postcode;
+	public String getConsentToShareBiospecimen() {
+		return consentToShareBiospecimen;
 	}
 
-	public void setPostcode(String postcode) {
-		this.postcode = postcode;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-	public String getWorkPhone() {
-		return workPhone;
-	}
-
-	public void setWorkPhone(String workPhone) {
-		this.workPhone = workPhone;
-	}
-
-	public String getHomePhone() {
-		return homePhone;
-	}
-
-	public void setHomePhone(String homePhone) {
-		this.homePhone = homePhone;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
+	public void setConsentToShareBiospecimen(String consentToShareBiospecimen) {
+		this.consentToShareBiospecimen = consentToShareBiospecimen;
 	}
 
 	public String getSex() {

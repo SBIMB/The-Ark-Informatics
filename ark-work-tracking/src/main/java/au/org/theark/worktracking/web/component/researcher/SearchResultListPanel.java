@@ -42,7 +42,7 @@ public class SearchResultListPanel extends Panel {
 
 	public PageableListView<Researcher> buildPageableListView(IModel iModel) {
 
-		PageableListView<Researcher> sitePageableListView = new PageableListView<Researcher>("researcherList", iModel, iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue()) {
+		PageableListView<Researcher> sitePageableListView = new PageableListView<Researcher>("researcherList", iModel, iArkCommonService.getRowsPerPage()) {
 
 			private static final long	serialVersionUID	= 1L;
 
@@ -80,12 +80,7 @@ public class SearchResultListPanel extends Panel {
 				else {
 					item.add(new Label(Constants.RESEARCHER_ROLE, ""));
 				}
-				if (researcher.getResearcherStatus() != null) {
-					item.add(new Label(Constants.RESEARCHER_STATUS, researcher.getResearcherStatus().getName()));
-				}
-				else {
-					item.add(new Label(Constants.RESEARCHER_STATUS, ""));
-				}
+
 				item.add(new AttributeModifier("class", new AbstractReadOnlyModel<String>() {
 					private static final long	serialVersionUID	= 1L;
 

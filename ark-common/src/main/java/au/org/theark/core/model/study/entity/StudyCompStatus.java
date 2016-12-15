@@ -30,8 +30,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.envers.Audited;
-
 import au.org.theark.core.Constants;
 
 /**
@@ -39,7 +37,6 @@ import au.org.theark.core.Constants;
  */
 @Entity
 @Table(name = "STUDY_COMP_STATUS", schema = Constants.STUDY_SCHEMA, uniqueConstraints = @UniqueConstraint(columnNames = "NAME"))
-@Audited
 public class StudyCompStatus implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
