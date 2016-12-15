@@ -60,7 +60,6 @@ public class PrinterListPanel extends Panel {
 		printerListDdc.add(new AttributeModifier("name", "printerList"));
 		printerListDdc.add(new AttributeModifier("onchange", "changeHiddenInput(this)"));
 		printerListDdc.setOutputMarkupPlaceholderTag(true);
-		printerListDdc.setNullValid(true);
 		this.add(printerListDdc);
 		
 		selectedPrinter = new HiddenField<String>("selectedPrinter", new PropertyModel<String>(this, "selected"));
@@ -95,7 +94,6 @@ public class PrinterListPanel extends Panel {
 		javaScript.append(selectedPrinter.getMarkupId());
 		javaScript.append("');\n");
 		javaScript.append("\n");
-		javaScript.append("		printers.unshift(\"Choose One\");\n");
 		javaScript.append("		for ( var i in printers) {");
 		javaScript.append("\n");
 		javaScript.append("			if(objHidden.value == printers[i]) {\n");

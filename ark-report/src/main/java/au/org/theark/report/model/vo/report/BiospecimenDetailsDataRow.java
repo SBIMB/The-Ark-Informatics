@@ -22,6 +22,7 @@ public class BiospecimenDetailsDataRow implements Serializable {
 	private String initialStatus;
 	private String site;
 	private String freezer;
+	private String shelf;
 	private String rack;
 	private String box;
 	
@@ -31,7 +32,7 @@ public class BiospecimenDetailsDataRow implements Serializable {
 	public BiospecimenDetailsDataRow(String studyName, String subjectUId,
 			Long biospecimenId, String parentId, String sampleType,
 			Double quantity, String initialStatus, String site, String freezer,
-			String rack, String box, String biospecimenUid) {
+			String shelf, String rack, String box, String biospecimenUid) {
 		this.studyName = studyName;
 		this.subjectUId = subjectUId;
 		this.biospecimenId = biospecimenId;
@@ -41,6 +42,7 @@ public class BiospecimenDetailsDataRow implements Serializable {
 		this.initialStatus = initialStatus;
 		this.site = site;
 		this.freezer = freezer;
+		this.shelf = shelf;
 		this.rack = rack;
 		this.box = box;
 		this.biospecimenUid=biospecimenUid;
@@ -117,6 +119,15 @@ public class BiospecimenDetailsDataRow implements Serializable {
 	public void setFreezer(String freezer) {
 		this.freezer = freezer;
 	}
+	
+	public String getShelf() {
+		return shelf;
+	}
+
+	public void setShelf(String shelf) {
+		this.shelf = shelf;
+	}
+
 
 	public String getRack() {
 		return rack;

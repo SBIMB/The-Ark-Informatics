@@ -25,8 +25,7 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 
-import au.org.theark.core.model.pheno.entity.PhenoDataSetCollection;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetGroup;
+import au.org.theark.core.model.pheno.entity.PhenoCollection;
 import au.org.theark.core.model.study.entity.CustomFieldGroup;
 import au.org.theark.core.model.study.entity.FileFormat;
 import au.org.theark.core.model.study.entity.Study;
@@ -39,26 +38,21 @@ import au.org.theark.core.model.study.entity.Upload;
 @SuppressWarnings("serial")
 public class UploadVO implements Serializable {
 	private Upload								upload;
-	private List<String>						uidsToUpload;
-	private FileFormat							fileFormat;
-	private String								uploadType;//TODO could create type/enum/ref table
-	private FileUpload							fileUpload;
-	private Study								study;
-	private java.util.Collection<Upload>		uploadCollection;
-	private int									mode;
+	private List<String>								uidsToUpload;
+	private FileFormat								fileFormat;
+	private String										uploadType;//TODO could create type/enum/ref table
+	private FileUpload								fileUpload;
+	private Study										study;
+	private java.util.Collection<Upload>	uploadCollection;
+	private int											mode;
 	private java.util.Collection<String>		validationMessages;
-	private Boolean								updateChkBox;
+	private Boolean									updateChkBox;
 	private CustomFieldGroup					customFieldGroup;
-	private PhenoDataSetGroup					phenoDataSetGroup;
-	private PhenoDataSetCollection				phenoCollection;
-	private Boolean 							previousStepOutCompleted; 
-	private String								customFieldType;
-	private String 								strMessage;
-	private Integer 							progress;
+	private PhenoCollection						phenoCollection;
 
 	public UploadVO() {
 		upload = new Upload();
-		phenoCollection = new PhenoDataSetCollection();
+		phenoCollection = new PhenoCollection();
 		setUploadCollection(new ArrayList<Upload>());
 	}
 
@@ -68,6 +62,7 @@ public class UploadVO implements Serializable {
 	public Upload getUpload() {
 		return upload;
 	}
+
 	/**
 	 * @param field
 	 *           the field to set
@@ -227,55 +222,11 @@ public class UploadVO implements Serializable {
 		return customFieldGroup;
 	}
 
-	public PhenoDataSetGroup getPhenoDataSetGroup() {
-		return phenoDataSetGroup;
-	}
-
-	public void setPhenoDataSetGroup(PhenoDataSetGroup phenoDataSetGroup) {
-		this.phenoDataSetGroup = phenoDataSetGroup;
-	}
-
-	public void setPhenoCollection(PhenoDataSetCollection phenoCollection) {
+	public void setPhenoCollection(PhenoCollection phenoCollection) {
 		this.phenoCollection = phenoCollection;
 	}
 
-	public PhenoDataSetCollection getPhenoCollection() {
+	public PhenoCollection getPhenoCollection() {
 		return phenoCollection;
 	}
-	public Boolean getPreviousStepOutCompleted() {
-		return previousStepOutCompleted;
-	}
-
-	public void setPreviousStepOutCompleted(Boolean previousStepOutCompleted) {
-		this.previousStepOutCompleted = previousStepOutCompleted;
-	}
-
-	public String getCustomFieldType() {
-		return customFieldType;
-	}
-
-	public void setCustomFieldType(String customFieldType) {
-		this.customFieldType = customFieldType;
-	}
-	public String getStrMessage() {
-		return strMessage;
-	}
-
-	public void setStrMessage(String strMessage) {
-		this.strMessage = strMessage;
-	}
-
-	public Integer getProgress() {
-		if(progress==null){
-			return new Integer(0);
-		}else{
-			return progress;
-		}
-	}
-
-	public void setProgress(Integer progress) {
-		this.progress = progress;
-	}
-	
-	
 }

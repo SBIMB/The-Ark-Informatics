@@ -1,28 +1,4 @@
--- latest
-SET @STUDY_GROUP_NAME = 'GUARD';
-SET @STUDYKEY = 29;
-SET @STUDYNAME= 'GUARD';
-SET @AUTOGEN_SUBJECT = 0;
-SET @AUTOGEN_BIOSPECIMEN = 1;
-SET @AUTOGEN_BIOCOLLECTION = 1;
--- before setting each of these params check that this can work...ie; that there is not some weird multiple prefix for a given study.
-
--- SET @SUBJECT_PADCHAR = 8; -- no of chars to pad out
--- apparently subject prefix comes from wager
--- SET @SUBJECT_PREFIX = 'RAV';
-
-SET @BIOCOLLECTIONUID_PREFIX = 'ARD';
--- SET @BIOCOLLECTIONUID_TOKEN_ID = 1;
-SET @BIOCOLLECTIONUID_TOKEN_DASH = '';
-SET @BIOCOLLECTIONUID_PADCHAR_ID = 5;
-	
-SET @BIOSPECIMENUID_PREFIX = 'ARD';
-SET @BIOSPECIMENUID_TOKEN_ID = 1;
-SET @BIOSPECIMENUID_PADCHAR_ID = 5;
-
-
-
-/*
+-- WASHS PARAMETERS
 -- latest
 SET @STUDY_GROUP_NAME = 'ParkC';
 SET @STUDYKEY = 457;
@@ -44,7 +20,7 @@ SET @BIOCOLLECTIONUID_PADCHAR_ID = 5;
 SET @BIOSPECIMENUID_PREFIX = 'PKC';
 -- SET @BIOSPECIMENUID_TOKEN_ID = 1;
 SET @BIOSPECIMENUID_PADCHAR_ID = 5;
-*/
+
 select * from zeus.study where studykey = @STUDYKEY;
 select * from zeus.study where studyname = @STUDYNAME;
 
@@ -461,19 +437,8 @@ AND sub.`SUBJECTKEY` = `person`.`OTHER_ID`
 AND `person`.`OTHER_ID` IS NOT NULL
 AND s.studyname=@STUDYNAME
 and constudy.status = constat.status
-and constudy.subjectkey = sub.subjectkey
-group by subject_uid; -- stops repeat based on consent join I believe
+and constudy.subjectkey = sub.subjectkey;
 
-select * from study.link_subject_study where study_id = @STUDYKEY
-
-select @STUDYKEY
-
-select * from zeus.subject a, zeus.subject b
-where a.subjectkey <> b.subjectkey and a.subjectid = b.subjectid
-and a.studykey = b.studykey
-and a.studykey = @STUDYKEY
-
-select * from zeus.subject where subjectid like '%105838E'
 
 select * from study.link_subject_study where study_id  = @STUDYKEY;
 
@@ -577,7 +542,6 @@ select * from lims.biocollection where study_id = 11 and id > 78500
 
 select count(*) from lims.biocollection where study_id = @STUDYKEY;
 
-select * from study.link_subject_study where id = 125468
 
 
 -- Insert biospecimen sampletypes that may not exist
@@ -740,9 +704,7 @@ AND `lss`.study_id = `b`.studykey
 -- and b.biospecimenkey <> 1728287 -- one we know not to exist - todo lookup
 -- AND `b`.substudykey = ss.substudykey  This was only needed for WARTN substudy ...keep as reference in case we need again
 AND s.studykey = @STUDYKEY
-AND `b`.`DELETED` = 0
-and exists (SELECT id FROM lims.biocollection bc WHERE (bc.link_subject_study_id, bc.study_id, bc.name) = 
-																	(lss.id, lss.study_id, b.encounter));
+AND `b`.`DELETED` = 0;
 
 select count(*) from lims.biospecimen where study_id = @STUDYKEY;
 
@@ -780,12 +742,11 @@ UPDATE lims.biospecimen b
     WHERE
         oldparent_id IS NOT NULL
             AND oldparent_id > - 1
-		and b.study_id = @STUDYKEY
+		and b.study_id = @studykey
     ORDER BY oldparent_id) p ON b.id = p.id 
 SET 
     b.parent_id = p.parent_id,
-    b.parentid = p.parentid
-WHERE b.study_id = @studykey;
+    b.parentid = p.parentid;
 
 -- Insert bio_transactions
 -- Trav : these may now need units themselves (just take from biospecimen) - we will just run a fix up script after to make sure the units are the correct references.
@@ -950,7 +911,7 @@ INSERT INTO `lims`.`biocollectionuid_sequence`
 (`STUDY_NAME_ID`,
 `UID_SEQUENCE`,
 `INSERT_LOCK`)
-VALUES (@STUDYNAME, 2000, 0);
+VALUES (@STUDYNAME, 152, 0);
 
  --- U PDATE `lims`.`biocollectionuid_sequence` SET `UID_SEQUENCE`='5000' WHERE `STUDY_NAME_ID`='Vitamin A';
 
@@ -1009,7 +970,7 @@ INSERT INTO `lims`.`biospecimenuid_sequence`
 (`STUDY_NAME_ID`,
 `UID_SEQUENCE`,
 `INSERT_LOCK`)
-VALUES (@STUDYNAME, 2000, 0);
+VALUES (@STUDYNAME, 5000, 0);
 
 IN SERT INTO `lims`.`biospecimenuid_sequence`
 (`STUDY_NAME_ID`,

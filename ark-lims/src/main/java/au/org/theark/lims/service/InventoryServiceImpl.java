@@ -3,6 +3,7 @@ package au.org.theark.lims.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import au.org.theark.core.model.lims.entity.InvBox;
 import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.model.lims.entity.InvColRowType;
 import au.org.theark.core.model.lims.entity.InvFreezer;
+import au.org.theark.core.model.lims.entity.InvShelf;
 import au.org.theark.core.model.lims.entity.InvRack;
 import au.org.theark.core.model.lims.entity.InvSite;
 import au.org.theark.core.model.lims.entity.StudyInvSite;
@@ -126,6 +128,24 @@ public class InventoryServiceImpl implements IInventoryService {
 		arkCommonService.createAuditHistory(ah);
 	}
 
+	public void createInvShelf(LimsVO modelObject) {
+		InvShelf invShelf = modelObject.getInvShelf();
+		int capacity = invShelf.getCapacity();
+		invShelf.setAvailable(capacity);
+		iInventoryDao.createInvShelf(invShelf);
+
+		// update available of parent
+		invShelf.getInvFreezer().setAvailable(invShelf.getInvFreezer().getAvailable() - 1);
+		iInventoryDao.updateInvFreezer(invShelf.getInvFreezer());
+
+		AuditHistory ah = new AuditHistory();
+		ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_CREATED);
+		ah.setComment("Created InvShelf " + invShelf.getName());
+		ah.setEntityId(invShelf.getId());
+		ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_INV_SHELF);
+		arkCommonService.createAuditHistory(ah);
+	}
+	
 	public void createInvRack(LimsVO modelObject) {
 		InvRack invRack = modelObject.getInvRack();
 		int capacity = invRack.getCapacity();
@@ -133,8 +153,8 @@ public class InventoryServiceImpl implements IInventoryService {
 		iInventoryDao.createInvRack(invRack);
 
 		// update available of parent
-		invRack.getInvFreezer().setAvailable(invRack.getInvFreezer().getAvailable() - 1);
-		iInventoryDao.updateInvFreezer(invRack.getInvFreezer());
+		invRack.getInvShelf().setAvailable(invRack.getInvShelf().getAvailable() - 1);
+		iInventoryDao.updateInvShelf(invRack.getInvShelf());
 
 		AuditHistory ah = new AuditHistory();
 		ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_CREATED);
@@ -171,12 +191,28 @@ public class InventoryServiceImpl implements IInventoryService {
 		ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_INV_FREEZER);
 		arkCommonService.createAuditHistory(ah);
 	}
+	
+	public void deleteInvShelf(LimsVO modelObject) {
+		InvShelf invShelf = modelObject.getInvShelf();
+		// update available of parent
+		invShelf.getInvFreezer().setAvailable(invShelf.getInvFreezer().getAvailable() + 1);
+		iInventoryDao.updateInvFreezer(invShelf.getInvFreezer());
+
+		iInventoryDao.deleteInvShelf(invShelf);
+
+		AuditHistory ah = new AuditHistory();
+		ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_DELETED);
+		ah.setComment("Deleted InvShelf " + invShelf.getName());
+		ah.setEntityId(invShelf.getId());
+		ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_INV_SHELF);
+		arkCommonService.createAuditHistory(ah);
+	}
 
 	public void deleteInvRack(LimsVO modelObject) {
 		InvRack invRack = modelObject.getInvRack();
 		// update available of parent
-		invRack.getInvFreezer().setAvailable(invRack.getInvFreezer().getAvailable() + 1);
-		iInventoryDao.updateInvFreezer(invRack.getInvFreezer());
+		invRack.getInvShelf().setAvailable(invRack.getInvShelf().getAvailable() + 1);
+		iInventoryDao.updateInvShelf(invRack.getInvShelf());
 
 		iInventoryDao.deleteInvRack(invRack);
 
@@ -232,6 +268,7 @@ public class InventoryServiceImpl implements IInventoryService {
 	public void updateInvCell(InvCell invCell) {
 		// Update available cells in box
 		InvBox invBox = invCell.getInvBox();
+		Log.info(invBox.getName());
 		invBox.setAvailable(countAvailableCellsForBox(invBox));
 		iInventoryDao.updateInvBox(invBox);
 		
@@ -262,6 +299,18 @@ public class InventoryServiceImpl implements IInventoryService {
 		ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_UPDATED);
 		ah.setComment("Updated InvFreezer " + invFreezer.getName());
 		ah.setEntityId(invFreezer.getId());
+		ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_INV_FREEZER);
+		arkCommonService.createAuditHistory(ah);
+	}
+	
+	public void updateInvShelf(LimsVO modelObject) {
+		InvShelf invShelf = modelObject.getInvShelf();
+		iInventoryDao.updateInvShelf(invShelf);
+
+		AuditHistory ah = new AuditHistory();
+		ah.setActionType(au.org.theark.core.Constants.ACTION_TYPE_UPDATED);
+		ah.setComment("Updated InvShelf " + invShelf.getName());
+		ah.setEntityId(invShelf.getId());
 		ah.setEntityType(au.org.theark.core.Constants.ENTITY_TYPE_INV_FREEZER);
 		arkCommonService.createAuditHistory(ah);
 	}
@@ -301,6 +350,9 @@ public class InventoryServiceImpl implements IInventoryService {
 	public InvFreezer getInvFreezer(Long id) {
 		return iInventoryDao.getInvFreezer(id);
 	}
+	public InvShelf getInvShelf(Long id) {
+		return iInventoryDao.getInvShelf(id);
+	}
 
 	public InvRack getInvRack(Long id) {
 		return iInventoryDao.getInvRack(id);
@@ -316,6 +368,10 @@ public class InventoryServiceImpl implements IInventoryService {
 
 	public List<InvFreezer> searchInvFreezer(InvFreezer invTank, List<Study> studyListForUser) throws ArkSystemException {
 		return iInventoryDao.searchInvFreezer(invTank, studyListForUser);
+	}
+	
+	public List<InvShelf> searchInvShelf(InvShelf invTank, List<Study> studyListForUser) throws ArkSystemException {
+		return iInventoryDao.searchInvShelf(invTank, studyListForUser);
 	}
 
 	public List<InvRack> searchInvRack(InvRack invRack, List<Study> studyListForUser) throws ArkSystemException {
@@ -352,23 +408,36 @@ public class InventoryServiceImpl implements IInventoryService {
 			path.add(invSite);
 			path.add(invFreezer);
 		}
+		if (node instanceof InvShelf) {
+			InvShelf invShelf = (InvShelf) node;
+			invShelf = iInventoryDao.getInvShelf(invShelf.getId());
+			InvFreezer invFreezer = invShelf.getInvFreezer();
+			InvSite invSite = invFreezer.getInvSite();
+			path.add(invSite);
+			path.add(invFreezer);
+			path.add(invShelf);
+		}
 		if (node instanceof InvRack) {
 			InvRack invRack = (InvRack) node;
 			invRack = iInventoryDao.getInvRack(invRack.getId());
-			InvFreezer invTank = invRack.getInvFreezer();
+			InvShelf invShelf = invRack.getInvShelf();
+			InvFreezer invTank = invShelf.getInvFreezer();
 			InvSite invSite = invTank.getInvSite();
 			path.add(invSite);
 			path.add(invTank);
+			path.add(invShelf);
 			path.add(invRack);
 		}
 		if (node instanceof InvBox) {
 			InvBox invBox = (InvBox) node;
 			invBox = iInventoryDao.getInvBox(invBox.getId());
 			InvRack invRack = invBox.getInvRack();
-			InvFreezer invFreezer = invRack.getInvFreezer();
+			InvShelf invShelf = invRack.getInvShelf();
+			InvFreezer invFreezer = invShelf.getInvFreezer();
 			InvSite invSite = invFreezer.getInvSite();
 			path.add(invSite);
 			path.add(invFreezer);
+			path.add(invShelf);
 			path.add(invRack);
 			path.add(invBox);
 		}
@@ -387,8 +456,8 @@ public class InventoryServiceImpl implements IInventoryService {
 		return iInventoryDao.hasAllocatedCells(invBox);
 	}
 
-	public InvCell getInvCellByLocationNames(String siteName, String freezerName, String rackName, String boxName, String row, String column) throws ArkSystemException {
-		return iInventoryDao.getInvCellByLocationNames(siteName, freezerName, rackName, boxName, row, column);
+	public InvCell getInvCellByLocationNames(String siteName, String freezerName, String shelfName, String rackName, String boxName, String row, String column) throws ArkSystemException {
+		return iInventoryDao.getInvCellByLocationNames(siteName, freezerName, shelfName, rackName, boxName, row, column);
 	}
 
 	public InvCell getNextAvailableInvCell(InvBox invBox) {
@@ -405,22 +474,6 @@ public class InventoryServiceImpl implements IInventoryService {
 	
 	public String fillOutAllBoxesWithEmptyInvCellsToCapacity(Study study){
 		return iInventoryDao.fillOutAllBoxesWithEmptyInvCellsToCapacity(study);
-	}
-	
-	public InvSite getInvSiteByname(String siteName){
-		return iInventoryDao.getInvSiteByname(siteName);
-	}
-	
-	public InvFreezer getInvFreezerByNameForSite(InvSite invSite,String freezerName){
-		return iInventoryDao.getFreezerByNameForSite(invSite,freezerName);
-	}
-	
-	public InvRack getInvRackByNameForFreezer(InvFreezer invFreezer,String rackName){
-		return iInventoryDao.getRackByNameForFreezer(invFreezer,rackName);
-	}
-	
-	public InvBox getInvBoxByNameForRack(InvRack invRack,String boxName){
-		return iInventoryDao.getBoxByNameForRack(invRack,boxName);
 	}
 
 }

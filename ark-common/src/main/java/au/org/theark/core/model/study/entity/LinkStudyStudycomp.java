@@ -26,8 +26,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.envers.Audited;
-
 import au.org.theark.core.Constants;
 
 /**
@@ -35,7 +33,6 @@ import au.org.theark.core.Constants;
  */
 @Entity
 @Table(name = "LINK_STUDY_STUDYCOMP", schema = Constants.STUDY_SCHEMA)
-@Audited
 public class LinkStudyStudycomp implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -61,11 +58,11 @@ public class LinkStudyStudycomp implements java.io.Serializable {
 
 	@Id
 	@Column(name = "ID", unique = true, nullable = false, precision = 22, scale = 0)
-	public Long getId() {
+	public Long getid() {
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setid(Long id) {
 		this.id = id;
 	}
 

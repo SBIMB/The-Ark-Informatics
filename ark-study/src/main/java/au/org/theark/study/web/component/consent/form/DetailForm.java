@@ -52,7 +52,6 @@ import org.slf4j.LoggerFactory;
 import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.EntityNotFoundException;
 import au.org.theark.core.model.audit.entity.ConsentHistory;
-import au.org.theark.core.model.study.entity.Consent;
 import au.org.theark.core.model.study.entity.ConsentStatus;
 import au.org.theark.core.model.study.entity.ConsentType;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
@@ -66,7 +65,6 @@ import au.org.theark.core.vo.ArkCrudContainerVO;
 import au.org.theark.core.vo.ConsentVO;
 import au.org.theark.core.web.behavior.ArkDefaultFormFocusBehavior;
 import au.org.theark.core.web.component.ArkDatePicker;
-import au.org.theark.core.web.component.audit.button.HistoryButtonPanel;
 import au.org.theark.core.web.component.panel.collapsiblepanel.CollapsiblePanel;
 import au.org.theark.core.web.form.AbstractDetailForm;
 import au.org.theark.study.service.IStudyService;
@@ -92,7 +90,7 @@ public class DetailForm extends AbstractDetailForm<ConsentVO> {
 	/**
 	 * Form Components
 	 */
-	protected TextField<String>						consentedBy;
+	protected TextField<String>					consentedBy;
 	protected DateTextField							consentedDatePicker;
 	protected DateTextField							consentRequestedDtf;
 	protected DateTextField							consentReceivedDtf;
@@ -111,8 +109,6 @@ public class DetailForm extends AbstractDetailForm<ConsentVO> {
 	protected CollapsiblePanel						consentHistoryPanel;
 	protected FileUploadField						fileUploadField;
 	private AjaxButton										clearButton;
-	protected HistoryButtonPanel					historyButtonPanel;
-
 
 	public DetailForm(String id, FeedbackPanel feedBackPanel, ContainerForm containerForm, ArkCrudContainerVO arkCrudContainerVO) {
 		super(id, feedBackPanel, containerForm, arkCrudContainerVO);
@@ -188,8 +184,6 @@ public class DetailForm extends AbstractDetailForm<ConsentVO> {
 		
 		addDetailFormComponents();
 		attachValidators();
-
-		historyButtonPanel = new HistoryButtonPanel(containerForm, arkCrudContainerVO.getEditButtonContainer(), arkCrudContainerVO.getDetailPanelFormContainer());
 	}
 
 	/**
@@ -198,35 +192,16 @@ public class DetailForm extends AbstractDetailForm<ConsentVO> {
 	@SuppressWarnings("unchecked")
 	protected void initStudyComponentChoice() {
 		Long sessionStudyId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.STUDY_CONTEXT_ID);
-		Long sessionPersonId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.PERSON_CONTEXT_ID);
 		Study study = iArkCommonService.getStudy(sessionStudyId);
-		
-		LinkSubjectStudy linkSubjectStudy=null;
-		
-		try {
-			if(sessionPersonId!=null){
-				linkSubjectStudy = iStudyService.getSubjectLinkedToStudy(sessionPersonId, study);
-			}else{
-				throw new EntityNotFoundException("The subject in context does not exist in system.");
-			}
-		 }catch (EntityNotFoundException e) {
-				containerForm.error("The subject in context does not exist in system anymore.Please re-do the operation.");
-		 }catch (ArkSystemException e) {
-				containerForm.error("There was a system error. Please contact support.");
-		}
-		//List<StudyComp> studyCompList = iArkCommonService.getStudyComponentByStudy(study);
-		List<StudyComp> studyCompList = iArkCommonService.getStudyComponentsNotInThisSubject(study,linkSubjectStudy);
+		List<StudyComp> studyCompList = iArkCommonService.getStudyComponentByStudy(study);
 		ChoiceRenderer<StudyComp> defaultChoiceRenderer = new ChoiceRenderer<StudyComp>(Constants.NAME, Constants.ID);
 		studyComponentChoice = new DropDownChoice<StudyComp>(Constants.CONSENT_STUDY_COMP, studyCompList, defaultChoiceRenderer){
-		private static final long	serialVersionUID	= 1L;
+
+			private static final long	serialVersionUID	= 1L;
+
 			@Override
 			protected void onBeforeRender() {
-				if(isNew()){
-					setEnabled(true);
-				}else{
-					studyCompList.set(0, getModelObject());
-					setEnabled(false);
-				}
+				setEnabled(isNew());
 				super.onBeforeRender();
 			}
 		};
@@ -335,29 +310,27 @@ public class DetailForm extends AbstractDetailForm<ConsentVO> {
 	 */
 	@Override
 	protected void attachValidators() {
-		commentTxtArea.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_COMMENTS_MAX_LENGTH_500)).setLabel(new StringResourceModel("consent.comments.StringValidator.maximum", this, null));
-		consentedBy.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_MAX_LENGTH_100)).setLabel(new StringResourceModel("consent.consentedBy.StringValidator.maximum",this,null));
+		commentTxtArea.add(StringValidator.maximumLength(100)).setLabel(new StringResourceModel("comments.max.length", this, null));
+		consentedBy.add(StringValidator.maximumLength(100)).setLabel(new StringResourceModel("consentedBy.max.length", this, null));
 		studyComponentChoice.setRequired(true).setLabel(new StringResourceModel("study.component.choice.required", this, null));
 		consentStatusChoice.setRequired(true).setLabel(new StringResourceModel("consent.status.required", this, null));
 		consentTypeChoice.setRequired(true).setLabel(new StringResourceModel("consent.type.required", this, null));
 		studyComponentStatusChoice.setRequired(true).setLabel(new StringResourceModel("studyComponent.status.required", this, null));
-		consentedDatePicker.add(DateValidator.maximum(new Date())).setLabel(new StringResourceModel("consent.consentDate.DateValidator.maximum", this, null));
-		consentCompletedDtf.add(DateValidator.maximum(new Date())).setLabel(new StringResourceModel("consent.completedDate.DateValidator.maximum", this, null));
-		consentRequestedDtf.add(DateValidator.maximum(new Date())).setLabel(new StringResourceModel("consent.requestedDate.DateValidator.maximum", this, null));
-		consentReceivedDtf.add(DateValidator.maximum(new Date())).setLabel(new StringResourceModel("consent.receivedDate.DateValidator.maximum", this, null));
-
-		consentCompletedDtf.setRequired(true).setLabel(new StringResourceModel("consent.completedDate.choice.required", this, null));
-		consentRequestedDtf.setRequired(true).setLabel(new StringResourceModel("consent.requestedDate.choice.required", this, null));
-		consentReceivedDtf.setRequired(true).setLabel(new StringResourceModel("consent.receivedDate.choice.required", this, null));
+		consentedDatePicker.add(DateValidator.maximum(new Date())).setLabel(new StringResourceModel("consent.consentdate", this, null));
+		consentCompletedDtf.add(DateValidator.maximum(new Date())).setLabel(new StringResourceModel("completed.date.DateValidator.maximum", this, null));
+		consentRequestedDtf.add(DateValidator.maximum(new Date())).setLabel(new StringResourceModel("requested.date.DateValidator.maximum", this, null));
+		consentReceivedDtf.add(DateValidator.maximum(new Date())).setLabel(new StringResourceModel("received.date.DateValidator.maximum", this, null));
 	}
 
 	public void addDetailFormComponents() {
 		arkCrudContainerVO.getDetailPanelFormContainer().add(consentedBy);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(consentedDatePicker);
+
 		arkCrudContainerVO.getDetailPanelFormContainer().add(wmcPlain);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(wmcRecieved);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(wmcRequested);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(wmcCompleted);
+
 		arkCrudContainerVO.getDetailPanelFormContainer().add(studyComponentChoice);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(studyComponentStatusChoice);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(consentStatusChoice);
@@ -412,29 +385,53 @@ public class DetailForm extends AbstractDetailForm<ConsentVO> {
 	 */
 	@Override
 	protected void onSave(Form<ConsentVO> containerForm, AjaxRequestTarget target) {
+		// save new
 		boolean isOkToSave = true;
-		 if(!isRequestedReceivedCompletedInOrder(containerForm.getModelObject().getConsent())){
+
+		String status = containerForm.getModelObject().getConsent().getStudyComponentStatus().getName();
+
+		if (status.equalsIgnoreCase(Constants.STUDY_STATUS_COMPLETED) && containerForm.getModelObject().getConsent().getCompletedDate() == null) {
 			isOkToSave = false;
-		 }
+			this.error("Field 'Completed Date' is required.");
+		}
+		else if (status.equalsIgnoreCase(Constants.STUDY_STATUS_REQUESTED) && containerForm.getModelObject().getConsent().getRequestedDate() == null) {
+			isOkToSave = false;
+			this.error("Field 'Requested Date' is required.");
+		}
+		else if (status.equalsIgnoreCase(Constants.STUDY_STATUS_RECEIVED) && containerForm.getModelObject().getConsent().getReceivedDate() == null) {
+			isOkToSave = false;
+			this.error("Field 'Received Date' is required.");
+		}
+		else {
+			isOkToSave = true;
+		}
+
 		if (isOkToSave) {
 			try {
 				// Study in Context
 				Long studyId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.STUDY_CONTEXT_ID);
 				Study study = iArkCommonService.getStudy(studyId);
 				containerForm.getModelObject().getConsent().setStudy(study);
+
 				if (containerForm.getModelObject().getConsent().getId() == null) {
 					iStudyService.create(containerForm.getModelObject().getConsent());
 					this.info("Consent was successfuly created for the Subject ");
+					
 					createConsentFile();
+					
 					processErrors(target);
 					// Store session object (used for history)
 					SecurityUtils.getSubject().getSession().setAttribute(au.org.theark.core.Constants.PERSON_CONTEXT_CONSENT_ID, containerForm.getModelObject().getConsent().getId());
 				}
 				else {
+					
 					boolean consentFile=fileUploadField.getFileUpload()!=null;
 					iStudyService.update(containerForm.getModelObject().getConsent(),consentFile);
+					
 					createConsentFile();
 					//Check for consent file upload	
+				
+					
 					this.info("Consent was successfuly updated for the Subject ");
 					processErrors(target);
 				}
@@ -454,6 +451,10 @@ public class DetailForm extends AbstractDetailForm<ConsentVO> {
 		else {
 			processErrors(target);
 		}
+	}
+	
+	@Override
+	protected void onTest(Form<ConsentVO> containerForm, AjaxRequestTarget target) {
 	}
 
 	private void createConsentFile() throws ArkSystemException {
@@ -523,57 +524,5 @@ public class DetailForm extends AbstractDetailForm<ConsentVO> {
 	public void onBeforeRender() {
 		super.onBeforeRender();
 		consentHistoryPanel.setVisible(!isNew());
-		historyButtonPanel.setVisible(!isNew());
-	}
-	/**
-	 * Function to check for the order dates of the consent.
-	 * @param consent
-	 * @return
-	 */
-	private boolean isRequestedReceivedCompletedInOrder(Consent consent){
-		Date requestedDate= null;
-		Date receivedDate= null;
-		Date completedDate = null;
-		if(consent!=null && consent.getRequestedDate()!=null){requestedDate=consent.getRequestedDate();}
-		if(consent!=null && consent.getReceivedDate()!=null){receivedDate=consent.getReceivedDate();}
-		if(consent!=null && consent.getCompletedDate()!=null){completedDate=consent.getCompletedDate();}
-		
-		if(requestedDate!=null && receivedDate!=null && completedDate!=null){
-			if((requestedDate.before(receivedDate) ||requestedDate.equals(receivedDate)) &&
-					(receivedDate.before(completedDate) || receivedDate.equals(completedDate))){
-				return true;
-			}else{
-				this.error("Please ensure chronological order of consent requested,received & complete dates.");
-				return false;
-			}
-		}else if(requestedDate!=null && receivedDate!=null){
-			if(requestedDate.before(receivedDate) ||requestedDate.equals(receivedDate)){
-				return true;
-			}else{
-				this.error("Consent requested date cannot be greater than received date.");
-				return false;
-			}
-		}else if(receivedDate!=null && completedDate!=null){
-			if(receivedDate.before(completedDate) || receivedDate.equals(completedDate)){
-				return true;
-			}else{
-				this.error("Consent received date cannot be greater than completed date.");
-				return false;
-			}
-		}else if(requestedDate!=null && completedDate!=null){
-			if(requestedDate.before(completedDate) || requestedDate.equals(completedDate)){
-				return true;
-			}else{
-				this.error("Consent requested date cannot be greater than completed date.");
-				return false;
-			}
-		}else if(requestedDate!=null || receivedDate!=null || completedDate!=null){
-			return true;
-		}else if(requestedDate==null && receivedDate==null && completedDate==null){
-			return true;
-		}else{
-			this.error("Please ensure chronological order of consent requested,received & complete dates.");
-			return false;
-		}
 	}
 }

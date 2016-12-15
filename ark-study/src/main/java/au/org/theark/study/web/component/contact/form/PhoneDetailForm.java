@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.shiro.SecurityUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -47,7 +46,6 @@ import au.org.theark.core.model.study.entity.PhoneType;
 import au.org.theark.core.model.study.entity.Study;
 import au.org.theark.core.model.study.entity.YesNo;
 import au.org.theark.core.service.IArkCommonService;
-import au.org.theark.core.util.DateFromToValidator;
 import au.org.theark.core.vo.ArkCrudContainerVO;
 import au.org.theark.core.vo.ContactVO;
 import au.org.theark.core.vo.PhoneVO;
@@ -78,17 +76,14 @@ public class PhoneDetailForm extends AbstractDetailForm<ContactVO> {
 	private TextField<String>				phoneNumberTxtFld;
 	private TextField<String>				source;
 	private TextArea<String>				commentsTxtArea;
-	private CheckBox						preferredPhoneNumberChkBox;
+
 	private DateTextField					dateReceivedDp;
-	private DropDownChoice<PhoneType>		phoneTypeChoice;
-	private DropDownChoice<PhoneStatus>		phoneStatusChoice;
+	private DropDownChoice<PhoneType>	phoneTypeChoice;
+	private DropDownChoice<PhoneStatus>	phoneStatusChoice;
 	private DropDownChoice<YesNo>			silentModeChoice;
 	
 	private FeedbackPanel 					feedBackPanel;
-	private ArkCrudContainerVO 				arkCrudContainerVO;
-	
-	private DateTextField 					dateValidFrom;
-	private DateTextField 					dateValidTo;
+	private ArkCrudContainerVO 			arkCrudContainerVO;
 
 	/**
 	 * /**
@@ -104,38 +99,20 @@ public class PhoneDetailForm extends AbstractDetailForm<ContactVO> {
 		this.arkCrudContainerVO=arkCrudContainerVO;
 		this.feedBackPanel = feedBackPanel;
 	}
-	@Override
-	public void onBeforeRender() {
-		// Disable preferred phone for new phone and if no others exist
-		boolean enabled = !(isNew() && containerForm.getModelObject().getPhoneVo().getPhoneList().size() == 0);
-		preferredPhoneNumberChkBox.setEnabled(enabled);
-		super.onBeforeRender();
-	}
 
 	public void initialiseDetailForm() {
 		phoneIdTxtFld = new TextField<String>("phoneVo.phone.id");
 		areaCodeTxtFld = new TextField<String>("phoneVo.phone.areaCode");
-		preferredPhoneNumberChkBox = new CheckBox("phoneVo.phone.preferredPhoneNumber");
 		phoneNumberTxtFld = new TextField<String>("phoneVo.phone.phoneNumber");
+
 		source = new TextField<String>("phoneVo.phone.source");
 		commentsTxtArea = new TextArea<String>("phoneVo.phone.comment");
-		dateReceivedDp = new DateTextField("phoneVo.phone.dateReceived", au.org.theark.core.Constants.DD_MM_YYYY);
-		ArkDatePicker dPDateReceived = new ArkDatePicker();
-		dPDateReceived.bind(dateReceivedDp);
-		dateReceivedDp.add(dPDateReceived);
-		
-		//Valid From
-		dateValidFrom=new DateTextField("phoneVo.phone.validFrom", au.org.theark.core.Constants.DD_MM_YYYY);
-		ArkDatePicker dPDateValidFrom = new ArkDatePicker();
-		dPDateValidFrom.bind(dateValidFrom);
-		dateValidFrom.add(dPDateValidFrom);
 
-		//Valid To
-		dateValidTo=new DateTextField("phoneVo.phone.validTo", au.org.theark.core.Constants.DD_MM_YYYY);
-		ArkDatePicker dPDateValidTo = new ArkDatePicker();
-		dPDateValidTo.bind(dateValidTo);
-		dateValidTo.add(dPDateValidTo);
-	
+		dateReceivedDp = new DateTextField("phoneVo.phone.dateReceived", au.org.theark.core.Constants.DD_MM_YYYY);
+		ArkDatePicker datePicker = new ArkDatePicker();
+		datePicker.bind(dateReceivedDp);
+		dateReceivedDp.add(datePicker);
+
 		List<PhoneStatus> phoneStatusSourceList = iArkCommonService.getPhoneStatus();
 		ChoiceRenderer<PhoneStatus> phoneStatusRenderer = new ChoiceRenderer<PhoneStatus>(Constants.NAME, Constants.ID);
 		phoneStatusChoice = new DropDownChoice<PhoneStatus>("phoneVo.phone.phoneStatus", phoneStatusSourceList, phoneStatusRenderer);
@@ -155,7 +132,6 @@ public class PhoneDetailForm extends AbstractDetailForm<ContactVO> {
 	public void addDetailFormComponents() {
 		arkCrudContainerVO.getDetailPanelFormContainer().add(phoneIdTxtFld.setEnabled(false));
 		arkCrudContainerVO.getDetailPanelFormContainer().add(areaCodeTxtFld);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(preferredPhoneNumberChkBox);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(phoneNumberTxtFld);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(phoneTypeChoice);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(phoneStatusChoice);
@@ -163,9 +139,6 @@ public class PhoneDetailForm extends AbstractDetailForm<ContactVO> {
 		arkCrudContainerVO.getDetailPanelFormContainer().add(dateReceivedDp);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(silentModeChoice);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(source);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(dateValidFrom);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(dateValidTo);
-		this.add(new DateFromToValidator(dateValidFrom, dateValidTo,"Valid from date","Valid to date"));
 	}
 
 	/*
@@ -181,9 +154,6 @@ public class PhoneDetailForm extends AbstractDetailForm<ContactVO> {
 		phoneStatusChoice.setRequired(true).setLabel((new StringResourceModel("phone.phoneStatus.required", this, new Model<String>("Phone Status"))));
 		phoneNumberTxtFld.add(StringValidator.maximumLength(20));
 		dateReceivedDp.add(DateValidator.maximum(new Date())).setLabel(new StringResourceModel("phone.dateReceived.DateValidator.maximum", this, null));
-		source.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_COMMENTS_MAX_LENGTH_500));
-		commentsTxtArea.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_COMMENTS_MAX_LENGTH_500));
-		
 	}
 
 	/*
@@ -230,41 +200,53 @@ public class PhoneDetailForm extends AbstractDetailForm<ContactVO> {
 		Long personSessionId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.PERSON_CONTEXT_ID);
 		// Get the person and set it on the Phone object.
 		try {
-			//boolean saveOk = true;
+			boolean saveOk = true;
 			Person person = studyService.getPerson(personSessionId);
 			containerForm.getModelObject().getPhoneVo().getPhone().setPerson(person);
-			//if (saveOk) {
+			
+			/*
+			// Make the area code mandatory only for landline phone (home/work) entries
+			String phType = containerForm.getModelObject().getPhone().getPhoneType().getName().toLowerCase();
+			
+			if (!phType.equals("mobile")) {
+				// must be landline
+				if (containerForm.getModelObject().getPhone().getAreaCode() == null || containerForm.getModelObject().getPhone().getAreaCode().length() < 1) {
+					this.error("An area code must be entered for landline numbers");
+					saveOk = false;
+				}
+			}
+			*/
+			if (saveOk) {
 				// Ok to save...
 				String personType = (String) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.PERSON_TYPE);
+
 				if (personType != null && personType.equalsIgnoreCase(au.org.theark.core.Constants.PERSON_CONTEXT_TYPE_SUBJECT)) {
 					Long studyId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.STUDY_CONTEXT_ID);
 					Study study = iArkCommonService.getStudy(studyId);
 					LinkSubjectStudy subjectInContext = iArkCommonService.getSubject(personSessionId, study);// This is fetched basically to display the
+																																			// info
 					// message along with the Subject UID or Contact ID
 					if (containerForm.getModelObject().getPhoneVo().getPhone().getId() == null) {
-						if(containerForm.getModelObject().getPhoneVo().getPhone().getPreferredPhoneNumber()){
-							// Update any other preferredPhoneNumber to false
-							studyService.setPreferredPhoneNumberToFalse(person);
-						}
 						studyService.create(containerForm.getModelObject().getPhoneVo().getPhone());
 						this.info("Phone number was added and linked to Subject UID: " + subjectInContext.getSubjectUID());
-					}else {
-						if(containerForm.getModelObject().getPhoneVo().getPhone().getPreferredPhoneNumber()){
-							// Update any other preferredMailingAddresses to false
-							studyService.setPreferredPhoneNumberToFalse(person);
-						}
+					}
+					else {
 						studyService.update(containerForm.getModelObject().getPhoneVo().getPhone());
 						this.info("Phone number was updated and linked to Subject UID: " + subjectInContext.getSubjectUID());
-						}
-				}else if (personType != null && personType.equalsIgnoreCase(au.org.theark.core.Constants.PERSON_CONTEXT_TYPE_CONTACT)) {
+					}
+				}
+				else if (personType != null && personType.equalsIgnoreCase(au.org.theark.core.Constants.PERSON_CONTEXT_TYPE_CONTACT)) {
 					// TODO: Contact Interface implementation
 				}
+
 				processErrors(target);
 				onSavePostProcess(target);
-			//}
-			/*else {
+			}
+			else {
+
 				processErrors(target);
-			}*/
+
+			}
 		}
 		catch (ArkUniqueException aue) {
 			this.error(aue.getMessage());
@@ -275,6 +257,10 @@ public class PhoneDetailForm extends AbstractDetailForm<ContactVO> {
 		catch (ArkSystemException e) {
 			this.error("A System Exception has occured please contact Support.");
 		}
+	}
+	
+	@Override
+	protected void onTest(Form<ContactVO> containerForm, AjaxRequestTarget target) {
 	}
 
 	/*

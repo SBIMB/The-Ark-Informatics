@@ -27,7 +27,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,8 +83,8 @@ public class BoxAllocationDetailForm extends AbstractInventoryDetailForm<LimsVO>
 	 * @param modalWindow
 	 */
 	public BoxAllocationDetailForm(String id, FeedbackPanel feedBackPanel, WebMarkupContainer detailContainer, AbstractContainerForm<LimsVO> containerForm, InventoryLinkTree tree, DefaultMutableTreeNode node,
-			GridBoxPanel gridBoxPanel, AbstractDetailModalWindow modalWindow, Panel containerPanel) {
-		super(id, feedBackPanel, detailContainer, containerForm, tree, node, containerPanel);
+			GridBoxPanel gridBoxPanel, AbstractDetailModalWindow modalWindow) {
+		super(id, feedBackPanel, detailContainer, containerForm, tree, node);
 		this.gridBoxPanel = gridBoxPanel;
 		this.feedbackPanel = feedBackPanel;
 		this.modalWindow = modalWindow;

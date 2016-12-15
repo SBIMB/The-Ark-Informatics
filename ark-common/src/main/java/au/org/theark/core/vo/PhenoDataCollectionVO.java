@@ -2,65 +2,44 @@ package au.org.theark.core.vo;
 
 import java.io.Serializable;
 
-import au.org.theark.core.model.pheno.entity.PhenoDataSetCollection;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetData;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetFieldDisplay;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetGroup;
-import au.org.theark.core.model.pheno.entity.PickedPhenoDataSetCategory;
+import au.org.theark.core.model.pheno.entity.PhenoCollection;
+import au.org.theark.core.model.pheno.entity.PhenoData;
+import au.org.theark.core.model.study.entity.CustomFieldGroup;
+import au.org.theark.core.web.component.customfield.dataentry.CustomDataVO;
 
-public class PhenoDataCollectionVO extends PhenoDataVO<PhenoDataSetData> implements Serializable {
+public class PhenoDataCollectionVO extends CustomDataVO<PhenoData> implements Serializable {
 
 	private static final long	serialVersionUID	= 1L;
-	
-	private PhenoDataSetGroup phenoDataSetGroup;
-	private PhenoDataSetGroup pheDataSetGroupSelected;
-	private PhenoDataSetCollection phenoDataSetCollection;
-	private PickedPhenoDataSetCategory pickedPhenoDataSetCategory;
-	private PhenoDataSetFieldDisplay phenoDataSetFieldDisplay;
 
+	private CustomFieldGroup customFieldGroup;
+	private CustomFieldGroup customFieldGroupSelected;
+	private PhenoCollection phenoCollection;
+	
 	public PhenoDataCollectionVO() {
-		phenoDataSetGroup = new PhenoDataSetGroup();
-		phenoDataSetCollection = new PhenoDataSetCollection();
-		pickedPhenoDataSetCategory=new PickedPhenoDataSetCategory();
-		phenoDataSetFieldDisplay=new PhenoDataSetFieldDisplay();
+		customFieldGroup = new CustomFieldGroup();
+		phenoCollection = new PhenoCollection();
 	}
 	
-	public PhenoDataSetGroup getPhenoDataSetGroup() {
-		return phenoDataSetGroup;
+	public CustomFieldGroup getCustomFieldGroup() {
+		return customFieldGroup;
 	}
-	public void setPhenoDataSetGroup(PhenoDataSetGroup phenoDataSetGroup) {
-		this.phenoDataSetGroup = phenoDataSetGroup;
-	}
-	public PhenoDataSetGroup getPheDataSetGroupSelected() {
-		return pheDataSetGroupSelected;
-	}
-	public void setPheDataSetGroupSelected(PhenoDataSetGroup pheDataSetGroupSelected) {
-		this.pheDataSetGroupSelected = pheDataSetGroupSelected;
-	}
-	public PhenoDataSetCollection getPhenoDataSetCollection() {
-		return phenoDataSetCollection;
-	}
-	public void setPhenoDataSetCollection(
-			PhenoDataSetCollection phenoDataSetCollection) {
-		this.phenoDataSetCollection = phenoDataSetCollection;
-	}
-	public PickedPhenoDataSetCategory getPickedPhenoDataSetCategory() {
-		return pickedPhenoDataSetCategory;
-	}
-	public void setPickedPhenoDataSetCategory(
-			PickedPhenoDataSetCategory pickedPhenoDataSetCategory) {
-		this.pickedPhenoDataSetCategory = pickedPhenoDataSetCategory;
+	public void setCustomFieldGroup(CustomFieldGroup customFieldGroup) {
+		this.customFieldGroup = customFieldGroup;
 	}
 
-	public PhenoDataSetFieldDisplay getPhenoDataSetFieldDisplay() {
-		return phenoDataSetFieldDisplay;
+	public CustomFieldGroup getCustomFieldGroupSelected() {
+		return customFieldGroupSelected;
 	}
 
-	public void setPhenoDataSetFieldDisplay(
-			PhenoDataSetFieldDisplay phenoDataSetFieldDisplay) {
-		this.phenoDataSetFieldDisplay = phenoDataSetFieldDisplay;
+	public void setCustomFieldGroupSelected(CustomFieldGroup customFieldGroupSelected) {
+		this.customFieldGroupSelected = customFieldGroupSelected;
 	}
-	
 
-	
+	public PhenoCollection getPhenoCollection() {
+		return phenoCollection;
+	}
+	public void setPhenoCollection(PhenoCollection phenoCollection) {
+		this.phenoCollection = phenoCollection;
+	}
+
 }

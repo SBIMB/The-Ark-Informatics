@@ -74,6 +74,7 @@ public class ArkLdapRealm extends AuthorizingRealm {
 
 		// Get the logged in user name from Shiro Session
 		String ldapUserName = (String) principals.getPrimaryPrincipal();
+		log.info(ldapUserName);
 
 		Long sessionStudyId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.STUDY_CONTEXT_ID);
 		Long sessionFunctionId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.ARK_FUNCTION_KEY);

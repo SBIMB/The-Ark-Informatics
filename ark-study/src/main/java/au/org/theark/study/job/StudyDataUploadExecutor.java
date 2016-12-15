@@ -32,7 +32,10 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerFactory;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import za.ac.theark.study.util.RedcapRecordImporterSchServiceImpl;
 import au.org.theark.core.Constants;
 import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.study.service.IStudyService;
@@ -50,6 +53,8 @@ public class StudyDataUploadExecutor {
 
 	private String							report;
 	private List<String>					uidsToUpload;
+	
+	protected transient Logger		log					= LoggerFactory.getLogger(StudyDataUploadExecutor.class);
 	
 	/**
 	 * StudyDataUploadExecutor constructor
@@ -82,6 +87,7 @@ public class StudyDataUploadExecutor {
 		this.size = size;
 		this.report = report;
 		this.uidsToUpload = uidsToUpload;
+		log.warn(" has been scheduled to start at " + studyId.toString() + " StudyDataUploadExecutor Constructor");
 	}
 
 	public void run() throws Exception {
@@ -99,10 +105,13 @@ public class StudyDataUploadExecutor {
 		studyUploadJob.getJobDataMap().put(StudyDataUploadJob.DELIMITER, delimiter);
 		studyUploadJob.getJobDataMap().put(StudyDataUploadJob.SIZE, size);
 		studyUploadJob.getJobDataMap().put(StudyDataUploadJob.LIST_OF_UIDS_TO_UPDATE, uidsToUpload);
+		
+		log.warn(" has been scheduled to start at " + studyId.toString() + " will run at x:  and repeat:  times, every seconds");
+		
 		Date startTime = nextGivenSecondDate(null, 1);
 		SimpleTrigger trigger1 = newTrigger().withIdentity("StudyDataUploadJobTrigger", "group1").startAt(startTime).withSchedule(simpleSchedule()).build();
 		sched.scheduleJob(studyUploadJob, trigger1);
-		//		log.warn(studyUploadJob.getKey() + " will run at: " + scheduleTime1 + " and repeat: " + trigger1.getRepeatCount() + " times, every " + trigger1.getRepeatInterval() / 1000 + " seconds");
+		log.warn(" has been scheduled to start at " + studyId.toString() + " will run at x: " + trigger1.getStartTime() + " and repeat: " + trigger1.getRepeatCount() + " times, every " + trigger1.getRepeatInterval() / 1000 + " seconds");
 		// All of the jobs have been added to the scheduler, but none of the jobs will run until the scheduler has been started
 		sched.start();
 	}

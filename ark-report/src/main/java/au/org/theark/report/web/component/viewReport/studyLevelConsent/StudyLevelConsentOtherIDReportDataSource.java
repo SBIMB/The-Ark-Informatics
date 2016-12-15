@@ -21,16 +21,16 @@ package au.org.theark.report.web.component.viewReport.studyLevelConsent;
 import java.io.Serializable;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import au.org.theark.report.model.vo.ConsentDetailsReportVO;
 import au.org.theark.report.model.vo.report.ConsentDetailsDataRow;
 import au.org.theark.report.service.IReportService;
-import au.org.theark.report.web.component.viewReport.studyLevelConsent.filterForm.StudyLevelConsentDetailsFilterForm;
 
 /**
  * Based on ...

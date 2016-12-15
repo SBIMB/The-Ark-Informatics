@@ -18,6 +18,9 @@
  ******************************************************************************/
 package au.org.theark.core.model.study.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,14 +33,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
 import au.org.theark.core.Constants;
 
 @Entity
 @Table(name = "OtherID", schema = Constants.STUDY_SCHEMA)
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class OtherID implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -84,7 +83,7 @@ public class OtherID implements java.io.Serializable {
 		this.otherID = otherID;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "PersonID")
 	public Person getPerson() {
 		return this.person;

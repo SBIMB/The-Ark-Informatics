@@ -49,16 +49,16 @@ public class LssConsentHistory implements java.io.Serializable {
 
 	private static final long	serialVersionUID	= 1L;
 
-	private Long							id;
-	private Date							timestamp;
+	private Long						id;
+	private Date						timestamp;
 	private LinkSubjectStudy			linkSubjectStudy;
-	private ConsentOption				consentToActiveContact;
-	private ConsentOption				consentToPassiveDataGathering;
-	private ConsentOption				consentToUseData;
+	private Date						consentDate;
 	private ConsentStatus				consentStatus;
-	private ConsentType					consentType;
-	private Date							consentDate;
-	private YesNo							consentDownloaded;
+	private ConsentOption				consentToUseData;
+	private ConsentOption				consentToUseBiospecimen;
+	private ConsentOption				consentToShareData;
+	private ConsentOption				consentToShareBiospecimen;
+	private YesNo						consentDownloaded;
 
 	@Id
 	@SequenceGenerator(name = "LSS_CONSENT_HISTORY_SEQ", sequenceName = "LSS_CONSENT_HISTORY_SEQUENCE")
@@ -103,35 +103,15 @@ public class LssConsentHistory implements java.io.Serializable {
 	public LinkSubjectStudy getLinkSubjectStudy() {
 		return linkSubjectStudy;
 	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CONSENT_TO_PASSIVE_DATA_GATHERING_ID")
-	public ConsentOption	getConsentToPassiveDataGathering() {
-		return consentToPassiveDataGathering;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "CONSENT_DATE", length = 7)
+	public Date getConsentDate() {
+		return consentDate;
 	}
 
-	public void setConsentToPassiveDataGathering(ConsentOption consentToPassiveDataGathering) {
-		this.consentToPassiveDataGathering = consentToPassiveDataGathering;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CONSENT_TO_USE_DATA_ID")
-	public ConsentOption getConsentToUseData() {
-		return consentToUseData;
-	}
-
-	public void setConsentToUseData(ConsentOption consentToUseData) {
-		this.consentToUseData = consentToUseData;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CONSENT_TO_ACTIVE_CONTACT_ID")
-	public ConsentOption getConsentToActiveContact() {
-		return consentToActiveContact;
-	}
-
-	public void setConsentToActiveContact(ConsentOption consentToActiveContact) {
-		this.consentToActiveContact = consentToActiveContact;
+	public void setConsentDate(Date consentDate) {
+		this.consentDate = consentDate;
 	}
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -143,27 +123,47 @@ public class LssConsentHistory implements java.io.Serializable {
 	public void setConsentStatus(ConsentStatus consentStatus) {
 		this.consentStatus = consentStatus;
 	}
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CONSENT_TO_USE_DATA_ID")
+	public ConsentOption getConsentToUseData() {
+		return consentToUseData;
+	}
+
+	public void setConsentToUseData(ConsentOption consentToUseData) {
+		this.consentToUseData = consentToUseData;
+	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CONSENT_TYPE_ID")
-	public ConsentType getConsentType() {
-		return consentType;
+	@JoinColumn(name = "CONSENT_TO_USE_BIOSPECIMEN_ID")
+	public ConsentOption getConsentToUseBiospecimen() {
+		return consentToUseBiospecimen;
 	}
 
-	public void setConsentType(ConsentType consentType) {
-		this.consentType = consentType;
+	public void setConsentToUseBiospecimen(ConsentOption consentToUseBiospecimen) {
+		this.consentToUseBiospecimen = consentToUseBiospecimen;
 	}
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "CONSENT_DATE", length = 7)
-	public Date getConsentDate() {
-		return consentDate;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CONSENT_TO_SHARE_DATA_ID")
+	public ConsentOption getConsentToShareData() {
+		return consentToShareData;
 	}
 
-	public void setConsentDate(Date consentDate) {
-		this.consentDate = consentDate;
+	public void setConsentToShareData(ConsentOption consentToShareData) {
+		this.consentToShareData = consentToShareData;
 	}
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CONSENT_TO_SHARE_BIOSPECIMEN_ID")
+	public ConsentOption getConsentToShareBiospecimen() {
+		return consentToShareBiospecimen;
+	}
+
+	public void setConsentToShareBiospecimen(ConsentOption consentToShareBiospecimen) {
+		this.consentToShareBiospecimen = consentToShareBiospecimen;
+	}
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CONSENT_DOWNLOADED")
 	public YesNo getConsentDownloaded() {

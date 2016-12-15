@@ -76,7 +76,6 @@ public abstract class AbstractModalDetailForm<T> extends Form<T> implements  IEd
 			buttonsPanel.setDeleteButtonVisible(false);
 			buttonsPanel.setDeleteButtonEnabled(false);
 		}
-		buttonsPanel.createHistoryButtonPanel(arkCrudContainerVo);
 		buttonsPanelWMC.addOrReplace(buttonsPanel);
 	}
 	
@@ -86,7 +85,6 @@ public abstract class AbstractModalDetailForm<T> extends Form<T> implements  IEd
 		buttonsPanel.setDeleteButtonEnabled(false);
 		buttonsPanel.setSaveButtonVisible(false);
 		buttonsPanel.setSaveButtonEnabled(false);
-		buttonsPanel.createHistoryButtonPanel(arkCrudContainerVo);
 		buttonsPanelWMC.addOrReplace(buttonsPanel);
 	}
 	/**

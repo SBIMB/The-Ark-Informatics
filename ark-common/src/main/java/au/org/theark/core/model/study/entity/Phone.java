@@ -34,16 +34,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
 import au.org.theark.core.Constants;
 
 /**
  * Phone entity. @author MyEclipse Persistence Tools
  */
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Entity
 @Table(name = "PHONE", schema = Constants.STUDY_SCHEMA, uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"AREA_CODE", "PHONE_NUMBER", "PERSON_ID" }) })
@@ -60,9 +55,6 @@ public class Phone implements java.io.Serializable {
 	private Date dateReceived;
 	private YesNo silentMode;
 	private String comment;
-	private Boolean preferredPhoneNumber;
-	private Date validFrom;
-	private Date validTo;
 
 
 	/** default constructor */
@@ -183,34 +175,5 @@ public class Phone implements java.io.Serializable {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-
-	@Temporal(TemporalType.DATE)
-	@Column(name = "VALID_FROM", length = 7)
-	public Date getValidFrom() {
-		return validFrom;
-	}
-
-	public void setValidFrom(Date validFrom) {
-		this.validFrom = validFrom;
-	}
-
-	@Temporal(TemporalType.DATE)
-	@Column(name = "VALID_TO", length = 7)
-	public Date getValidTo() {
-		return validTo;
-	}
-
-	public void setValidTo(Date validTo) {
-		this.validTo = validTo;
-	}
-	@Column(name = "PREFERRED_PHONE_NUMBER", length = 10)
-	public Boolean getPreferredPhoneNumber() {
-		return preferredPhoneNumber;
-	}
-
-	public void setPreferredPhoneNumber(Boolean preferredPhoneNumber) {
-		this.preferredPhoneNumber = preferredPhoneNumber;
-	}
-	
 	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011  University of Western Australia. All rights reserved.
+ * Copyright (c) 2015  University of Witwatersrand. All rights reserved.
  * 
  * This file is part of The Ark.
  * 

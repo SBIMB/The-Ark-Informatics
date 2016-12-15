@@ -45,7 +45,7 @@ public class SearchResultListPanel extends Panel {
 
 	public PageableListView<WorkRequest> buildPageableListView(IModel iModel) {
 
-		PageableListView<WorkRequest> sitePageableListView = new PageableListView<WorkRequest>("workRequestList", iModel, iArkCommonService.getUserConfig(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE).getIntValue()) {
+		PageableListView<WorkRequest> sitePageableListView = new PageableListView<WorkRequest>("workRequestList", iModel, iArkCommonService.getRowsPerPage()) {
 
 			private static final long	serialVersionUID	= 1L;
 
@@ -135,11 +135,7 @@ public class SearchResultListPanel extends Panel {
 					arkCrudContainerVO.getDetailPanelFormContainer().get(Constants.WORK_REQUEST_GST).setEnabled(false);
 				}else{
 					arkCrudContainerVO.getDetailPanelFormContainer().get(Constants.WORK_REQUEST_GST_ALLOW).setEnabled(true);
-					if(workRequest.getGstAllow() != null && workRequest.getGstAllow()){
-						arkCrudContainerVO.getDetailPanelFormContainer().get(Constants.WORK_REQUEST_GST).setEnabled(true);
-					}else{
-						arkCrudContainerVO.getDetailPanelFormContainer().get(Constants.WORK_REQUEST_GST).setEnabled(false);
-					}
+					arkCrudContainerVO.getDetailPanelFormContainer().get(Constants.WORK_REQUEST_GST).setEnabled(true);
 				}
 			}
 		};

@@ -5,7 +5,10 @@
 	<form wicket:id="searchForm">
 		<div class="searchPanelContent">
 			<div class="searchPanelBreaker">&nbsp;</div>
+	<!-- Row 1 - Study and Other IDs -->
 			<div class="panelContentLeft">&nbsp;</div>
+			
+		<!-- Study -->
 			<div class="fldLabel">
 				<wicket:message key="study">Study:</wicket:message>
 			</div>
@@ -19,17 +22,26 @@
 
 			<div class="panelMargin">&nbsp;</div>
 
+		<!-- Other IDs -->
 			<div class="fldLabel">
-				<div class="label"><label for="linkSubjectStudy.person.otherIDs"><wicket:message key="linkSubjectStudy.person.otherIDs">Other IDs:</wicket:message></label></div>
+				<div class="label"><label for="otherID"><wicket:message key="otherID">Other IDs:</wicket:message></label></div>
 			</div>
+			
 			<div class="fldControl">
 				<div class="label">
-					<input wicket:id="linkSubjectStudy.person.otherIDs"/>
+					<input wicket:id="otherID"/>
 				</div>
 			</div>
 			
+		<!-- Row 1 Ends -->
+		
 			<div class="searchPanelBreaker">&nbsp;</div>
+		
+	<!-- Row 2 begins - Subject ID & Enthnicity -->	
+		
 			<div class="panelContentLeft">&nbsp;</div>
+			
+		<!-- Subject ID -->
 			<div class="fldLabel">
 				<div class="label"><label for="subjectId"><wicket:message key="subjectUID">Participant UID:</wicket:message></label></div>
 			</div>
@@ -40,7 +52,7 @@
 			
 			<div class="panelMargin">&nbsp;</div>
 			
-			<div class="fldLabel">
+			<!-- <div class="fldLabel">
 				<div class="label"><label for="firstName"><wicket:message key="firstName">First Name:</wicket:message></label></div>
 			</div>
 			
@@ -102,13 +114,34 @@
 					</select>
 				</div>
 			</div>
+ -->
 
+		<!-- Ethnicity -->
+			<div class="fldLabel">
+				<wicket:message	key="ethnicity">
+						Ethnicity:
+				</wicket:message>
+			</div>
 
+			<div class="fldControl">
+				<div class="label">
+					<select wicket:id="ethnicityType">
+						<option>African</option>
+						<option>European</option>
+						<option>Asian</option>
+						<option>Unknown</option>
+						<option>Other</option>
+					</select>
+				</div>
+			</div>
 			
+	<!-- Row 2 ends -->
+	
 			<div class="searchPanelBreaker">&nbsp;</div>
 
 			<div class="panelContentLeft">&nbsp;</div>
-			
+		
+		<!-- Gender and Age at Enrollment-->				
 			<div class="fldLabel">
 				<div class="label"><label for="genderType"> <wicket:message key="gender">Gender:</wicket:message> </label></div>
 			</div>
@@ -124,6 +157,20 @@
 			<div class="panelMargin">&nbsp;</div>
 			
 			<div class="fldLabel">
+					<wicket:message key="ageAtEnrollment">
+						Age at Enrollment:
+					</wicket:message>
+			</div>
+
+			<div class="fldControl">
+					<input wicket:id="linkSubjectStudy.ageAtEnrollment"/>
+			</div>
+			
+			<div class="searchPanelBreaker">&nbsp;</div>
+
+			<div class="panelContentLeft">&nbsp;</div>
+			
+			<div class="fldLabel">
 				<div class="label"><label for="subjectStatus"> <wicket:message key="subjectStatus">Participant Status:</wicket:message> </label></div>
 			</div>
 			<div class="fldControl">
@@ -132,6 +179,8 @@
 					<option>Subject</option>
 				</select>
 			</div>
+			
+			<div class="panelMargin">&nbsp;</div>
 			
 			<div class="searchPanelBreaker">&nbsp;</div>
 

@@ -25,32 +25,27 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import au.org.theark.core.util.OrderByNatural;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.StatelessSession;
 import org.hibernate.criterion.DetachedCriteria;
@@ -61,10 +56,6 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory;
-import org.hibernate.hql.spi.QueryTranslator;
-import org.hibernate.hql.spi.QueryTranslatorFactory;
 import org.hibernate.sql.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +63,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.DigestUtils;
 
+import za.ac.theark.core.model.study.entity.UploadMethod;
 import au.org.theark.core.Constants;
 import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.EntityExistsException;
@@ -95,10 +87,7 @@ import au.org.theark.core.model.lims.entity.BiospecimenCustomFieldData;
 import au.org.theark.core.model.lims.entity.BiospecimenUidPadChar;
 import au.org.theark.core.model.lims.entity.BiospecimenUidTemplate;
 import au.org.theark.core.model.lims.entity.BiospecimenUidToken;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetData;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetField;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetFieldDisplay;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetGroup;
+import au.org.theark.core.model.pheno.entity.PhenoData;
 import au.org.theark.core.model.report.entity.BiocollectionField;
 import au.org.theark.core.model.report.entity.BiocollectionFieldSearch;
 import au.org.theark.core.model.report.entity.BiospecimenField;
@@ -111,7 +100,6 @@ import au.org.theark.core.model.report.entity.DemographicFieldSearch;
 import au.org.theark.core.model.report.entity.Entity;
 import au.org.theark.core.model.report.entity.FieldCategory;
 import au.org.theark.core.model.report.entity.Operator;
-import au.org.theark.core.model.report.entity.PhenoDataSetFieldDisplaySearch;
 import au.org.theark.core.model.report.entity.QueryFilter;
 import au.org.theark.core.model.report.entity.Search;
 import au.org.theark.core.model.report.entity.SearchPayload;
@@ -134,18 +122,16 @@ import au.org.theark.core.model.study.entity.ConsentStatus;
 import au.org.theark.core.model.study.entity.ConsentType;
 import au.org.theark.core.model.study.entity.Country;
 import au.org.theark.core.model.study.entity.CustomField;
-import au.org.theark.core.model.study.entity.CustomFieldCategoryUpload;
 import au.org.theark.core.model.study.entity.CustomFieldDisplay;
-import au.org.theark.core.model.study.entity.CustomFieldType;
+import au.org.theark.core.model.study.entity.CustomFieldGroup;
 import au.org.theark.core.model.study.entity.CustomFieldUpload;
 import au.org.theark.core.model.study.entity.DelimiterType;
 import au.org.theark.core.model.study.entity.EmailStatus;
-import au.org.theark.core.model.study.entity.FamilyCustomFieldData;
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.FieldType;
 import au.org.theark.core.model.study.entity.FileFormat;
 import au.org.theark.core.model.study.entity.GenderType;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
-import au.org.theark.core.model.study.entity.LinkSubjectTwin;
 import au.org.theark.core.model.study.entity.MaritalStatus;
 import au.org.theark.core.model.study.entity.OtherID;
 import au.org.theark.core.model.study.entity.Payload;
@@ -171,6 +157,7 @@ import au.org.theark.core.model.study.entity.UploadStatus;
 import au.org.theark.core.model.study.entity.UploadType;
 import au.org.theark.core.model.study.entity.VitalStatus;
 import au.org.theark.core.model.study.entity.YesNo;
+import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.util.CsvListReader;
 import au.org.theark.core.vo.DataExtractionVO;
 import au.org.theark.core.vo.ExtractionVO;
@@ -178,6 +165,7 @@ import au.org.theark.core.vo.LinkedExtractionVO;
 import au.org.theark.core.vo.QueryFilterVO;
 import au.org.theark.core.vo.SearchVO;
 import au.org.theark.core.vo.SubjectVO;
+import au.org.theark.core.vo.UserConfigVO;
 
 /**
  * @author nivedann
@@ -322,6 +310,13 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		Study study = (Study) getSession().get(Study.class, id);
 		return study;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public Collection<EthnicityType> getEthnicityTypes() {
+		Example example = Example.create(new EthnicityType());
+		Criteria criteria = getSession().createCriteria(EthnicityType.class).add(example);
+		return criteria.list();
+	}
 
 	@SuppressWarnings("unchecked")
 	public Collection<TitleType> getTitleType() {
@@ -411,6 +406,10 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			if (subjectVO.getLinkSubjectStudy().getPerson().getGenderType() != null) {
 				criteria.add(Restrictions.eq("p.genderType.id", subjectVO.getLinkSubjectStudy().getPerson().getGenderType().getId()));
 			}
+			
+			if (subjectVO.getLinkSubjectStudy().getPerson().getEthnicityType() != null) {
+				criteria.add(Restrictions.eq("p.ethnicityType.id", subjectVO.getLinkSubjectStudy().getPerson().getEthnicityType().getId()));
+			}
 
 			if (subjectVO.getLinkSubjectStudy().getPerson().getVitalStatus() != null) {
 				criteria.add(Restrictions.eq("p.vitalStatus.id", subjectVO.getLinkSubjectStudy().getPerson().getVitalStatus().getId()));
@@ -435,8 +434,8 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 				criteria.add(Restrictions.ne("subjectStatus", subjectStatus));
 			}
 		}
-		//criteria.addOrder(Order.asc("subjectUID"));
-		criteria.addOrder(OrderByNatural.asc("subjectUID"));
+
+		criteria.addOrder(Order.asc("subjectUID"));
 		List<LinkSubjectStudy> list = criteria.list();
 
 		Collection<SubjectVO> subjectVOList = new ArrayList<SubjectVO>();
@@ -522,7 +521,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	 * @return LinkSubjectStudy
 	 */
 	public LinkSubjectStudy getSubjectByUIDAndStudy(String subjectUID, Study study) {
-		//log.warn("about to create query right now");
+		log.warn("about to create query right now");
 		Criteria linkSubjectStudyCriteria = getSession().createCriteria(LinkSubjectStudy.class);
 		linkSubjectStudyCriteria.add(Restrictions.eq("subjectUID", subjectUID));
 		linkSubjectStudyCriteria.add(Restrictions.eq("study", study));
@@ -569,17 +568,9 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	 * @return
 	 */
 	public List<AddressType> getAddressTypes() {
-		List<AddressType> AddressTypeLstNew=new ArrayList<AddressType>();
 		Criteria criteria = getSession().createCriteria(AddressType.class);
 		criteria.addOrder(Order.asc("name"));
-
-		List<AddressType> AddressTypeLst=criteria.list();
-		for (AddressType addressType : AddressTypeLst) {
-			String name=addressType.getName().toLowerCase();
-			addressType.setName(WordUtils.capitalize(name));
-			AddressTypeLstNew.add(addressType);
-		}
-		return AddressTypeLstNew;
+		return criteria.list();
 	}
 
 	/**
@@ -669,8 +660,15 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 
 		if (userId == null) {// if not forcing a userID manually, get
 			// currentuser
-			Subject currentUser = SecurityUtils.getSubject();
-			auditHistory.setArkUserId((String) currentUser.getPrincipal());
+			log.warn("Entity Type : " + userId);
+			if(auditHistory.getEntityType().toUpperCase()=="Study Upload"){
+				auditHistory.setArkUserId("arkadmin@ark.core.wits.ac.za");
+			}else{
+				Subject currentUser = SecurityUtils.getSubject();
+				auditHistory.setArkUserId((String) currentUser.getPrincipal());
+			}
+			log.warn("User ID : " + userId);
+				
 		}
 		else {
 			auditHistory.setArkUserId(userId);
@@ -697,9 +695,24 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		getSession().save(auditHistory);
 		// getSession().flush();
 	}
+	
+	public void createAuditHistory(AuditHistory auditHistory, String userId, StudyStatus studyStatus, String s) {
+		Date date = new Date(System.currentTimeMillis());
+
+		auditHistory.setArkUserId(userId);
+		auditHistory.setStudyStatus(studyStatus);
+		auditHistory.setDateTime(date);
+		getSession().save(auditHistory);
+		// getSession().flush();
+	}
 
 	public void createAuditHistory(AuditHistory auditHistory) {
-		createAuditHistory(auditHistory, null, null);
+		if(auditHistory.getArkUserId()==null){
+			createAuditHistory(auditHistory, null, null);
+		}else{
+			if(auditHistory.getStudyStatus()==null)
+				createAuditHistory(auditHistory, auditHistory.getArkUserId(), auditHistory.getStudyStatus(), new String());
+		};
 	}
 
 	public List<PersonContactMethod> getPersonContactMethodList() {
@@ -821,6 +834,18 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		}
 		return genderType;
 	}
+	
+	public EthnicityType getEthnicityType(String name) {
+		Criteria criteria = getSession().createCriteria(EthnicityType.class);
+		criteria.add(Restrictions.eq("name", name));
+		EthnicityType ethnicityType = new EthnicityType();
+		List<EthnicityType> results = criteria.list();
+		if (!results.isEmpty()) {
+			ethnicityType = (EthnicityType) results.get(0);
+		}
+		return ethnicityType;
+	}
+
 
 	public VitalStatus getVitalStatus(String name) {
 		Criteria criteria = getSession().createCriteria(VitalStatus.class);
@@ -869,10 +894,9 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 
 	public long getStudySubjectCount(SubjectVO subjectVO) {
 		// Handle for study not in context
-		// GEORGE - 30/1/15 Removed handle to allow for global search. Need to test to see if this fails anywhere.
-//		if (subjectVO.getLinkSubjectStudy().getStudy() == null) {
-//			return 0;
-//		}
+		if (subjectVO.getLinkSubjectStudy().getStudy() == null) {
+			return 0;
+		}
 
 		Criteria criteria = buildGeneralSubjectCriteria(subjectVO);
 		criteria.setProjection(Projections.rowCount());
@@ -883,13 +907,8 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	private Criteria buildGeneralSubjectCriteria(SubjectVO subjectVO) {
 		Criteria criteria = getSession().createCriteria(LinkSubjectStudy.class);
 		criteria.createAlias("person", "p");
-		if(subjectVO.getLinkSubjectStudy().getStudy() != null) {
-			criteria.add(Restrictions.eq("study.id", subjectVO.getLinkSubjectStudy().getStudy().getId()));
-		} else {
-			criteria.add(Restrictions.in("study", subjectVO.getStudyList()));
-			criteria.createAlias("study", "st");
-			criteria.addOrder(Order.asc("st.name"));
-		}
+		criteria.add(Restrictions.eq("study.id", subjectVO.getLinkSubjectStudy().getStudy().getId()));
+
 		if (subjectVO.getLinkSubjectStudy().getPerson() != null) {
 
 			if (subjectVO.getLinkSubjectStudy().getPerson().getId() != null) {
@@ -921,6 +940,10 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			if (subjectVO.getLinkSubjectStudy().getPerson().getGenderType() != null) {
 				criteria.add(Restrictions.eq("p.genderType.id", subjectVO.getLinkSubjectStudy().getPerson().getGenderType().getId()));
 			}
+			
+			if (subjectVO.getLinkSubjectStudy().getPerson().getEthnicityType() != null) {
+				criteria.add(Restrictions.eq("p.ethnicityType.id", subjectVO.getLinkSubjectStudy().getPerson().getEthnicityType().getId()));
+			}
 
 			if (subjectVO.getLinkSubjectStudy().getPerson().getVitalStatus() != null) {	
 				criteria.add(Restrictions.eq("p.vitalStatus.id", subjectVO.getLinkSubjectStudy().getPerson().getVitalStatus().getId()));
@@ -942,6 +965,10 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 				}
 			}
 		}
+		if (subjectVO.getLinkSubjectStudy().getAgeAtEnrollment() != null){
+		if (subjectVO.getLinkSubjectStudy().getAgeAtEnrollment() != 0) {
+			criteria.add(Restrictions.eq("ageAtEnrollment", subjectVO.getLinkSubjectStudy().getAgeAtEnrollment()));
+		}}
 
 		if (subjectVO.getLinkSubjectStudy().getSubjectUID() != null && subjectVO.getLinkSubjectStudy().getSubjectUID().length() > 0) {
 			criteria.add(Restrictions.ilike("subjectUID", subjectVO.getLinkSubjectStudy().getSubjectUID(), MatchMode.ANYWHERE));
@@ -964,11 +991,10 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			criteria.add(Restrictions.not(Restrictions.in("subjectUID",
 					subjectVO.getRelativeUIDs().toArray())));
 		}
-		//criteria.addOrder(OrderByBorder"{alias}.STUDY_ID, length({alias}.SUBJECT_UID), {alias}.SUBJECT_UID");
 
 		criteria.setProjection(Projections.distinct(Projections.projectionList().add(Projections.id())));
-		//criteria.addOrder(Order.asc("subjectUID"));
-		criteria.addOrder(OrderByNatural.asc("subjectUID"));
+
+		criteria.addOrder(Order.asc("subjectUID"));
 		return criteria;
 	}
 
@@ -1004,11 +1030,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			subjectVOList.add(subject);
 		}
 		return subjectVOList;
-		/*Try to sort in this position but unable to sort because data will be comming as a chunk of 20,40 
-		Comparator<SubjectVO> comparator=Comparator.comparing((SubjectVO svo)->svo.getLinkSubjectStudy().getStudy().getName()).thenComparingInt(svo->svo.getSubjectUID().length())
-				.thenComparing((SubjectVO svo)->svo.getSubjectUID());
-		Stream<SubjectVO> subjectVOStream = subjectVOList.stream().sorted(comparator);
-		return subjectVOStream.collect(Collectors.toList());*/
 	}
 
 	public List<ConsentStatus> getRecordableConsentStatus() {
@@ -1049,6 +1070,8 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	public List<ArkFunction> getModuleFunction(ArkModule arkModule) {
 
 		ArkFunctionType arkFunctionType = getArkFunctionType(Constants.ARK_FUNCTION_TYPE_NON_REPORT);
+		
+		log.info(arkModule.getName().toString());
 
 		Criteria criteria = getSession().createCriteria(ArkModuleFunction.class);
 		criteria.createAlias("arkFunction", "aliasArkFunction");
@@ -1060,6 +1083,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		List<ArkFunction> arkFunctionList = new ArrayList<ArkFunction>();
 		for (ArkModuleFunction arkModuleFunction : listOfArkModuleFunction) {
 			arkFunctionList.add(arkModuleFunction.getArkFunction());
+			log.info(arkModuleFunction.getArkFunction().toString());
 		}
 
 		return arkFunctionList;
@@ -1204,8 +1228,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		// uploadCriteria.getArkFunction()));
 
 		ArkFunction biospecArkFunction = getArkFunctionByName(Constants.FUNCTION_KEY_VALUE_BIOSPECIMEN);
-		//ArkFunction biocollArkFunction = getArkFunctionByName(Constants.FUNCTION_KEY_VALUE_LIMS_COLLECTION);
-		ArkFunction biocollArkFunction = getArkFunctionByName(Constants.FUNCTION_KEY_VALUE_LIMS_CUSTOM_FIELD);
+		ArkFunction biocollArkFunction = getArkFunctionByName(Constants.FUNCTION_KEY_VALUE_LIMS_COLLECTION);
 
 		List<ArkFunction> arkFunctionsForBio = new ArrayList<ArkFunction>();
 		arkFunctionsForBio.add(biospecArkFunction);
@@ -1279,13 +1302,23 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		return resultsList;
 	}
 
-	public void createUpload(Upload studyUpload) throws Exception {
+	public void createUpload(Upload studyUpload) {
+		String userId = null;
+		Subject currentUser;
 		if (studyUpload.getUploadStatus() == null) {
-			//studyUpload.setUploadStatus(getUploadStatusForUndefined());
-			studyUpload.setUploadStatus(getUploadStatusFor(Constants.UPLOAD_STATUS_STATUS_NOT_DEFINED));
+			studyUpload.setUploadStatus(getUploadStatusForUndefined());
 		}
-		Subject currentUser = SecurityUtils.getSubject();
-		String userId = (String) currentUser.getPrincipal();
+		if (studyUpload.getUploadMethod()==null){
+			studyUpload.setUploadMethod(getUploadMethod(Long.valueOf("1")));
+		}
+		log.info(" "+studyUpload.getUploadMethod().getName().toString().equalsIgnoreCase("Automated"));
+		if(studyUpload.getUploadMethod().getName().toString().equalsIgnoreCase("Automated")){
+			userId = "arkadmin@ark.core.wits.ac.za";
+		}else{
+			currentUser = SecurityUtils.getSubject();
+			userId = (String) currentUser.getPrincipal();
+		}
+			
 		studyUpload.setUserId(userId);
 		getSession().save(studyUpload);
 		// getSession().flush();
@@ -1293,6 +1326,18 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 
 	public void updateUpload(Upload studyUpload) {
 		getSession().update(studyUpload);
+	}
+	
+	public UploadMethod getUploadMethod(Long id) {
+		Criteria criteria = getSession().createCriteria(UploadMethod.class);
+		criteria.add(Restrictions.eq("id", id));
+		return (UploadMethod) criteria.uniqueResult();
+	}
+	
+	public UploadType getUploadType(Long id) {
+		Criteria criteria = getSession().createCriteria(UploadType.class);
+		criteria.add(Restrictions.eq("id", id));
+		return (UploadType) criteria.uniqueResult();
 	}
 
 	public String getDelimiterTypeNameByDelimiterChar(char delimiterCharacter) {
@@ -1528,17 +1573,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 
 	}
 
-	public List<PhenoDataSetFieldDisplay> getPhenoFieldDisplaysIn(Study study, ArkFunction arkFunction) {
-		String queryString = "select pdsfd from PhenoDataSetFieldDisplay pdsfd " +
-				" where phenoDataSetField.id in ( " +
-				" SELECT id from PhenoDataSetField pdsf " +
-				" where pdsf.study =:study " + " and pdsf.arkFunction =:arkFunction )";
-		Query query = getSession().createQuery(queryString);
-		query.setParameter("study", study);
-		query.setParameter("arkFunction", arkFunction);
-		return query.list();
-	}
-
 	/**
 	 * based on sql concept of; select id from custom_field_display where custom_field_id in (SELECT id FROM custom_field where name='AGE' and study_id
 	 * = 1 and ark_function_id = 5)
@@ -1547,7 +1581,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	 * @param study
 	 * @return
 	 */
-	/*@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public List<CustomFieldDisplay> getCustomFieldDisplaysIn(List<String> fieldNameCollection, Study study, ArkFunction arkFunction, CustomFieldGroup customFieldGroup) {
 
 		if (fieldNameCollection == null || fieldNameCollection.isEmpty()) {
@@ -1570,10 +1604,20 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			query.setParameter("customFieldGroup", customFieldGroup);
 			return query.list();
 		}
-	}*/
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<LinkSubjectStudy> getSubjectsThatAlreadyExistWithTheseUIDs(Study study, Collection subjectUids) {
+		ArrayList<?> subUiDs = (ArrayList<?>)subjectUids;
+		ArrayList<String> tempSubUiDs = new ArrayList<String>();
+		if (subUiDs.get(0) instanceof StringBuilder){
+			for( StringBuilder sb : (ArrayList<StringBuilder>) subjectUids){
+				tempSubUiDs.add(sb.toString());
+			}
+			
+			subjectUids = tempSubUiDs;
+		}
+		
 		String queryString = "select subject " + "from LinkSubjectStudy subject " + "where study =:study " + "and subjectUID in  (:subjects) ";
 		Query query = getSession().createQuery(queryString);
 		query.setParameter("study", study);
@@ -1592,7 +1636,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<SubjectCustomFieldData> getSubjectCustomFieldDataFor(Collection customFieldDisplaysThatWeNeed, List subjectUIDsToBeIncluded) {
+	public List<SubjectCustomFieldData> getCustomFieldDataFor(Collection customFieldDisplaysThatWeNeed, List subjectUIDsToBeIncluded) {
 		if (customFieldDisplaysThatWeNeed == null || customFieldDisplaysThatWeNeed.isEmpty() || subjectUIDsToBeIncluded == null || subjectUIDsToBeIncluded.isEmpty()) {
 			return new ArrayList<SubjectCustomFieldData>();
 		}
@@ -1605,6 +1649,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			return query.list();
 		}
 	}
+
 	public Payload createPayload(byte[] bytes) {
 		Payload payload = new Payload(bytes);
 		getSession().save(payload);
@@ -1618,18 +1663,42 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		// may be from wicket and not be attached?
 		return upload.getPayload();
 	}
+
+	// TODO Constants? for all of the next methods
+	public UploadStatus getUploadStatusForUploaded() {
+		Criteria criteria = getSession().createCriteria(UploadStatus.class);
+		criteria.add(Restrictions.eq("name", "COMPLETED"));
+		return (UploadStatus) criteria.uniqueResult();
+	}
+
+	public UploadStatus getUploadStatusForUndefined() {
+		Criteria criteria = getSession().createCriteria(UploadStatus.class);
+		criteria.add(Restrictions.eq("name", "STATUS_NOT_DEFINED"));
+		return (UploadStatus) criteria.uniqueResult();
+	}
+
+	public UploadStatus getUploadStatusForAwaitingValidation() {
+		Criteria criteria = getSession().createCriteria(UploadStatus.class);
+		criteria.add(Restrictions.eq("name", "AWAITING_VALIDATION"));
+		return (UploadStatus) criteria.uniqueResult();
+	}
+
 	public UploadStatus getUploadStatusFor(String statusFromConstant) {
 		Criteria criteria = getSession().createCriteria(UploadStatus.class);
 		criteria.add(Restrictions.eq("name", statusFromConstant));
 		return (UploadStatus) criteria.uniqueResult();
 	}
+
+	public UploadStatus getUploadStatusForValidated() {
+		Criteria criteria = getSession().createCriteria(UploadStatus.class);
+		criteria.add(Restrictions.eq("name", "VALIDATED"));
+		return (UploadStatus) criteria.uniqueResult();
+	}
+
 	@SuppressWarnings("unchecked")
-	public Collection<UploadType> getUploadTypesForSubject(Study study) {
+	public Collection<UploadType> getUploadTypesForSubject() {
 		Criteria criteria = getSession().createCriteria(UploadType.class);
 		criteria.add(Restrictions.eq("arkModule", getArkModuleForSubject()));
-		if(study != null && study.getParentStudy() != null) { //i.e. study is a child study
-			criteria.add(Restrictions.not(Restrictions.eq("name", "Subject Demographic Data")));
-		}
 		return criteria.list();
 	}
 
@@ -1637,7 +1706,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	public Collection<UploadType> getUploadTypesForLims() {
 		Criteria criteria = getSession().createCriteria(UploadType.class);
 		criteria.add(Restrictions.eq("arkModule", getArkModuleForLims()));
-		criteria.addOrder(Order.asc("order"));
 		return criteria.list();
 	}
 
@@ -1819,18 +1887,19 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		//end save biocollection fields
 
 		//start saving all custom display fields		
+		Collection<CustomFieldDisplay> listOfPhenoCustomFieldDisplaysFromVO = searchVO.getSelectedPhenoCustomFieldDisplays();
 		Collection<CustomFieldDisplay> listOfSubjectCustomFieldDisplaysFromVO = searchVO.getSelectedSubjectCustomFieldDisplays();
 		Collection<CustomFieldDisplay> listOfBiospecimenCustomFieldDisplaysFromVO = searchVO.getSelectedBiospecimenCustomFieldDisplays();
 		Collection<CustomFieldDisplay> listOfBiocollectionCustomFieldDisplaysFromVO = searchVO.getSelectedBiocollectionCustomFieldDisplays();// we really can add them all here and add to one collections
 		List<CustomFieldDisplaySearch> nonPoppablePhenoCFDs = new ArrayList<CustomFieldDisplaySearch>();
 		nonPoppablePhenoCFDs.addAll(search.getCustomFieldsToReturn());
 		List<CustomFieldDisplay> nonPoppableCustomFieldsFromVO = new ArrayList<CustomFieldDisplay>();
-		//nonPoppableCustomFieldsFromVO.addAll(listOfPhenoCustomFieldDisplaysFromVO);
+		nonPoppableCustomFieldsFromVO.addAll(listOfPhenoCustomFieldDisplaysFromVO);
 		nonPoppableCustomFieldsFromVO.addAll(listOfSubjectCustomFieldDisplaysFromVO);
 		nonPoppableCustomFieldsFromVO.addAll(listOfBiospecimenCustomFieldDisplaysFromVO);
 		nonPoppableCustomFieldsFromVO.addAll(listOfBiocollectionCustomFieldDisplaysFromVO);
 		List<CustomFieldDisplay> poppableCustomFieldsFromVO = new ArrayList<CustomFieldDisplay>();
-		//poppableCustomFieldsFromVO.addAll(listOfPhenoCustomFieldDisplaysFromVO);
+		poppableCustomFieldsFromVO.addAll(listOfPhenoCustomFieldDisplaysFromVO);
 		poppableCustomFieldsFromVO.addAll(listOfSubjectCustomFieldDisplaysFromVO);
 		poppableCustomFieldsFromVO.addAll(listOfBiospecimenCustomFieldDisplaysFromVO);
 		poppableCustomFieldsFromVO.addAll(listOfBiocollectionCustomFieldDisplaysFromVO);
@@ -1858,40 +1927,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			CustomFieldDisplaySearch cfds = new CustomFieldDisplaySearch(field, search);
 			getSession().save(cfds);
 		}
-
-		//Pheno DataSet Fields:
-		Collection<PhenoDataSetFieldDisplay> listOfPhenoDataSetFieldDisplaysFromVO = searchVO.getSelectedPhenoDataSetFieldDisplays();
-		List<PhenoDataSetFieldDisplaySearch> nonPoppablePhenoDataSetFieldDisplaySearch = new ArrayList<>();
-		nonPoppablePhenoDataSetFieldDisplaySearch.addAll(search.getPhenoDataSetFieldsToReturn());
-		List<PhenoDataSetFieldDisplay> nonPoppablePhenoDataSetFieldDisplays = new ArrayList<>();
-		nonPoppablePhenoDataSetFieldDisplays.addAll(listOfPhenoDataSetFieldDisplaysFromVO);
-		List<PhenoDataSetFieldDisplay> poppablePhenoDataSetFieldDisplays = new ArrayList<>();
-		poppablePhenoDataSetFieldDisplays.addAll(listOfPhenoDataSetFieldDisplaysFromVO);
-
-		for (PhenoDataSetFieldDisplaySearch phenoSearch : nonPoppablePhenoDataSetFieldDisplaySearch) {
-			log.info("pheno fields to return = " + search.getPhenoDataSetFieldsToReturn().size());
-			boolean toBeDeleted = true;
-			for (PhenoDataSetFieldDisplay field : nonPoppablePhenoDataSetFieldDisplays) {
-				if (phenoSearch.getPhenoDataSetFieldDisplay().getId().equals(field.getId())) {
-					toBeDeleted = false;
-					poppablePhenoDataSetFieldDisplays.remove(field);
-				}
-			}
-
-			if (toBeDeleted) {
-				search.getPhenoDataSetFieldsToReturn().remove(phenoSearch);
-				getSession().update(search);
-				getSession().delete(phenoSearch);
-				getSession().flush();
-				getSession().refresh(search);
-			}
-		}
-
-		for (PhenoDataSetFieldDisplay field : poppablePhenoDataSetFieldDisplays) {
-			PhenoDataSetFieldDisplaySearch phenoSearch = new PhenoDataSetFieldDisplaySearch(field, search);
-			getSession().save(phenoSearch);
-		}
-
 		// is all of this necessary now...investigate// searchVO.setSelectedPhenoCustomFieldDisplays(nonPoppableCustomFieldsFromVO);
 		//end save all custom field displays
 
@@ -2016,7 +2051,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		return query.list();
 	}
 
-	@Deprecated
 	public List<CustomFieldDisplay> getSelectedPhenoCustomFieldDisplaysForSearch(Search search) {
 		String queryString = "select cfds.customFieldDisplay " + " from CustomFieldDisplaySearch cfds " + " where cfds.search=:search "
 				+ " and cfds.customFieldDisplay.customField.arkFunction=:arkFunction ";// +
@@ -2025,15 +2059,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		query.setParameter("search", search);
 		query.setParameter("arkFunction", getArkFunctionByName(Constants.FUNCTION_KEY_VALUE_PHENO_COLLECTION));
 
-		return query.list();
-	}
-
-	public List<PhenoDataSetFieldDisplay> getSelectedPhenoDataSetFieldDisplaysForSearch(Search search) {
-		String queryString = "select pdfds.phenoDataSetFieldDisplay " + " from PhenoDataSetFieldDisplaySearch pdfds " +
-				"where pdfds.search=:search " + " and pdfds.phenoDataSetFieldDisplay.phenoDataSetField.arkFunction=:arkFunction";
-		Query query = getSession().createQuery(queryString);
-		query.setParameter("search", search);
-		query.setParameter("arkFunction", getArkFunctionByName(Constants.FUNCTION_KEY_VALUE_DATA_DICTIONARY));
 		return query.list();
 	}
 
@@ -2061,14 +2086,44 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		query.setParameter("search", search);
 		return query.list();
 	}
+	
+	public List<Study> getAllStudies(){
+		Criteria criteria = getSession().createCriteria(Study.class);
+		criteria.addOrder(Order.asc("name"));
+		log.info(criteria.list().size() + "" );
+		return criteria.list();
+	}
+	
+	public List<Study> getAllParentStudies(){
+		Criteria criteria = getSession().createCriteria(Study.class);
+		criteria.addOrder(Order.asc("name"))
+		.add(Restrictions.isNull("parentStudy"));		
+		log.info(criteria.list().size() + "" );
+		return criteria.list();
+	}
+	
+	public List<Study> getAllSubStudiesList(Study study){
+		Criteria criteria = getSession().createCriteria(Study.class);
+		criteria.add(Restrictions.eq("parentStudy", study));
+		criteria.addOrder(Order.asc("name"));
+		log.info(criteria.list().size() + "" );
+		return criteria.list();
+	}
+	
+	public Hashtable<String, Study> getAllSubStudiesHashTable(Study study){
+		Hashtable<String, Study> subStudies = new Hashtable<String, Study>();
+		for(Study s : getAllSubStudiesList(study)){
+			subStudies.put(s.getName(), s);
+		}
+		return subStudies;
+	}
 
 	public List<CustomFieldDisplay> getSelectedBiocollectionCustomFieldDisplaysForSearch(Search search) {
 		String queryString = "select cfds.customFieldDisplay " + " from CustomFieldDisplaySearch cfds " + " where cfds.search=:search "
 				+ " and cfds.customFieldDisplay.customField.arkFunction=:arkFunction";
 		Query query = getSession().createQuery(queryString);
 		query.setParameter("search", search);
-		//query.setParameter("arkFunction", getArkFunctionByName(Constants.FUNCTION_KEY_VALUE_LIMS_COLLECTION));
-		query.setParameter("arkFunction", getArkFunctionByName(Constants.FUNCTION_KEY_VALUE_LIMS_CUSTOM_FIELD));
+		query.setParameter("arkFunction", getArkFunctionByName(Constants.FUNCTION_KEY_VALUE_LIMS_COLLECTION));
 		return query.list();
 	}
 
@@ -2089,22 +2144,19 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			List<DemographicField> personDFs = getSelectedDemographicFieldsForSearch(search, Entity.Person);
 			List<DemographicField> phoneDFs = getSelectedDemographicFieldsForSearch(search, Entity.Phone);
 			List<DemographicField> otherIDDFs = getSelectedDemographicFieldsForSearch(search, Entity.OtherID);
-			//added on 2015-11-03 include the twin subject uid and the twin type.
-			List<DemographicField> twinDetailDFs = getSelectedDemographicFieldsForSearch(search, Entity.LinkSubjectTwin);
 			
 			List<DemographicField> allSubjectFields = new ArrayList<DemographicField>();
 			allSubjectFields.addAll(addressDFs);
 			allSubjectFields.addAll(lssDFs);
 			allSubjectFields.addAll(personDFs);
 			allSubjectFields.addAll(phoneDFs);
-			allSubjectFields.addAll(twinDetailDFs);
 
 			List<BiospecimenField> bsfs = getSelectedBiospecimenFieldsForSearch(search);
 			List<BiocollectionField> bcfs = getSelectedBiocollectionFieldsForSearch(search);
 			List<CustomFieldDisplay> bccfds = getSelectedBiocollectionCustomFieldDisplaysForSearch(search);
 			List<CustomFieldDisplay> bscfds = getSelectedBiospecimenCustomFieldDisplaysForSearch(search);
 			List<CustomFieldDisplay> scfds = getSelectedSubjectCustomFieldDisplaysForSearch(search);
-			List<PhenoDataSetFieldDisplay> pfds = getSelectedPhenoDataSetFieldDisplaysForSearch(search);
+			List<CustomFieldDisplay> pcfds = getSelectedPhenoCustomFieldDisplaysForSearch(search);
 			
 			List<ConsentStatusField> consentStatus = (List<ConsentStatusField>) getSelectedConsentStatusFieldsForSearch(search);
 			
@@ -2158,7 +2210,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			//PHENO CUSTOM
 
 			if(!idsAfterFiltering.isEmpty()){
-				idsAfterFiltering = applyPhenoDataSetFilters(allTheData, search, idsAfterFiltering);	//change will be applied to referenced object
+				idsAfterFiltering = applyPhenoCustomFilters(allTheData, search, idsAfterFiltering);	//change will be applied to referenced object
 			}
 			log.info("uidsafterFiltering pheno cust=" + idsAfterFiltering.size());
 
@@ -2168,8 +2220,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			wipeBiospecimenDataNotMatchingThisList(search.getStudy(), allTheData, biospecimenIdsAfterFiltering, bioCollectionIdsAfterFiltering, idsAfterFiltering);
 			wipeBiocollectionDataNotMatchThisList(search.getStudy(), allTheData, bioCollectionIdsAfterFiltering, idsAfterFiltering, biospecimenIdsAfterFiltering,  getBiospecimenQueryFilters(search));
 
-			//2015-11-03 include the Twin subject uid with the twin type after the otherIDFs
-			addDataFromMegaDemographicQuery(allTheData, personDFs, lssDFs, addressDFs, phoneDFs, otherIDDFs, twinDetailDFs,scfds, search, idsAfterFiltering);//This must go last, as the number of joining tables is going to affect performance
+			addDataFromMegaDemographicQuery(allTheData, personDFs, lssDFs, addressDFs, phoneDFs, otherIDDFs, scfds, search, idsAfterFiltering);//This must go last, as the number of joining tables is going to affect performance
 
 			log.info("uidsafterFiltering SUBJECT cust=" + idsAfterFiltering.size());
 
@@ -2198,12 +2249,14 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			createSearchResult(search, iDataExtractionDao.createSubjectDemographicCSV(search, allTheData, allSubjectFields, scfds, FieldCategory.DEMOGRAPHIC_FIELD), currentUser);
 			createSearchResult(search, iDataExtractionDao.createBiocollectionCSV(search, allTheData, bccfds, FieldCategory.BIOCOLLECTION_FIELD), currentUser);
 			createSearchResult(search, iDataExtractionDao.createBiospecimenCSV(search, allTheData, bsfs, bscfds, FieldCategory.BIOSPECIMEN_FIELD), currentUser);
-			createSearchResult(search, iDataExtractionDao.createPhenotypicCSV(search, allTheData, pfds, FieldCategory.PHENO_FD),currentUser);
+			createSearchResult(search, iDataExtractionDao.createPhenotypicCSV(search, allTheData, pcfds, FieldCategory.PHENO_CFD),currentUser);
 			if(search.getIncludeGeno()) {
 				createSearchResult(search, iDataExtractionDao.createGenoCSV(search, allTheData, FieldCategory.GENO, maxProcessesPerPipeline, maxInputList, maxOutputList),currentUser);				
 			}
 			createSearchResult(search, iDataExtractionDao.createConsentStatusCSV(search, allTheData, consentStatus, FieldCategory.CONSENT_STATUS_FIELD), currentUser);
-			createSearchResult(search, iDataExtractionDao.createMegaCSV(search, allTheData, allSubjectFields, bccfds, bscfds, pfds, consentStatus), currentUser);
+			if(search.getIncludeMega()) {
+				createSearchResult(search, iDataExtractionDao.createMegaCSV(search, allTheData, allSubjectFields, bccfds, bscfds, pcfds, consentStatus), currentUser);
+			}
 			try {
 				search.setFinishTime(new java.util.Date(System.currentTimeMillis()));
 				search.setStatus("FINISHED");
@@ -2256,30 +2309,15 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	}
 
 	/*allthedata might not b as good as just the bit we want */
-	/**This method modified on 2016-05-25.                                                                                                                                                                                                                                                                    
-	Due to "java.util.ConcurrentModificationException".                                                                                                                                                                                                                                                    
-	The rule is "You may not modify (add or remove elements from the list) while iterating over it using an Iterator (which happens when you use a for-each loop)".                                                                                                                                       
-	JavaDocs:                                                                                                                                                                                                                                                                                             
-	The iterators returned by this class's iterator and listIterator methods are fail-fast: if the list is structurally modified at any time after the iterator is created, in any way except through the iterator's own remove or add methods, the iterator will throw a ConcurrentModificationException.
-	Hence if you want to modify the list (or any collection in general), use iterator, because then it is aware of the modifications and hence those will be handled properly.                                                                                                                            
-	@param study                                                                                                                                                                                                                                                                                           
-	@param allTheData                                                                                                                                                                                                                                                                                      
-	@param biospecimenIdsAfterFiltering                                                                                                                                                                                                                                                                    
-	@param biocollectionIds                                                                                                                                                                                                                                                                                
-	@param idsAfterFiltering                                                                                                                                                                                                                                                                               
-	 */
 	private void wipeBiospecimenDataNotMatchingThisList(Study study, DataExtractionVO allTheData, List<Long> biospecimenIdsAfterFiltering, List<Long> biocollectionIds,
 			List<Long> idsAfterFiltering) {
 		HashMap<String, ExtractionVO> data = allTheData.getBiospecimenData();
 		Collection<String> uidsInData = data.keySet();
 		Collection<String> uidsToDelete = getBiospecimenUIDsNotMatchingTheseBiospecimenIdsOrSubjectIds(study, uidsInData, biospecimenIdsAfterFiltering, biocollectionIds, idsAfterFiltering);
-		Collection<String> uidsToDeleteCopy =new ArrayList<String>(uidsToDelete);
-		//This is an exact copy of the array so  ConcurrentModificationException can not be thrown.
-		for(String uid : uidsToDeleteCopy){
+		for(String uid : uidsToDelete){
 			log.info("wipeBiospecimenDataNotMatchingThisList:    removed biospecimen uid = " + uid);
 			data.remove(uid);
 		}
-		
 	}
 
 	private void wipeBiocollectionDataNotMatchThisList(Study study, DataExtractionVO allTheData, List<Long> bioCollectionIdsAfterFiltering, List<Long> subjectIds, List<Long> biospecimenIds,
@@ -2314,9 +2352,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			return bioCollectionUIDs;
 		}
 		else{
-			List<Long> subjectIdsNew=new ArrayList<Long>();
-			//add a dummy value=0 to get rid of ".QuerySyntaxException: unexpected end of subtree" due to empty list.
-			subjectIds.add(new Long(0));
 			String queryString = 	" select distinct bioCollection.biocollectionUid " +
 									" from BioCollection bioCollection " +
 									" where (" +
@@ -2329,12 +2364,8 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 				query.setParameterList("idList", bioCollectionIds);
 			if(!subjectIds.isEmpty())
 				query.setParameterList("subjectIdList", subjectIds);
-			else{
-				query.setParameterList("subjectIdList", subjectIdsNew);
-			}
 			query.setParameter("study", study);
 			query.setParameterList("uidList", bioCollectionUIDs);
-			log.info("Query String: "+query.getQueryString());
 			List<String> collectionsToDelete = query.list();
 
 
@@ -2591,8 +2622,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	 * @return the updated list of uids that are still left after the filtering.
 	 */
 	private List<Long> applySubjectCustomFilters(DataExtractionVO allTheData, Search search, List<Long> idsToInclude){
-		
-		 
+
 		if(idsToInclude!=null && !idsToInclude.isEmpty()){
 			String queryToFilterSubjectIDs = getSubjectCustomFieldQuery(search);
 			Collection<CustomFieldDisplay> cfdsToReturn = getSelectedSubjectCustomFieldDisplaysForSearch(search);
@@ -2929,9 +2959,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 
 
 	private List<Long> getSubjectIdsForBiospecimenIds(List<Long> biospecimenIdsToInclude) {
-		if(biospecimenIdsToInclude == null || biospecimenIdsToInclude.isEmpty()){
-			return new ArrayList<Long>();
-		}
 		String queryString = "select bio.linkSubjectStudy.id from Biospecimen bio " 
 				+ " where bio.id in (:biospecimenIdsToInclude) ";
 		Query query = getSession().createQuery(queryString);
@@ -2941,10 +2968,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 
 
 	private List<Long> getSubjectIdsForPhenoDataIds(List<Long> phenoDataIdsToInclude) {
-		if(phenoDataIdsToInclude == null || phenoDataIdsToInclude.isEmpty()){
-			return new ArrayList<Long>();
-		}
-		String queryString = "select pheno.phenoDataSetCollection.linkSubjectStudy.id from PhenoDataSetData pheno "
+		String queryString = "select pheno.phenoCollection.linkSubjectStudy.id from PhenoData pheno " 
 							+ " where pheno.id in (:phenoDataIdsToInclude) ";
 		Query query = getSession().createQuery(queryString);
 		query.setParameterList("phenoDataIdsToInclude", phenoDataIdsToInclude);
@@ -2952,9 +2976,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	}
 
 	private List<Long> getBiospecimenIdForSubjectIds(List<Long> subjectIds) {
-		if(subjectIds == null || subjectIds.isEmpty()){
-			return new ArrayList<Long>();
-		}
 		String queryString = "select bio.id from Biospecimen bio " 
 							+ " where bio.linkSubjectStudy.id in (:subjectIds) ";
 		Query query = getSession().createQuery(queryString);
@@ -2963,9 +2984,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	}
 
 	private List<Long> getSubjectIdsForBioCollectionIds(List<Long> bioCollectionIdsToInclude) {
-		if(bioCollectionIdsToInclude == null || bioCollectionIdsToInclude.isEmpty()){
-			return new ArrayList<Long>();
-		}
 		String queryString = "select bio.linkSubjectStudy.id from BioCollection bio " 
 							+ " where bio.id in (:bioCollectionIdsToInclude) ";
 		Query query = getSession().createQuery(queryString);
@@ -2974,9 +2992,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	}
 
 	private List<Long> getBioCollectionIdForSubjectIds(List<Long> subjectIds) {
-		if(subjectIds == null || subjectIds.isEmpty()){
-			return new ArrayList<Long>();
-		}
 		String queryString = "select bc.id from BioCollection bc " 
 							+ " where bc.linkSubjectStudy.id in (:subjectIds) ";
 		Query query = getSession().createQuery(queryString);
@@ -2990,34 +3005,26 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	 * 
 	 * @param allTheData
 	 * @param search
-	 * @param idsToInclude
+	 * @param uidsToInclude
 	 * @return the updated list of uids that are still left after the filtering. 
 	 */
-	private List<Long> applyPhenoDataSetFilters(DataExtractionVO allTheData, Search search, List<Long> idsToInclude){
+	private List<Long> applyPhenoCustomFilters(DataExtractionVO allTheData, Search search, List<Long> idsToInclude){
 
 		Set<QueryFilter> filters = search.getQueryFilters();
 
-		Collection<PhenoDataSetGroup> pdsgWithFilters = getPhenoDataSetGroupsForPhenoFilters(search, filters);
+		Collection<CustomFieldGroup> cfgsWithFilters = getCustomFieldGroupsForPhenoFilters(search, filters);
 		List<Long> phenoCollectionIdsSoFar = new ArrayList<Long>();
 
-		for(PhenoDataSetGroup phenoGroup : pdsgWithFilters){
-			log.info("Pheno group: " + phenoGroup.getName());
-			if(idsToInclude!=null && !idsToInclude.isEmpty()){
-				String queryToGetPhenoIdsForGivenSearchAndCFGFilters = getQueryForPhenoIdsForSearchAndCFGFilters(search, phenoGroup);
+		for(CustomFieldGroup customFieldGroup : cfgsWithFilters){
 
+			if(idsToInclude!=null && !idsToInclude.isEmpty()){
+				String queryToGetPhenoIdsForGivenSearchAndCFGFilters = getQueryForPhenoIdsForSearchAndCFGFilters(search, customFieldGroup);
+
+				//Collection<CustomFieldDisplay> cfdsToReturn = getSelectedPhenoCustomFieldDisplaysForSearch(search);
+				//log.info("about to APPLY subject  filters.  UIDs size =" + idsToInclude.size() + " query string = " + queryToFilterSubjectIDs + " cfd to return size = " + cfdsToReturn.size());
 				if(!queryToGetPhenoIdsForGivenSearchAndCFGFilters.isEmpty()){
 					Query query = getSession().createQuery(queryToGetPhenoIdsForGivenSearchAndCFGFilters);
 					query.setParameterList("idList", idsToInclude);//TODO ASAP...this should be pheno list and not subjuid list now
-
-					QueryTranslatorFactory translatorFactory = new ASTQueryTranslatorFactory();
-					SessionFactoryImplementor factory = (SessionFactoryImplementor) getSession().getSessionFactory();
-					QueryTranslator translator = translatorFactory.
-							createQueryTranslator(query.getQueryString(), query.getQueryString(), Collections.EMPTY_MAP, factory);
-					translator.compile(Collections.EMPTY_MAP, false);
-					log.info(translator.getSQLString());
-
-
-
 					List<Long> phenosForThisCFG = query.list(); 
 					phenoCollectionIdsSoFar.addAll(phenosForThisCFG);
 					log.info("rows returned = " + phenoCollectionIdsSoFar.size());
@@ -3032,7 +3039,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		}
 		//now that we have all the phenoCollection IDs...get the updated list of subjects
 		if(phenoCollectionIdsSoFar.isEmpty()){
-			if(!pdsgWithFilters.isEmpty()){
+			if(!cfgsWithFilters.isEmpty()){
 				//there were no phenocollectionid's returned because they were validly filtered.  leave idsToIncludeAsItWas
 				idsToInclude = new ArrayList<Long>();
 			}
@@ -3048,23 +3055,23 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		//now that we have the pheno collection id, we just find the data for the selected customfields
 
 		if(!idsToInclude.isEmpty()){
-			Collection<PhenoDataSetFieldDisplay> customFieldToGet = getSelectedPhenoDataSetFieldDisplaysForSearch(search);//getSelectedPhenoCustomFieldDisplaysForSearch(search);
+			Collection<CustomFieldDisplay> customFieldToGet = getSelectedPhenoCustomFieldDisplaysForSearch(search);
 			// We have the list of phenos, and therefore the list of pheno custom data - now bring back all the custom data rows IF they have any data they need 
-			if(	(!phenoCollectionIdsSoFar.isEmpty() || (phenoCollectionIdsSoFar.isEmpty() && pdsgWithFilters.isEmpty()))
+			if(	(!phenoCollectionIdsSoFar.isEmpty() || (phenoCollectionIdsSoFar.isEmpty() && cfgsWithFilters.isEmpty())) 
 					&& !customFieldToGet.isEmpty()
 					){
-				String queryString = "select data from PhenoDataSetData data  " +
-						" left join fetch data.phenoDataSetCollection phenoDataSetCollection"  +
-						" left join fetch data.phenoDataSetFieldDisplay phenoDataSetFieldDisplay "  +
-						" left join fetch phenoDataSetFieldDisplay.phenoDataSetField phenoField "  		+(
-						( (phenoCollectionIdsSoFar.isEmpty() && pdsgWithFilters.isEmpty())			?(
-								" where data.phenoDataSetCollection.linkSubjectStudy.id in (:idsToInclude) "):(
-								" where data.phenoDataSetCollection.id in (:phenoIdsToInclude)" 			) ) )
+				String queryString = "select data from PhenoData data  " +
+						" left join fetch data.phenoCollection phenoCollection"  +
+						" left join fetch data.customFieldDisplay custFieldDisplay "  +
+						" left join fetch custFieldDisplay.customField custField "  		+(
+						( (phenoCollectionIdsSoFar.isEmpty() && cfgsWithFilters.isEmpty())			?(
+								" where data.phenoCollection.linkSubjectStudy.id in (:idsToInclude) "):(
+								" where data.phenoCollection.id in (:phenoIdsToInclude)" 			) ) )
 																							+
-						" and data.phenoDataSetFieldDisplay in (:customFieldsList)" +
-						" order by data.phenoDataSetCollection.id" ;
+						" and data.customFieldDisplay in (:customFieldsList)" + 
+						" order by data.phenoCollection.id" ;
 				Query query2 = getSession().createQuery(queryString);
-				if(phenoCollectionIdsSoFar.isEmpty() && pdsgWithFilters.isEmpty()){
+				if(phenoCollectionIdsSoFar.isEmpty() && cfgsWithFilters.isEmpty()){
 					query2.setParameterList("idsToInclude", idsToInclude);
 				}
 				else{
@@ -3072,13 +3079,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 				}
 				query2.setParameterList("customFieldsList", customFieldToGet);
 
-				QueryTranslatorFactory translatorFactory = new ASTQueryTranslatorFactory();
-				SessionFactoryImplementor factory = (SessionFactoryImplementor) getSession().getSessionFactory();
-				QueryTranslator translator = translatorFactory.
-						createQueryTranslator(query2.getQueryString(), query2.getQueryString(), Collections.EMPTY_MAP, factory);
-				translator.compile(Collections.EMPTY_MAP, false);
-				log.info(translator.getSQLString());
-				List<PhenoDataSetData> phenoData = query2.list();
+				List<PhenoData> phenoData = query2.list();
 
 				HashMap<String, ExtractionVO> hashOfPhenosWithTheirPhenoCustomData = allTheData.getPhenoCustomData();
 
@@ -3086,43 +3087,41 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 				HashMap<String, String> map = null;
 				Long previousPhenoId = null;
 				//will try to order our results and can therefore just compare to last LSS and either add to or create new Extraction VO
-				for (PhenoDataSetData data : phenoData) {
+				for (PhenoData data : phenoData) {
 
 					if(previousPhenoId==null){
 						map = new HashMap<String, String>();
-						previousPhenoId = data.getPhenoDataSetCollection().getId();
-						valuesForThisPheno.setSubjectUid(data.getPhenoDataSetCollection().getLinkSubjectStudy().getSubjectUID());
-						valuesForThisPheno.setRecordDate(data.getPhenoDataSetCollection().getRecordDate());
-						valuesForThisPheno.setCollectionName(data.getPhenoDataSetCollection().getQuestionnaire().getName());
+						previousPhenoId = data.getPhenoCollection().getId();
+						valuesForThisPheno.setSubjectUid(data.getPhenoCollection().getLinkSubjectStudy().getSubjectUID());
+						valuesForThisPheno.setRecordDate(data.getPhenoCollection().getRecordDate());
 					}
-					else if(data.getPhenoDataSetCollection().getId().equals(previousPhenoId)){
+					else if(data.getPhenoCollection().getId().equals(previousPhenoId)){
 						//then just put the data in
 					}
 					else{	//if its a new LSS finalize previous map, etc
 						valuesForThisPheno.setKeyValues(map);
 						hashOfPhenosWithTheirPhenoCustomData.put(("" + previousPhenoId), valuesForThisPheno);	
-						previousPhenoId = data.getPhenoDataSetCollection().getId();
+						previousPhenoId = data.getPhenoCollection().getId();
 						map = new HashMap<String, String>();//reset
 						valuesForThisPheno = new ExtractionVO();
-						valuesForThisPheno.setSubjectUid(data.getPhenoDataSetCollection().getLinkSubjectStudy().getSubjectUID());
-						valuesForThisPheno.setRecordDate(data.getPhenoDataSetCollection().getRecordDate());
-						valuesForThisPheno.setCollectionName(data.getPhenoDataSetCollection().getQuestionnaire().getName());
+						valuesForThisPheno.setSubjectUid(data.getPhenoCollection().getLinkSubjectStudy().getSubjectUID());
+						valuesForThisPheno.setRecordDate(data.getPhenoCollection().getRecordDate());
 					}
 
 					//if any error value, then just use that - though, yet again I really question the acceptance of error data
 					if(data.getErrorDataValue() !=null && !data.getErrorDataValue().isEmpty()) {
-						map.put(data.getPhenoDataSetFieldDisplay().getPhenoDataSetField().getName(), data.getErrorDataValue());
+						map.put(data.getCustomFieldDisplay().getCustomField().getName(), data.getErrorDataValue());
 					}
 					else {
 						// Determine field type and assign key value accordingly
-						if (data.getPhenoDataSetFieldDisplay().getPhenoDataSetField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_DATE)) {
-							map.put(data.getPhenoDataSetFieldDisplay().getPhenoDataSetField().getName(), data.getDateDataValue().toString());
+						if (data.getCustomFieldDisplay().getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_DATE)) {
+							map.put(data.getCustomFieldDisplay().getCustomField().getName(), data.getDateDataValue().toString());
 						}
-						if (data.getPhenoDataSetFieldDisplay().getPhenoDataSetField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_NUMBER)) {
-							map.put(data.getPhenoDataSetFieldDisplay().getPhenoDataSetField().getName(), data.getNumberDataValue().toString());
+						if (data.getCustomFieldDisplay().getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_NUMBER)) {
+							map.put(data.getCustomFieldDisplay().getCustomField().getName(), data.getNumberDataValue().toString());
 						}
-						if (data.getPhenoDataSetFieldDisplay().getPhenoDataSetField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_CHARACTER)) {
-							map.put(data.getPhenoDataSetFieldDisplay().getPhenoDataSetField().getName(), data.getTextDataValue());
+						if (data.getCustomFieldDisplay().getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_CHARACTER)) {
+							map.put(data.getCustomFieldDisplay().getCustomField().getName(), data.getTextDataValue());
 						}
 					}			
 				}
@@ -3143,18 +3142,18 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	}	
 
 
-	private Collection<PhenoDataSetGroup> getPhenoDataSetGroupsForPhenoFilters(Search search, Set<QueryFilter> filters) {
-		ArkFunction arkFunction = getArkFunctionByName(Constants.FUNCTION_KEY_VALUE_DATA_DICTIONARY);
-		List<PhenoDataSetFieldDisplay> phenoDataSetFieldDisplaysForStudy =  getPhenoFieldDisplaysIn(search.getStudy(), arkFunction);
-		Set<PhenoDataSetGroup> phenoDataSetGroupsToReturn = new HashSet<PhenoDataSetGroup>();
+	private Collection<CustomFieldGroup> getCustomFieldGroupsForPhenoFilters(Search search, Set<QueryFilter> filters) {
+		ArkFunction arkFunction = getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_PHENO_COLLECTION);
+		List<CustomFieldDisplay> customFieldDisplaysForStudy = getCustomFieldDisplaysIn(search.getStudy(), arkFunction);
+		Set<CustomFieldGroup> customFieldGroupsToReturn = new HashSet<CustomFieldGroup>();	
 
 		for(QueryFilter qf : filters){
-			if(qf.getPhenoDataSetFieldDisplay()!=null && phenoDataSetFieldDisplaysForStudy.contains(qf.getPhenoDataSetFieldDisplay())){
-				phenoDataSetGroupsToReturn.add(qf.getPhenoDataSetFieldDisplay().getPhenoDataSetGroup());
+			if(qf.getCustomFieldDisplay()!=null && customFieldDisplaysForStudy.contains(qf.getCustomFieldDisplay())){
+				customFieldGroupsToReturn.add(qf.getCustomFieldDisplay().getCustomFieldGroup());
 			}
 		}
 
-		return phenoDataSetGroupsToReturn;
+		return customFieldGroupsToReturn;
 	}
 
 	/**
@@ -3169,7 +3168,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	 * @return
 	 */
 	private HashMap<String, String> constructKeyValueHashmap(LinkSubjectStudy lss, Collection<DemographicField> personFields, Collection<DemographicField> lssFields,
-			Collection<DemographicField> addressFields, Collection<DemographicField> phoneFields, Collection<DemographicField> otherIDFields,Collection<DemographicField> linkSubjectTwinsFields) {
+			Collection<DemographicField> addressFields, Collection<DemographicField> phoneFields, Collection<DemographicField> otherIDFields) {
 		HashMap map = new HashMap<String, String>();
 		for (DemographicField field : personFields) {
 			// TODO: Analyse performance cost of using reflection instead...would be CLEANER code...maybe dangerous/slow
@@ -3372,26 +3371,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), "");
 					}
 				}
-				//valid From	
-				else if (field.getFieldName().equalsIgnoreCase("validFrom")) {
-
-					if(a.getValidFrom() != null) {
-						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), formatDate(a.getValidFrom().toString()));
-					}
-					else{
-						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), "");
-					}
-				}
-				//valid To
-				else if (field.getFieldName().equalsIgnoreCase("validTo")) {
-
-					if(a.getValidTo() != null) {
-						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), formatDate(a.getValidTo().toString()));
-					}
-					else{
-						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), "");
-					}
-				}
 				else if (field.getFieldName().equalsIgnoreCase("comments")) {
 					map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), a.getComments());
 				}
@@ -3431,26 +3410,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), "");
 					}
 				}
-				//valid From	
-				else if (field.getFieldName().equalsIgnoreCase("validFrom")) {
-
-					if(phone.getValidFrom() != null) {
-						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), formatDate(phone.getValidFrom().toString()));
-					}
-					else{
-						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), "");
-					}
-				}
-				//valid To
-				else if (field.getFieldName().equalsIgnoreCase("validTo")) {
-
-					if(phone.getValidTo() != null) {
-						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), formatDate(phone.getValidTo().toString()));
-					}
-					else{
-						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), "");
-					}
-				}
 				else if (field.getFieldName().equalsIgnoreCase("silentMode")) {
 					if(phone.getSilentMode() != null) {
 						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), phone.getSilentMode().getName());
@@ -3485,32 +3444,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 				}
 			}
 		}
-		// Generate the twin or triplet details for a subject.
-		for (DemographicField field : linkSubjectTwinsFields) {
-			int count = 0;
-			for(LinkSubjectTwin lst: lss.getLinkSubjectTwinsAsFirstSubject()){
-				count++;
-				if(lss.getId().equals(lst.getFirstSubject().getId())){
-					if (field.getFieldName().equalsIgnoreCase("secondSubject")) {
-						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), lst.getSecondSubject().getSubjectUID());
-					}
-					else if(field.getFieldName().equalsIgnoreCase("twinType")) {
-						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), lst.getTwinType().getName());
-					}
-				}
-			}
-			for(LinkSubjectTwin lst: lss.getLinkSubjectTwinsAsSecondSubject()){
-				count++;
-				if(lss.getId().equals(lst.getSecondSubject().getId())){
-					if (field.getFieldName().equalsIgnoreCase("secondSubject")) {
-						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), lst.getFirstSubject().getSubjectUID());
-					}
-					else if(field.getFieldName().equalsIgnoreCase("twinType")) {
-						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), lst.getTwinType().getName());
-					}
-				}
-			}
-		} 
 		return map;
 	}
 
@@ -3577,9 +3510,9 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 					map.put(field.getPublicFieldName(), bioCollection.getRefDoctor());
 				}
 			}
-			else if (field.getFieldName().equalsIgnoreCase("patientage")) {
-				if(bioCollection.getPatientage()!=null){
-					map.put(field.getPublicFieldName(), bioCollection.getPatientage()!=null?bioCollection.getPatientage().toString():"");
+			else if (field.getFieldName().equalsIgnoreCase("patientAge")) {
+				if(bioCollection.getPatientAge()!=null){
+					map.put(field.getPublicFieldName(), bioCollection.getPatientAge()!=null?bioCollection.getPatientAge().toString():"");
 				}
 			}
 			else if (field.getFieldName().equalsIgnoreCase("dischargeDate")) {
@@ -3728,9 +3661,14 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 					map.put(field.getPublicFieldName(), biospecimen.getBiospecimenProtocol().getName());
 				}
 			}
-			else if (field.getFieldName().equalsIgnoreCase("purity")) {
-				if(biospecimen.getPurity() != null){
-					map.put(field.getPublicFieldName(), biospecimen.getPurity()!=null?biospecimen.getPurity().toString():"");
+			else if (field.getFieldName().equalsIgnoreCase("purity280")) {
+				if(biospecimen.getPurity280() != null){
+					map.put(field.getPublicFieldName(), biospecimen.getPurity280()!=null?biospecimen.getPurity280().toString():"");
+				}
+			}
+			else if (field.getFieldName().equalsIgnoreCase("purity230")) {
+				if(biospecimen.getPurity230() != null){
+					map.put(field.getPublicFieldName(), biospecimen.getPurity230()!=null?biospecimen.getPurity230().toString():"");
 				}
 			}
 			else if (field.getFieldName().equalsIgnoreCase("quality")) {
@@ -3745,14 +3683,19 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			}
 			else if (field.getFieldName().equalsIgnoreCase("site")) {
 				if(biospecimen.getInvCell()!=null){
-					map.put(field.getPublicFieldName(), biospecimen.getInvCell().getInvBox().getInvRack().getInvFreezer().getInvSite().getName());
+					map.put(field.getPublicFieldName(), biospecimen.getInvCell().getInvBox().getInvRack().getInvShelf().getInvFreezer().getInvSite().getName());
 				}
 			}
 			else if (field.getFieldName().equalsIgnoreCase("freezer")) {
 					if(biospecimen.getInvCell()!=null){		
-						map.put(field.getPublicFieldName(), biospecimen.getInvCell().getInvBox().getInvRack().getInvFreezer().getName());
+						map.put(field.getPublicFieldName(), biospecimen.getInvCell().getInvBox().getInvRack().getInvShelf().getInvFreezer().getName());
 					}
 			}
+			else if (field.getFieldName().equalsIgnoreCase("shelf")) {
+				if(biospecimen.getInvCell()!=null){		
+					map.put(field.getPublicFieldName(), biospecimen.getInvCell().getInvBox().getInvRack().getInvShelf().getInvFreezer().getName());
+				}
+		}
 			else if (field.getFieldName().equalsIgnoreCase("rack")) {
 				if(biospecimen.getInvCell()!=null){
 					map.put(field.getPublicFieldName(), biospecimen.getInvCell().getInvBox().getInvRack().getName());
@@ -3796,11 +3739,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			}
 			else if(field.getFieldName().equalsIgnoreCase("name")){
 				map.put(field.getPublicFieldName(), biospecimen.getBioCollection().getName());
-			}
-			else if(field.getFieldName().equalsIgnoreCase("parentUID")) {
-				if(biospecimen.getParent() != null) {
-					map.put(field.getPublicFieldName(), biospecimen.getParent().getBiospecimenUid());
-				}
 			}
 		}
 		return map;
@@ -4120,7 +4058,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 					// Determine field type and assign key value accordingly    //( data.customFieldDisplay.id=99 AND data.numberDataValue  >  0  )  and ( ( data.customFieldDisplay.id=112 AND data.numberDataValue  >=  0 ) ) 
 
 					//TODO evaluate date entry/validation
-					/*if (customFieldDisplay.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_DATE)) {
+					if (customFieldDisplay.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_DATE)) {
 						nextFilterLine = (" ( " + tablePrefix + ".customFieldDisplay.id=" + customFieldDisplay.getId() + 
 								" AND " + tablePrefix + ".dateDataValue " + getHQLForOperator(filter.getOperator()) + " '" + parseFilterValue(customFieldDisplay.getCustomField().getFieldType(),filter.getValue()) + "' ");
 					}
@@ -4131,27 +4069,13 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 					else if (customFieldDisplay.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_CHARACTER)) {
 						nextFilterLine = (" ( " + tablePrefix + ".customFieldDisplay.id=" + customFieldDisplay.getId() + 
 								" AND " + tablePrefix + ".textDataValue " + getHQLForOperator(filter.getOperator()) + " '" + filter.getValue() + "' ");
-					}*/
-					//TODO evaluate date entry/validation
-					if (customFieldDisplay.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_DATE)) {
-						nextFilterLine = (" ( " + tablePrefix + ".customFieldDisplay.id=" + customFieldDisplay.getId() + 
-								" AND " + tablePrefix + ".dateDataValue " + createCorrectOpreratorClauseWithOnePassingParameter(filter.getOperator(),parseFilterValue(customFieldDisplay.getCustomField().getFieldType(),filter.getValue())));
 					}
-					else if (customFieldDisplay.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_NUMBER)) {
-						nextFilterLine = (" ( " + tablePrefix + ".customFieldDisplay.id=" + customFieldDisplay.getId() + 
-							" AND " + tablePrefix + ".numberDataValue " + createCorrectOpreratorClauseWithOnePassingParameter(filter.getOperator(),filter.getValue()));
-					}
-					else if (customFieldDisplay.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_CHARACTER)) {
-						nextFilterLine = (" ( " + tablePrefix + ".customFieldDisplay.id=" + customFieldDisplay.getId() + 
-							" AND " + tablePrefix + ".textDataValue " + createCorrectOpreratorClauseWithOnePassingParameter(filter.getOperator() ,filter.getValue()));
-					}
-					
 					else{
 						count--;
 					}
 					//TODO ASAP i think all of these might need to start thinking about is null or is not null?
 					if (filter.getOperator().equals(Operator.BETWEEN)) {
-						nextFilterLine += (" AND '"+ filter.getSecondValue()+"'");
+						nextFilterLine += (" AND " + filter.getSecondValue());
 					}
 
 					if(whereClause.isEmpty()){
@@ -4261,8 +4185,8 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		Set<QueryFilter> filters = search.getQueryFilters();// or we could run query to just get demographic ones
 		for (QueryFilter filter : filters) {
 			CustomFieldDisplay customFieldDisplay = filter.getCustomFieldDisplay();
-			//if ((customFieldDisplay != null) && customFieldDisplay.getCustomField().getArkFunction().getName().equalsIgnoreCase(Constants.FUNCTION_KEY_VALUE_LIMS_COLLECTION)) {
-			if ((customFieldDisplay != null) && customFieldDisplay.getCustomField().getArkFunction().getName().equalsIgnoreCase(Constants.FUNCTION_KEY_VALUE_LIMS_CUSTOM_FIELD)) {
+			if ((customFieldDisplay != null) && customFieldDisplay.getCustomField().getArkFunction().getName().equalsIgnoreCase(Constants.FUNCTION_KEY_VALUE_LIMS_COLLECTION)) {
+
 				String tablePrefix = "data" + count++;
 				log.info("what is this BIOSPECIMEN CUSTOM filter? " + filter.getId() + "     for data row? " + tablePrefix );
 
@@ -4319,17 +4243,17 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	 * @param THIS
 	 * @return
 	 */
-	private String getQueryForPhenoIdsForSearchAndCFGFilters(Search search, PhenoDataSetGroup phenoDataSetGroup) {
+	private String getQueryForPhenoIdsForSearchAndCFGFilters(Search search, CustomFieldGroup customFieldGroup) {
 
 		int count = 0;
-		String selectComponent = " Select data0.phenoDataSetCollection.id ";
-		String fromComponent = " from PhenoDataSetData data0 ";
+		String selectComponent = " Select data0.phenoCollection.id ";
+		String fromComponent = " from PhenoCustomFieldData data0 ";
 		String whereClause = "";
 		Set<QueryFilter> filters = search.getQueryFilters();// or we could run query to just get demographic ones
 		for (QueryFilter filter : filters) {
-			PhenoDataSetFieldDisplay phenoDataSetFieldDisplay = filter.getPhenoDataSetFieldDisplay();
-			if (phenoDataSetFieldDisplay != null){
-				if(phenoDataSetFieldDisplay.getPhenoDataSetGroup().equals(phenoDataSetGroup)){
+			CustomFieldDisplay customFieldDisplay = filter.getCustomFieldDisplay();
+			if ((customFieldDisplay != null) && customFieldDisplay.getCustomField().getArkFunction().getName().equalsIgnoreCase(Constants.FUNCTION_KEY_VALUE_PHENO_COLLECTION)) {
+				if(customFieldDisplay.getCustomFieldGroup().equals(customFieldGroup)){
 					String tablePrefix = "data" + count++;
 					log.info("what is this PHENO CUSTOM filter? " + filter.getId() + "     for data row? " + tablePrefix );
 
@@ -4339,20 +4263,17 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 					// ( data.customFieldDisplay.id=99 AND data.numberDataValue  >  0  )  and ( ( data.customFieldDisplay.id=112 AND data.numberDataValue  >=  0 ) ) 
 
 					//TODO evaluate date entry/validation
-					if (phenoDataSetFieldDisplay.getPhenoDataSetField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_DATE)) {
-						nextFilterLine = (" ( " + tablePrefix + ".phenoDataSetFieldDisplay.id=" + phenoDataSetFieldDisplay.getId() +
+					if (customFieldDisplay.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_DATE)) {
+						nextFilterLine = (" ( " + tablePrefix + ".customFieldDisplay.id=" + customFieldDisplay.getId() + 
 								" AND " + tablePrefix + ".dateDataValue " + getHQLForOperator(filter.getOperator()) + " '" + filter.getValue() + "' ");
 					}
-					else if (phenoDataSetFieldDisplay.getPhenoDataSetField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_NUMBER)) {
-						nextFilterLine = (" ( " + tablePrefix + ".phenoDataSetFieldDisplay.id=" + phenoDataSetFieldDisplay.getId() +
+					else if (customFieldDisplay.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_NUMBER)) {
+						nextFilterLine = (" ( " + tablePrefix + ".customFieldDisplay.id=" + customFieldDisplay.getId() + 
 								" AND " + tablePrefix + ".numberDataValue " + getHQLForOperator(filter.getOperator()) + " " + filter.getValue() + " ");
 					}
-					else if (phenoDataSetFieldDisplay.getPhenoDataSetField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_CHARACTER)) {
-						nextFilterLine = " ( " + tablePrefix + ".phenoDataSetFieldDisplay.id=" + phenoDataSetFieldDisplay.getId() +
-								" AND " + tablePrefix + ".textDataValue " + getHQLForOperator(filter.getOperator());
-						if(filter.getValue() != null) {
-							nextFilterLine += " '" + filter.getValue() + "' ";
-						}
+					else if (customFieldDisplay.getCustomField().getFieldType().getName().equalsIgnoreCase(Constants.FIELD_TYPE_CHARACTER)) {
+						nextFilterLine = (" ( " + tablePrefix + ".customFieldDisplay.id=" + customFieldDisplay.getId() + 
+								" AND " + tablePrefix + ".textDataValue " + getHQLForOperator(filter.getOperator()) + " '" + filter.getValue() + "' ");
 					}
 					else{ //TODO : if we go for new type of look up does it affect this
 						count--;
@@ -4366,18 +4287,17 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 						whereClause = " where " + nextFilterLine + " ) ";
 					}
 					else{
-						fromComponent += ",  PhenoDataSetData " + tablePrefix ;
-						whereClause = whereClause + " and " + nextFilterLine + " )  "
-							+ " and data0.phenoDataSetFieldDisplay.id = " + tablePrefix +  ".phenoDataSetFieldDisplay.id ";
+						fromComponent += ",  PhenoCustomFieldData " + tablePrefix ;
+						whereClause = whereClause + " and " + nextFilterLine + " )  " +
+								" and data0.pheno.id = " + tablePrefix +  ".pheno.id ";
 					}
 				}
 			}
 		}
-		whereClause += " and data0.phenoDataSetCollection.linkSubjectStudy.id in (:idList) ";//count>0?"":
+		whereClause += " and data0.pheno.id in (:idList) ";//count>0?"":
 		log.info("filterClauseAfterPhenoCustomField FILTERS = " + whereClause);
 
 		if(count>0){
-			log.info("Query> " + selectComponent + fromComponent + whereClause);
 			return selectComponent + fromComponent + whereClause;
 		}
 		else{
@@ -4431,7 +4351,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	public void createQueryFilters(List filterList) throws ArkSystemException {
 		List<QueryFilter> queryFilterList = (List<QueryFilter>) filterList;
 
-		log.info("query filter list = " + queryFilterList==null?"0":(""+queryFilterList.size()));
 		if (validateQueryFilters(queryFilterList)) {
 
 			for (QueryFilter filter : queryFilterList) {
@@ -4448,7 +4367,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			// if(filter.getValue()==null) i guess null or empty is valid for
 			// string
 	 * 
-	 * @param queryFilterList - list of all filters we wish to apply
+	 * @param queryFilterList - list of all fiolters we wish to apply
 	 * @return
 	 * @throws ArkSystemException 
 	 */
@@ -4464,7 +4383,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 				if (queryfilter.getValue() != null) {
 					if (!validDateFormat(queryfilter.getValue()))
 					{
-						throw new ArkSystemException("Value is not a valid date.  Date must be in dd/mm/yyyy format eg; 01/22/2012");
+						throw new ArkSystemException("Value is not a valid date");
 					}
 				}
 			}
@@ -4584,15 +4503,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			getSession().refresh(csf.getFieldType());
 			return csf.getFieldType();
 		}
-
-		PhenoDataSetFieldDisplay pdf = queryfilter.getPhenoDataSetFieldDisplay();
-		if(pdf != null) {
-			PhenoDataSetField field = pdf.getPhenoDataSetField();
-			if(field != null) {
-				getSession().refresh(field.getFieldType());
-				return field.getFieldType();
-			}
-		}
 		
 		return null;
 	}
@@ -4633,11 +4543,10 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		if (arkFunction.getName().equalsIgnoreCase(Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_FIELD)) {
 			return FieldCategory.SUBJECT_CFD;
 		}
-		else if (arkFunction.getName().equalsIgnoreCase(Constants.FUNCTION_KEY_VALUE_DATA_DICTIONARY)) {
-			return FieldCategory.PHENO_FD;
+		else if (arkFunction.getName().equalsIgnoreCase(Constants.FUNCTION_KEY_VALUE_PHENO_COLLECTION)) {
+			return FieldCategory.PHENO_CFD;
 		}
-		//else if (arkFunction.getName().equalsIgnoreCase(Constants.FUNCTION_KEY_VALUE_LIMS_COLLECTION)) {
-		else if (arkFunction.getName().equalsIgnoreCase(Constants.FUNCTION_KEY_VALUE_LIMS_CUSTOM_FIELD)) {
+		else if (arkFunction.getName().equalsIgnoreCase(Constants.FUNCTION_KEY_VALUE_LIMS_COLLECTION)) {
 			return FieldCategory.BIOCOLLECTION_CFD;
 		}
 		else {// should really have a default! TODO
@@ -4646,10 +4555,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	}
 
 	public void deleteQueryFilter(QueryFilter queryFilter) {
-		if(queryFilter != null && queryFilter.getSearch()!=null) {
-			for(SearchResult result : getSearchResultList(queryFilter.getSearch().getId())) {
-				getSession().delete(result);
-			}
+		if(queryFilter != null) {
 			getSession().delete(queryFilter);
 		}
 	}
@@ -4839,33 +4745,16 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	}
 	
 
-	/**
-	 * 
-	 * 
-	 * @param allTheData
-	 * @param personFields
-	 * @param lssFields
-	 * @param addressFields
-	 * @param phoneFields
-	 * @param otherIDFields
-	 * @param subjectCFDs
-	 * @param search
-	 * @param idsAfterFiltering
-	 */
 	private void addDataFromMegaDemographicQuery(DataExtractionVO allTheData, Collection<DemographicField> personFields, Collection<DemographicField> lssFields,
-			Collection<DemographicField> addressFields, Collection<DemographicField> phoneFields, Collection<DemographicField> otherIDFields, 
-			Collection<DemographicField> linkSubjectTwinsFields,Collection<CustomFieldDisplay> subjectCFDs, Search search, List<Long> idsAfterFiltering) {
+			Collection<DemographicField> addressFields, Collection<DemographicField> phoneFields, Collection<DemographicField> otherIDFields, Collection<CustomFieldDisplay> subjectCFDs, Search search, List<Long> idsAfterFiltering) {
 		log.info("in addDataFromMegaDemographicQuery");																						//if no id's, no need to run this
-		if ((!lssFields.isEmpty() || !personFields.isEmpty() || !addressFields.isEmpty() || !phoneFields.isEmpty() || !linkSubjectTwinsFields.isEmpty() ||
-				!subjectCFDs.isEmpty()) && !idsAfterFiltering.isEmpty()) { // hasEmailFields(dfs)
+		if ((!lssFields.isEmpty() || !personFields.isEmpty() || !addressFields.isEmpty() || !phoneFields.isEmpty() || !subjectCFDs.isEmpty()) && !idsAfterFiltering.isEmpty()) { // hasEmailFields(dfs)
 			//note.  filtering is happening previously...we then do the fetch when we have narrowed down the list of subjects to save a lot of processing
 			String queryString = "select distinct lss " // , address, lss, email " +
 					+ " from LinkSubjectStudy lss " 
 					+ ((!personFields.isEmpty()) ? " left join fetch lss.person person " : "") 
 					+ ((!addressFields.isEmpty()) ? " left join lss.person.addresses a " : "")
-					+ ((!phoneFields.isEmpty()) ? " left join lss.person.phones p " : "")
-					+ ((!linkSubjectTwinsFields.isEmpty()) ? " left join lss.linkSubjectTwinsAsFirstSubject lstAsFirst  " : "")
-					+ ((!linkSubjectTwinsFields.isEmpty()) ? " left join lss.linkSubjectTwinsAsSecondSubject lstAsSecond  " : "")
+					+ ((!phoneFields.isEmpty()) ? " left join lss.person.phones p " : "") 
 					+ " where lss.study.id = " + search.getStudy().getId()
 					+ " and lss.id in (:idsToInclude) "
 					+ " order by lss.subjectUID";
@@ -4874,20 +4763,13 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			query.setParameterList("idsToInclude", idsAfterFiltering);
 			List<LinkSubjectStudy> subjects = query.list();
 
-			QueryTranslatorFactory translatorFactory = new ASTQueryTranslatorFactory();
-			SessionFactoryImplementor factory = (SessionFactoryImplementor) getSession().getSessionFactory();
-			QueryTranslator translator = translatorFactory.
-					createQueryTranslator(query.getQueryString(), query.getQueryString(), Collections.EMPTY_MAP, factory);
-			translator.compile(Collections.EMPTY_MAP, false);
-			log.info(translator.getSQLString());
-
 			// DataExtractionVO devo; = new DataExtractionVO();
 			HashMap<String, ExtractionVO> hashOfSubjectsWithTheirDemographicData = allTheData.getDemographicData();
 
 			/* this is putting the data we extracted into a generic kind of VO doc that will be converted to an appopriate format later (such as csv/xls/pdf/xml/etc) */
 			for (LinkSubjectStudy lss : subjects) {
 				ExtractionVO sev = new ExtractionVO();
-				sev.setKeyValues(constructKeyValueHashmap(lss, personFields, lssFields, addressFields, phoneFields, otherIDFields,linkSubjectTwinsFields));
+				sev.setKeyValues(constructKeyValueHashmap(lss, personFields, lssFields, addressFields, phoneFields, otherIDFields));
 				hashOfSubjectsWithTheirDemographicData.put(lss.getSubjectUID(), sev);
 			}
 
@@ -4964,12 +4846,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			}
 			else {
 				biospecimenIdsAfterFiltering = getBiospecimenIdForSubjectIds(idsToInclude);
-				if(biospecimenIdsAfterFiltering.isEmpty()){
-					return Collections.EMPTY_LIST;
-				}
-				else{
-					biospecimenList = getSession().createCriteria(Biospecimen.class).add(Restrictions.in("id", biospecimenIdsAfterFiltering)).list();
-				}
+				biospecimenList = getSession().createCriteria(Biospecimen.class).add(Restrictions.in("id", biospecimenIdsAfterFiltering)).list();
 			}
 		}
 		else if((!biospecimenFields.isEmpty() || !biospecimenFilters.isEmpty()) && !idsToInclude.isEmpty()){
@@ -5145,10 +5022,6 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		getSession().delete(search);
 	}
 
-	public void delete(SearchResult result) {
-		getSession().delete(result);
-	}
-
 	public ConsentStatus getConsentStatusByName(String name) {
 		Criteria criteria = getSession().createCriteria(ConsentStatus.class);
 		criteria.add(Restrictions.eq("name", name));
@@ -5204,175 +5077,81 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			
 	}
 			
-	public List<ConfigField> getAllConfigFields() {
+	public Collection<ConfigField> getAllConfigFields() {
 		Criteria criteria = getSession().createCriteria(ConfigField.class);
-		final List<ConfigField> configFields = criteria.list();
-		return configFields;
+		return criteria.list();
 	}
 	
-	public List<UserConfig> getUserConfigs(ArkUser arkUser) {
-		List<UserConfig> userConfigs = new ArrayList<UserConfig>();
+	public List<UserConfigVO> getUserConfigVOs(ArkUser arkUser)  {
+		List<UserConfigVO> userConfigVOs = new ArrayList<UserConfigVO>();
 		Criteria criteria = getSession().createCriteria(UserConfig.class);
 		log.info("arkuser: " + arkUser);
 		log.info("arkuser.id: " + arkUser.getId());
 		if(arkUser != null && arkUser.getId() != null) {
 			criteria.add(Restrictions.eq("arkUser", arkUser));
-			userConfigs = criteria.list();
-			log.info("userconfs.size: " + userConfigs.size());
+			List<UserConfig> userConfs = criteria.list();
+			log.info("userconfs.size: " + userConfs.size());
+			for(UserConfig uc : userConfs) {
+				UserConfigVO userConfigVO = new UserConfigVO();
+				userConfigVO.setUserConfig(uc);
+				userConfigVOs.add(userConfigVO);
+			}
 		}
-		return userConfigs;
+		return userConfigVOs;
 	}
+
 	
-	@Override
-	public UserConfig getUserConfig(ArkUser arkUser, ConfigField configField) {
+	public UserConfig getUserConfigForUser(String configField) {
+		String currentUserName = (String) SecurityUtils.getSubject().getPrincipal();
+		Criteria userCriteria = getSession().createCriteria(ArkUser.class);
+		if (currentUserName != null) {
+			userCriteria.add(Restrictions.eq("ldapUserName", currentUserName));
+		}
+		ArkUser user = (ArkUser) userCriteria.uniqueResult();
 		Criteria criteria = getSession().createCriteria(UserConfig.class);
-		if(arkUser != null && arkUser.getId() != null) {
-			criteria.add(Restrictions.eq("arkUser",  arkUser));
-		}
-		if(configField != null && configField.getId() != null) {
-			criteria.add(Restrictions.eq("configField", configField));
-		}
-		UserConfig userConfig = null;
-		try {
-			userConfig = (UserConfig) criteria.uniqueResult();
-		} catch (HibernateException e) {
-			log.error(e.getMessage());
-			e.printStackTrace();
-			userConfig = new UserConfig();
-			userConfig.setArkUser(arkUser);
-			userConfig.setConfigField(configField);
-//			userConfig.setValue(configField.getDefaultValue());
-		}
-		return userConfig;
-	}	
-	
-	public ConfigField getConfigFieldByName(String configField) {
-		Criteria criteria = getSession().createCriteria(ConfigField.class);
-		criteria.add(Restrictions.eq("name", configField));
-		return (ConfigField) criteria.uniqueResult();
-	}
+		criteria.add(Restrictions.eq("arkUser", user));
+		criteria.createAlias("configField", "cf");
+		criteria.add(Restrictions.eq("cf.name", configField));
 		
+		UserConfig config = (UserConfig) criteria.uniqueResult();
+		return config;
+	}
+	
+	public int getRowsPerPage() {
+		UserConfig config = getUserConfigForUser(au.org.theark.core.Constants.CONFIG_ROWS_PER_PAGE);
+
+		if(config != null) {
+			int rows_per_page = au.org.theark.core.Constants.ROWS_PER_PAGE;
+			try {
+				rows_per_page = Integer.parseInt(config.getValue());
+			} catch(NumberFormatException e) {
+				log.error("Caught NumberFormatException, setting to default value " + e.getMessage());
+			}
+			return rows_per_page;
+		} else {
+			return au.org.theark.core.Constants.ROWS_PER_PAGE;
+		}
+	}
+	
+	public int getCustomFieldsPerPage() {
+		UserConfig config = getUserConfigForUser(au.org.theark.core.Constants.CONFIG_CUSTOM_FIELDS_PER_PAGE);
+
+		if(config != null) {
+			int rows_per_page = au.org.theark.core.Constants.CUSTOM_FIELDS_PER_PAGE;
+			try {
+				rows_per_page = Integer.parseInt(config.getValue());
+			} catch(NumberFormatException e) {
+				log.error("Caught NumberFormatException, setting to default value " + e.getMessage());
+			}
+			return rows_per_page;
+		} else {
+			return au.org.theark.core.Constants.CUSTOM_FIELDS_PER_PAGE;
+		}
+	}
+	
 	public void deleteUserConfig(UserConfig uc) {
 		if(uc != null) {
 			getSession().delete(uc);
 		}
 	}
-
-	@Override
-	public List<Study> getChildStudiesForStudy(Study parentStudy) {
-		Criteria criteria = getSession().createCriteria(Study.class);
-		criteria.add(Restrictions.eq("parentStudy", parentStudy));
-		List<Study> childStudies = criteria.list();
-		return childStudies;
-	}
-	@Override
-	public void createCustomFieldCategoryUpload(CustomFieldCategoryUpload cfcUpload) {
-		getSession().save(cfcUpload);
-	}
-	@Override
-	public List<String> getAllFamilyUIDs(Study study) {
-		Criteria criteria = getSession().createCriteria(FamilyCustomFieldData.class);
-		Set<String>  familyUIDSet=new HashSet<String>();
-		criteria.add(Restrictions.eq("study", study));
-		List<FamilyCustomFieldData> familyCustomFieldDatalst = criteria.list();
-		for (FamilyCustomFieldData familyCustomFieldData : familyCustomFieldDatalst) {
-			familyUIDSet.add(familyCustomFieldData.getFamilyUid());
-		}
-		List<String> familyUIDLst=new ArrayList<String>(familyUIDSet);
-		return  familyUIDLst;
-	}
-
-	@Override
-	public List<FamilyCustomFieldData> getfamilyCustomFieldDataFor(Study study,Collection customFieldDisplaysThatWeNeed,List familyUidsToBeIncluded) {
-		if (customFieldDisplaysThatWeNeed == null || customFieldDisplaysThatWeNeed.isEmpty() || familyUidsToBeIncluded == null || familyUidsToBeIncluded.isEmpty()) {
-			return new ArrayList<FamilyCustomFieldData>();
-		}
-		else {
-			String queryString = "select fcfd from FamilyCustomFieldData fcfd where fcfd.familyUid in (:familyUidsToBeIncluded) "
-					+ " and fcfd.customFieldDisplay in (:customFieldDisplaysThatWeNeed) and fcfd.study=:study";
-			Query query = getSession().createQuery(queryString);
-			query.setParameterList("familyUidsToBeIncluded", familyUidsToBeIncluded);
-			query.setParameterList("customFieldDisplaysThatWeNeed", customFieldDisplaysThatWeNeed);
-			query.setParameter("study",study) ;
-			return query.list();
-			
-		}
-	}
-
-	@Override
-	public List<CustomFieldDisplay> getCustomFieldDisplaysInWithCustomFieldType(List<String> fieldNameCollection, Study study,ArkFunction arkFunction, CustomFieldType customFieldType) {
-		if (fieldNameCollection == null || fieldNameCollection.isEmpty()) {
-			return new ArrayList<CustomFieldDisplay>();
-		}
-		else {
-			List<String> lowerCaseNames = new ArrayList<String>();
-			for (String name : fieldNameCollection) {
-				lowerCaseNames.add(name.toLowerCase());
-			}
-			String queryString = "select cfd " + 
-								"from CustomFieldDisplay cfd " + 
-								"where customField.id in ( " + " SELECT id from CustomField cf " + 
-																" where cf.study =:study "
-																+ " and lower(cf.name) in (:names) " + " and cf.arkFunction =:arkFunction and cf.customFieldType=:customFieldType )";
-			Query query = getSession().createQuery(queryString);
-			query.setParameter("study", study);
-			// query.setParameterList("names", fieldNameCollection);
-			query.setParameterList("names", lowerCaseNames);
-			query.setParameter("arkFunction", arkFunction);
-			query.setParameter("customFieldType", customFieldType);
-			return query.list();
-		}
-	}
-
-	@Override
-	public UploadType getUploadTypeByModuleAndName(ArkModule arkModule,String name) {
-		Criteria criteria = getSession().createCriteria(UploadType.class);
-		criteria.add(Restrictions.eq("name", name));
-		criteria.add(Restrictions.eq("arkModule", arkModule));
-		return (UploadType) criteria.uniqueResult();
-	}
-	private String createCorrectOpreratorClauseWithOnePassingParameter(Operator operator,String value){
-		if(operator.equals(Operator.IS_EMPTY)|| operator.equals(Operator.IS_NOT_EMPTY)){
-			return getHQLForOperator(operator);
-		}else{
-			return getHQLForOperator(operator)+" '"+value+"' ";
-		}
-	}
-	@Override
-	public List<Search> getSearchesForSearch(Search search) {
-		Criteria criteria = getSession().createCriteria(Search.class);
-		criteria.add(Restrictions.eq("study", search.getStudy()));
-		if(search.getId()!=null){criteria.add(Restrictions.eq("id", search.getId()));}
-		if(search.getName()!=null){criteria.add(Restrictions.like("name", search.getName(),MatchMode.ANYWHERE));}
-		List<Search> searchList = criteria.list();
-		return searchList;
-	}
-	@Override
-	public List<StudyComp> getStudyComponentsNeverUsedInThisSubject(Study study, LinkSubjectStudy linkSubjectStudy) {
-		List<StudyComp> consentStudyCompLst=getDifferentStudyComponentsInConsentForSubject(study, linkSubjectStudy);
-		List<Long> consentStudyCompIdLst=new ArrayList<Long>();
-		for (StudyComp studyComp : consentStudyCompLst) {
-			consentStudyCompIdLst.add(studyComp.getId());
-		}
-		Criteria criteria = getSession().createCriteria(StudyComp.class);
-		criteria.add(Restrictions.eq("study", study));
-		if(!consentStudyCompIdLst.isEmpty()) {
-			criteria.add(Restrictions.not(Restrictions.in("id", consentStudyCompIdLst)));
-		}
-		return criteria.list();
-	}
-
-	@Override
-	public List<StudyComp> getDifferentStudyComponentsInConsentForSubject(Study study, LinkSubjectStudy linkSubjectStudy) {
-		Criteria criteria = getSession().createCriteria(Consent.class);
-		criteria.add(Restrictions.eq("study",study));
-		criteria.add(Restrictions.eq("linkSubjectStudy",linkSubjectStudy));
-		ProjectionList projectionList = Projections.projectionList();
-		projectionList.add(Projections.groupProperty("studyComp"));
-		criteria.setProjection(projectionList);
-		criteria.addOrder(Order.asc("id"));
-		List<StudyComp> fieldsList = criteria.list();
-		return fieldsList;
-	}
-
 }

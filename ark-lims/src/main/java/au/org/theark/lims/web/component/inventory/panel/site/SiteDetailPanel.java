@@ -63,7 +63,7 @@ public class SiteDetailPanel extends Panel {
 	}
 
 	public void initialisePanel() {
-		detailForm = new SiteDetailForm("detailForm", feedbackPanel, detailContainer, containerForm, tree, node, this){
+		detailForm = new SiteDetailForm("detailForm", feedbackPanel, detailContainer, containerForm, tree, node){
 			@Override
 			public boolean isEnabled() {
 				try {

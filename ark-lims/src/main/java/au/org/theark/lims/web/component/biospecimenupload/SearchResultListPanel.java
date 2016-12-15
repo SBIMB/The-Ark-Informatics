@@ -57,30 +57,19 @@ public class SearchResultListPanel extends Panel {
 
 	public SearchResultListPanel(String id, FeedbackPanel feedBackPanel, ContainerForm containerForm, ArkCrudContainerVO arkCrudContainerVO) {
 		super(id);
-		ArkDownloadTemplateButton downloadBiocollectionTemplateButton = new ArkDownloadTemplateButton("downloadBiocollectionTemplate", "BiocollectionUpload", Constants.BIOCOLLECTION_TEMPLATE_CELLS) {
+		/*if (id!=null)
+			throw new IllegalStateException(Integer.toString(Constants.BIOSPECIMEN_TEMPLATE_CELLS.length));*/
+		ArkDownloadTemplateButton downloadTemplateButton = new ArkDownloadTemplateButton("downloadTemplate", "BiospecimenUpload", Constants.BIOSPECIMEN_TEMPLATE_CELLS) {
+					
 			private static final long	serialVersionUID	= 1L;
+
 			@Override
 			protected void onError(AjaxRequestTarget target, Form<?> form) {
-				this.error("Unexpected Error: Could not proceed with download biocollection template.");
+				this.error("Unexpected Error: Could not proceed with download of the template.");
 			}
+			
 		};
-		ArkDownloadTemplateButton downloadBiospecimanInventoryTemplate = new ArkDownloadTemplateButton("downloadBiospecimanInventoryTemplate", "BiospecimenInventaryUpload", Constants.BIOSPECIMEN_INVENTORY_TEMPLATE_CELLS) {
-			private static final long	serialVersionUID	= 1L;
-			@Override
-			protected void onError(AjaxRequestTarget target, Form<?> form) {
-				this.error("Unexpected Error: Could not proceed with download biocollection template.");
-			}
-		};
-		ArkDownloadTemplateButton downloadBiospecimanTemplate = new ArkDownloadTemplateButton("downloadBiospecimanTemplate", "BiospecimanUpload", Constants.BIOSPECIMEN_TEMPLATE_CELLS) {
-			private static final long	serialVersionUID	= 1L;
-			@Override
-			protected void onError(AjaxRequestTarget target, Form<?> form) {
-				this.error("Unexpected Error: Could not proceed with download biocollection template.");
-			}
-		};
-		add(downloadBiocollectionTemplateButton);
-		add(downloadBiospecimanInventoryTemplate);
-		add(downloadBiospecimanTemplate);
+		add(downloadTemplateButton);
 	}
 
 	/**
@@ -90,7 +79,7 @@ public class SearchResultListPanel extends Panel {
 	 */
 	@SuppressWarnings("unchecked")
 	public PageableListView<Upload> buildPageableListView(IModel iModel) {
-		PageableListView<Upload> sitePageableListView = new PageableListView<Upload>(Constants.RESULT_LIST, iModel, iArkCommonService.getUserConfig(Constants.CONFIG_ROWS_PER_PAGE).getIntValue()) {
+		PageableListView<Upload> sitePageableListView = new PageableListView<Upload>(Constants.RESULT_LIST, iModel, iArkCommonService.getRowsPerPage()) {
 
 			private static final long	serialVersionUID	= 1L;
 

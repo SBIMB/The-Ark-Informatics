@@ -15,7 +15,7 @@ padding-bottom:2px;
 }
 
 table.dataview tr.even {
-background-color:#EEE;
+background-color:#C6E2FF;
 }
 
 table.dataview tr.odd {
@@ -29,7 +29,7 @@ padding-right:5px;
 
 table.dataview tr th {
 color:#000;
-background-color:silver;
+background-color:#85B6FF;
 border-bottom:1px solid #6F6F6F;
 border-top:1px solid #6F6F6F;
 text-align:left;
@@ -67,12 +67,12 @@ margin-left:1.5em;
 }
 
 table.dataview tfoot {
-background:none repeat scroll 0 0 silver;
+background:none repeat scroll 0 0 #85B6FF;
 border-top:1px solid;
 }
 
 table.palette td.header {
-background-color:silver;
+background-color:#85B6FF;
 border-bottom:1px solid #6F6F6F;
 border-top:1px solid #6F6F6F;
 font-size:10pt;
@@ -80,18 +80,3 @@ font-weight:700;
 text-align:center;
 padding:2px;
 }
-table.buttonview tr th{
-color:#000;	
-background-color: white;
-border-bottom:1px solid #6F6F6F;
-border-top:1px solid #6F6F6F;
-text-align:left;
-white-space:nowrap;
-vertical-align:middle;
-background-position:right;
-background-repeat:no-repeat;
-padding:5px 10px 5px 5px;
-}
-table.dataview tr th.table_header_rule{
-text-align:right;	
-} 

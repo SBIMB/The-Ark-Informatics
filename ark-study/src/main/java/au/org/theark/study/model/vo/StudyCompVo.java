@@ -24,6 +24,7 @@ import java.util.List;
 
 import au.org.theark.core.model.study.entity.StudyComp;
 
+;
 /**
  * A container for Study Component related function.
  * 

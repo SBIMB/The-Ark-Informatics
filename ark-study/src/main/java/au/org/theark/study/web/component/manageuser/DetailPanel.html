@@ -29,8 +29,6 @@
 						<input wicket:id="userName" type="text" size="25"/>
 					</div>
 				</div>
-				<div wicket:id="modalWindow"></div>
-				<div wicket:id="successModalWindow"></div>
 
 				<div class="panelMargin">
 					&nbsp;
@@ -156,38 +154,39 @@
 					</table>
 					<table width="100%" cellspacing="0" class="dataview" border="0">
 						<tr>
-							<th width="35%">
+							<th width="2%">
 								&nbsp;
 							</th>
-							<th width="12%">
+							<th width="15%">
 								<label for="moduleName">
 									<wicket:message key="module.name">
 										Module Name:
 									</wicket:message>
 								</label>
 							</th>
-							<th width="18%">
+							<th width="25%">
 								<label for="roleName">
 									<wicket:message key="roles">
 										Role:
 									</wicket:message>
 								</label>
 							</th>
-							<th width="35%">
+							<th width="2%">
 								&nbsp;
 							</th>
 						</tr>
 
 						<tr wicket:id="arkUserRoleList">
-							<td width="35%" style="padding-top: 4px; padding-bottom: 4px;">
+							<td width="2%">
 								&nbsp;
 							</td>
-							<td width="12%" style="padding-top: 4px; padding-bottom: 4px;">
+							<td width="15%">
 								<span wicket:id="moduleName">
 									Module Name
 								</span>
 							</td>
-							<td width="18%" style="padding-top: 4px; padding-bottom: 4px;">
+							<td width="25%">
+								&nbsp;
 								<select wicket:id="arkRole">
 									<option>
 										ArkRole1
@@ -197,7 +196,7 @@
 									</option>
 								</select>
 							</td>
-							<td width="35%" style="padding-top: 4px; padding-bottom: 4px;">
+							<td width="2%">
 								&nbsp;
 							</td>
 						</tr>

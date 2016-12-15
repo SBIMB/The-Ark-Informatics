@@ -21,38 +21,42 @@ package au.org.theark.report.service;
 public class Constants {
 
 	// Service-level definitions
-	public static final String	REPORT_SERVICE							= "reportService";
+	public static final String	REPORT_SERVICE									= "reportService";
 
 	// Constants to match database lookup tables
-	public static final String	STUDY_SUMMARY_REPORT_NAME			= "Study Summary";
-	public static final String	STUDY_COMP_CONSENT_REPORT_NAME	= "Study Component Consent";
-	public static final String	STUDY_LEVEL_CONSENT_REPORT_NAME	= "Study-level Consent";
-	public static final String	PHENO_FIELD_DETAILS_REPORT_NAME	= "Dataset Field Details";
-	public static final String	STUDY_USER_ROLE_PERMISSIONS	= "Study User Roles";
-	public static final String	WORK_RESEARCHER_COST_REPORT_NAME			= "Researcher Costs";
-	public static final String	WORK_RESEARCHER_DETAIL_COST_REPORT_NAME		= "Detailed Costs";
-	public static final String	WORK_STUDY_DETAIL_COST_REPORT_NAME			= "Study Costs";
-	public static final String	LIMS_BIOSPECIMEN_SUMMARY_REPORT_NAME		= "Biospecimen Summary";
-	public static final String	LIMS_BIOSPECIMEN_DETAIL_REPORT_NAME			= "Biospecimen Details";
+	public static final String	STUDY_SUMMARY_REPORT_NAME						= "Study Summary";
+	public static final String	STUDY_COMP_CONSENT_REPORT_NAME					= "Study Component Consent";
+	public static final String	STUDY_LEVEL_CONSENT_REPORT_NAME					= "Study-level Consent";
+	public static final String	PHENO_FIELD_DETAILS_REPORT_NAME					= "Datasets Field Details (Data Dictionary)";
+	public static final String	STUDY_USER_ROLE_PERMISSIONS						= "Study User Roles";
+	public static final String	WORK_RESEARCHER_COST_REPORT_NAME				= "Researcher Costs";
+	public static final String	WORK_RESEARCHER_DETAIL_COST_REPORT_NAME			= "Detailed Costs";
+	public static final String	WORK_STUDY_DETAIL_COST_REPORT_NAME				= "Study Costs";
+	public static final String	LIMS_BIOSPECIMEN_SUMMARY_REPORT_NAME			= "Biospecimen Summary";
+	public static final String	LIMS_NUCLEIC_ACID_SUMMARY_REPORT_NAME			= "Biospecimen (Nucleic Acid) Summary";
+	public static final String	LIMS_BIOSPECIMEN_DETAIL_REPORT_NAME				= "Biospecimen Details";
 
-	public static final String	PDF_REPORT_FORMAT						= "PDF";
-	public static final Object	CSV_REPORT_FORMAT						= "CSV";
+	public static final String	PDF_REPORT_FORMAT								= "PDF";
+	public static final Object	CSV_REPORT_FORMAT								= "CSV";
 
-	public static final String	NOT_CONSENTED							= "Not Consented";
-
-	public static final String	LINKSUBJECTSTUDY_STUDY				= "study";
-	public static final String	LINKSUBJECTSTUDY_SUBJECTUID		= "subjectUID";
-	public static final String	LINKSUBJECTSTUDY_SUBJECTSTATUS	= "subjectStatus";
-	public static final String	LINKSUBJECTSTUDY_CONSENT			= "consents";
-	public static final String	LINKSUBJECTSTUDY_CONSENTSTATUS	= "consentStatus";
-	public static final String	LINKSUBJECTSTUDY_CONSENTDATE		= "consentDate";
-	public static final String	LINKSUBJECTSTUDY_PERSON				= "person";
-
-	public static final String	CONSENT_STUDYCOMP						= "studyComp";
-	public static final String	CONSENT_CONSENTSTATUS				= "consentStatus";
-	public static final String	CONSENT_CONSENTDATE					= "consentDate";
-	public static final String	CONSENT_LINKSUBJECTSTUDY			= "linkSubjectStudy";
-
+	public static final String	NOT_CONSENTED									= "Not Consented";
+	public static final String	UNKNOWN											= "Unknown";
+	public static final String	UNAVAILABLE										= "Unavailable";
 	
-
+	public static final String	LINKSUBJECTSTUDY_STUDY							= "study";
+	public static final String	LINKSUBJECTSTUDY_SUBJECTUID						= "subjectUID";
+	public static final String	LINKSUBJECTSTUDY_SUBJECTSTATUS					= "subjectStatus";
+	public static final String	LINKSUBJECTSTUDY_CONSENT						= "consents";
+	public static final String	LINKSUBJECTSTUDY_CONSENTSTATUS					= "consentStatus";
+	public static final String	LINKSUBJECTSTUDY_CONSENTDATE					= "consentDate";
+	public static final String	LINKSUBJECTSTUDY_PERSON							= "person";
+	public static final String	LINKSUBJECTSTUDY_CONSENTTOUSEDATA				= "consentToUseData";
+	public static final String	LINKSUBJECTSTUDY_CONSENTTOSHAREDATA				= "consentToShareData";
+	public static final String	LINKSUBJECTSTUDY_CONSENTTOUSEBIOSPECIMEN		= "consentToUseBiospecimen";
+	public static final String	LINKSUBJECTSTUDY_CONSENTTOSHAREBIOSPECIMEN		= "consentToShareBiospecimen";
+	
+	public static final String	CONSENT_STUDYCOMP								= "studyComp";
+	public static final String	CONSENT_CONSENTSTATUS							= "consentStatus";
+	public static final String	CONSENT_CONSENTDATE								= "consentDate";
+	public static final String	CONSENT_LINKSUBJECTSTUDY						= "linkSubjectStudy";
 }

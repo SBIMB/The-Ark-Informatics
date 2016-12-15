@@ -170,6 +170,10 @@ public class DetailForm extends AbstractDetailForm<DiseaseVO> {
 			target.add(arkCrudContainerVO.getDetailPanelContainer());
 		}
 	}
+	
+	@Override
+	protected void onTest(Form<DiseaseVO> containerForm, AjaxRequestTarget target) {
+	}
 
 	/*
 	 * (non-Javadoc)

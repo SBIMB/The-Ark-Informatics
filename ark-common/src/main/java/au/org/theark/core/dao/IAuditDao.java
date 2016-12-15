@@ -20,11 +20,6 @@ package au.org.theark.core.dao;
 
 import java.util.List;
 
-import org.hibernate.envers.AuditReader;
-
-import au.org.theark.core.model.audit.entity.AuditEntity;
-import au.org.theark.core.model.audit.entity.AuditField;
-import au.org.theark.core.model.audit.entity.AuditPackage;
 import au.org.theark.core.model.audit.entity.ConsentHistory;
 import au.org.theark.core.model.audit.entity.LssConsentHistory;
 import au.org.theark.core.model.study.entity.Consent;
@@ -62,15 +57,5 @@ public interface IAuditDao {
 	 */
 	public void createConsentHistory(ConsentHistory consentHistory);
 
-	public AuditReader getAuditReader();
-
-	public List<AuditEntity> getAuditEntityList();
-
-	public List<AuditPackage> getAuditPackageList();
-
-	public List<AuditField> getAuditFieldList();
-
-	public boolean isAudited(Class<?> type);
-
-	public String getFieldName(Class<?> cls, String field);
+	
 }

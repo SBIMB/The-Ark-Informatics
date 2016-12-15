@@ -1,4 +1,5 @@
 /*******************************************************************************
+
  * Copyright (c) 2011  University of Western Australia. All rights reserved.
  * 
  * This file is part of The Ark.
@@ -115,6 +116,10 @@ public class DetailForm extends AbstractDetailForm<AdminVO> {
 		target.add(feedBackPanel);
 		onSavePostProcess(target);
 	}
+	
+	protected void onTest(Form<AdminVO> containerForm, AjaxRequestTarget target) {
+		
+	}	
 
 	protected void onCancel(AjaxRequestTarget target) {
 		containerForm.setModelObject(new AdminVO());
@@ -140,4 +145,5 @@ public class DetailForm extends AbstractDetailForm<AdminVO> {
 			return false;
 		}
 	}
+	
 }

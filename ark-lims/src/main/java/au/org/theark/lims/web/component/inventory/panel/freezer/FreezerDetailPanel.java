@@ -28,12 +28,12 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import au.org.theark.core.Constants;
-import au.org.theark.core.model.lims.entity.InvRack;
+import au.org.theark.core.model.lims.entity.InvShelf;
 import au.org.theark.core.security.ArkPermissionHelper;
 import au.org.theark.core.web.component.button.ArkBusyAjaxButton;
 import au.org.theark.lims.web.component.inventory.form.ContainerForm;
 import au.org.theark.lims.web.component.inventory.form.FreezerDetailForm;
-import au.org.theark.lims.web.component.inventory.panel.rack.RackDetailPanel;
+import au.org.theark.lims.web.component.inventory.panel.shelf.ShelfDetailPanel;
 import au.org.theark.lims.web.component.inventory.tree.InventoryLinkTree;
 
 @SuppressWarnings("serial")
@@ -44,7 +44,7 @@ public class FreezerDetailPanel extends Panel {
 	private ContainerForm				containerForm;
 	private InventoryLinkTree			tree;
 	private DefaultMutableTreeNode	node;
-	private AjaxButton					addRack;
+	private AjaxButton					addShelf;
 
 	public FreezerDetailPanel(String id, FeedbackPanel feedbackPanel, WebMarkupContainer detailContainer, ContainerForm containerForm, InventoryLinkTree tree, DefaultMutableTreeNode node) {
 		super(id);
@@ -57,19 +57,19 @@ public class FreezerDetailPanel extends Panel {
 	}
 
 	public void initialisePanel() {
-		detailForm = new FreezerDetailForm("detailForm", feedbackPanel, detailContainer, containerForm, tree, node, this);
+		detailForm = new FreezerDetailForm("detailForm", feedbackPanel, detailContainer, containerForm, tree, node);
 		detailForm.initialiseDetailForm();
 		
-		addRack = new ArkBusyAjaxButton("addRack") {
+		addShelf = new ArkBusyAjaxButton("addShelf") {
 			
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-				containerForm.getModelObject().setInvRack(new InvRack());
-				containerForm.getModelObject().getInvRack().setInvFreezer(containerForm.getModelObject().getInvFreezer());
-				RackDetailPanel rackDetailPanel = new RackDetailPanel("detailPanel", feedbackPanel, detailContainer, containerForm, tree, node); 
-				rackDetailPanel.initialisePanel();
+				containerForm.getModelObject().setInvShelf(new InvShelf());
+				containerForm.getModelObject().getInvShelf().setInvFreezer(containerForm.getModelObject().getInvFreezer());
+				ShelfDetailPanel shelfDetailPanel = new ShelfDetailPanel("detailPanel", feedbackPanel, detailContainer, containerForm, tree, node); 
+				shelfDetailPanel.initialisePanel();
 				
-				FreezerDetailPanel.this.replaceWith(rackDetailPanel);
+				FreezerDetailPanel.this.replaceWith(shelfDetailPanel);
 				target.add(detailContainer);
 			}
 			
@@ -90,7 +90,7 @@ public class FreezerDetailPanel extends Panel {
 		};
 		
 		add(detailForm);
-		add(addRack);
+		add(addShelf);
 	}
 
 	public FreezerDetailForm getDetailForm() {

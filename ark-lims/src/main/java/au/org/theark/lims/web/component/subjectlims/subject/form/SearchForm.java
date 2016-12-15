@@ -26,7 +26,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -42,18 +41,15 @@ import org.slf4j.LoggerFactory;
 import au.org.theark.core.exception.EntityNotFoundException;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkUser;
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.GenderType;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
 import au.org.theark.core.model.study.entity.Person;
 import au.org.theark.core.model.study.entity.Study;
 import au.org.theark.core.model.study.entity.SubjectStatus;
-import au.org.theark.core.model.study.entity.VitalStatus;
 import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.vo.ArkCrudContainerVO;
 import au.org.theark.core.vo.ArkUserVO;
-import au.org.theark.core.web.component.ArkDatePicker;
-import au.org.theark.core.web.component.button.ArkAjaxButton;
-import au.org.theark.core.web.component.button.EditModeButtonsPanel;
 import au.org.theark.core.web.form.AbstractSearchForm;
 import au.org.theark.lims.model.vo.LimsVO;
 import au.org.theark.lims.service.ILimsSubjectService;
@@ -77,13 +73,16 @@ public class SearchForm extends AbstractSearchForm<LimsVO> {
 
 	private DropDownChoice<Study>				studyDdc;
 	private TextField<String>					subjectUIDTxtFld;
-	private TextField<String>					firstNameTxtFld;
+	/*private TextField<String>					firstNameTxtFld;
 	private TextField<String>					middleNameTxtFld;
 	private TextField<String>					lastNameTxtFld;
-	private DropDownChoice<VitalStatus>		vitalStatusDdc;
-	private DropDownChoice<GenderType>		genderTypeDdc;
-	private DateTextField						dateOfBirthTxtFld;
-	private CompoundPropertyModel<LimsVO>	cpmModel;
+	private DropDownChoice<VitalStatus>			vitalStatusDdc;*/
+	private DropDownChoice<SubjectStatus>		subjectStatusDdc;
+	private TextField<Integer>					ageAtEnrollment;
+	private DropDownChoice<EthnicityType>		ethnicityTypeDdc;
+	private DropDownChoice<GenderType>			genderTypeDdc;
+	/*private DateTextField						dateOfBirthTxtFld;*/
+	private CompoundPropertyModel<LimsVO>		cpmModel;
 
 	/**
 	 * Constructor
@@ -123,41 +122,41 @@ public class SearchForm extends AbstractSearchForm<LimsVO> {
 			}
 
 		};
-		
-			EditModeButtonsPanel buttonPanel = (EditModeButtonsPanel)arkCrudContainerVO.getEditButtonContainer(); 
-			if(buttonPanel != null){
-				((ArkAjaxButton)buttonPanel.get("cancel")).setVisible(false);
-			}
-		
 		addOrReplace(newButton);
 	}
 
 	protected void addSearchComponentsToForm() {
 		add(studyDdc);
 		add(subjectUIDTxtFld);
-		add(firstNameTxtFld);
-		add(middleNameTxtFld);
-		add(lastNameTxtFld);
-		add(vitalStatusDdc);
+		//add(firstNameTxtFld);
+		//add(middleNameTxtFld);
+		//add(lastNameTxtFld);
+		//add(vitalStatusDdc);
+		add(subjectStatusDdc);
+		add(ageAtEnrollment);
+		add(ethnicityTypeDdc);
 		add(genderTypeDdc);
-		add(dateOfBirthTxtFld);
+		//add(dateOfBirthTxtFld);
 	}
 
 	protected void initialiseSearchForm() {
 		subjectUIDTxtFld = new TextField<String>(Constants.SUBJECT_UID);
-		firstNameTxtFld = new TextField<String>(Constants.PERSON_FIRST_NAME);
+		/*firstNameTxtFld = new TextField<String>(Constants.PERSON_FIRST_NAME);
 		middleNameTxtFld = new TextField<String>(Constants.PERSON_MIDDLE_NAME);
-		lastNameTxtFld = new TextField<String>(Constants.PERSON_LAST_NAME);
+		lastNameTxtFld = new TextField<String>(Constants.PERSON_LAST_NAME);*/
+		ageAtEnrollment = new TextField<Integer>(Constants.AGE_AT_ENROLLMENT);
 
 		initStudyDdc();
-		initVitalStatusDdc();
+		//initVitalStatusDdc();
+		initSubjectStatusDdc();
+		initEthnicityTypeDdc();
 		initSubjectStatusDdc();
 		initGenderTypeDdc();
 
-		dateOfBirthTxtFld = new DateTextField(Constants.PERSON_DOB, au.org.theark.core.Constants.DD_MM_YYYY);
+		/*dateOfBirthTxtFld = new DateTextField(Constants.PERSON_DOB, au.org.theark.core.Constants.DD_MM_YYYY);
 		ArkDatePicker dobDatePicker = new ArkDatePicker();
 		dobDatePicker.bind(dateOfBirthTxtFld);
-		dateOfBirthTxtFld.add(dobDatePicker);
+		dateOfBirthTxtFld.add(dobDatePicker);*/
 	}
 
 	private void initStudyDdc() {
@@ -169,7 +168,7 @@ public class SearchForm extends AbstractSearchForm<LimsVO> {
 		studyDdc = new DropDownChoice<Study>("study", studyPm, (List<Study>) studyListForUser, studyRenderer);
 	}
 
-	private void initVitalStatusDdc() {
+	/*private void initVitalStatusDdc() {
 		CompoundPropertyModel<LimsVO> limsSubjectCpm = cpmModel;
 		PropertyModel<LinkSubjectStudy> linkSubjectStudyPm = new PropertyModel<LinkSubjectStudy>(limsSubjectCpm, "linkSubjectStudy");
 		PropertyModel<Person> personPm = new PropertyModel<Person>(linkSubjectStudyPm, "person");
@@ -177,7 +176,7 @@ public class SearchForm extends AbstractSearchForm<LimsVO> {
 		Collection<VitalStatus> vitalStatusList = iArkCommonService.getVitalStatus();
 		ChoiceRenderer<VitalStatus> vitalStatusRenderer = new ChoiceRenderer<VitalStatus>(Constants.NAME, Constants.ID);
 		vitalStatusDdc = new DropDownChoice<VitalStatus>(Constants.VITAL_STATUS, vitalStatusPm, (List<VitalStatus>) vitalStatusList, vitalStatusRenderer);
-	}
+	}*/
 
 	private void initSubjectStatusDdc() {
 		CompoundPropertyModel<LimsVO> limsSubjectCpm = cpmModel;
@@ -186,6 +185,16 @@ public class SearchForm extends AbstractSearchForm<LimsVO> {
 		List<SubjectStatus> subjectStatusList = iArkCommonService.getSubjectStatus();
 		ChoiceRenderer<SubjectStatus> subjectStatusRenderer = new ChoiceRenderer<SubjectStatus>(Constants.NAME, Constants.SUBJECT_STATUS_ID);
 		new DropDownChoice<SubjectStatus>(Constants.SUBJECT_STATUS, subjectStatusPm, subjectStatusList, subjectStatusRenderer);
+	}
+	
+	private void initEthnicityTypeDdc() {
+		CompoundPropertyModel<LimsVO> subjectCpm = cpmModel;
+		PropertyModel<LinkSubjectStudy> linkSubjectStudyPm = new PropertyModel<LinkSubjectStudy>(subjectCpm, "linkSubjectStudy");
+		PropertyModel<Person> personPm = new PropertyModel<Person>(linkSubjectStudyPm, Constants.PERSON);
+		PropertyModel<EthnicityType> ethnicityTypePm = new PropertyModel<EthnicityType>(personPm, Constants.ETHNICITY_TYPE);
+		Collection<EthnicityType> ethnicityTypeList = iArkCommonService.getEthnicityTypes();
+		ChoiceRenderer<EthnicityType> ethnicityTypeRenderer = new ChoiceRenderer<EthnicityType>(Constants.NAME, Constants.ID);
+		ethnicityTypeDdc = new DropDownChoice<EthnicityType>(Constants.ETHNICITY_TYPE, ethnicityTypePm, (List<EthnicityType>) ethnicityTypeList, ethnicityTypeRenderer);
 	}
 
 	private void initGenderTypeDdc() {

@@ -26,7 +26,6 @@ import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -39,8 +38,6 @@ import au.org.theark.core.web.component.customfield.CustomFieldContainerPanel;
 import au.org.theark.core.web.component.customfieldupload.CustomFieldUploadContainerPanel;
 import au.org.theark.core.web.component.menu.AbstractArkTabPanel;
 import au.org.theark.core.web.component.tabbedPanel.ArkAjaxTabbedPanel;
-import au.org.theark.study.model.vo.FamilyCustomDataVO;
-import au.org.theark.study.model.vo.SubjectCustomDataVO;
 import au.org.theark.study.web.component.address.AddressContainerPanel;
 import au.org.theark.study.web.component.attachments.AttachmentsContainerPanel;
 import au.org.theark.study.web.component.consent.ConsentContainerPanel;
@@ -100,14 +97,14 @@ public class SubjectSubMenuTab extends AbstractArkTabPanel {
 						processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_SUBJECT, menuArkFunction);
 						panelToReturn = new SubjectContainerPanel(panelId, arkContextMarkup, null, null);// Note the constructor
 					}
-					else if (menuArkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_PHONE)) {
+					/*else if (menuArkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_PHONE)) {
 						processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_SUBJECT, menuArkFunction);
 						panelToReturn = new PhoneContainerPanel(panelId);
 					}
 					else if (menuArkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_ADDRESS)) {
 						processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_SUBJECT, menuArkFunction);
 						panelToReturn = new AddressContainerPanel(panelId);
-					}
+					}*/
 					//Add contact panel
 					else if(menuArkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_CONTACT)) {
 						processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_SUBJECT, menuArkFunction);
@@ -121,7 +118,7 @@ public class SubjectSubMenuTab extends AbstractArkTabPanel {
 						processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_SUBJECT, menuArkFunction);
 						panelToReturn = new AttachmentsContainerPanel(panelId);
 					}
-					else if (menuArkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_STUDY_STUDY_DATA_UPLOAD)) {
+					else if (menuArkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_UPLOAD)) {
 						processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_SUBJECT, menuArkFunction);
 						panelToReturn = new SubjectUploadContainerPanel(panelId, menuArkFunction);
 					}
@@ -132,7 +129,7 @@ public class SubjectSubMenuTab extends AbstractArkTabPanel {
 					else if (menuArkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_FIELD)) {
 						processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_SUBJECT, menuArkFunction);
 						// useCustomFieldDisplay = true
-						panelToReturn = new CustomFieldContainerPanel(panelId, true, iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_FIELD));
+						panelToReturn = new CustomFieldContainerPanel(panelId, true, iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_FIELD),false);
 					}
 					else if (menuArkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_CUSTOM_DATA)) {
 						processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_SUBJECT, menuArkFunction);
@@ -148,7 +145,7 @@ public class SubjectSubMenuTab extends AbstractArkTabPanel {
 				@Override
 				public boolean isVisible() {
 					// Subject Upload only visible to parent studies 
-					if (menuArkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_STUDY_STUDY_DATA_UPLOAD)) {
+					if (menuArkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_SUBJECT_UPLOAD)) {
 						return (!childStudy);
 					}
 					return true;

@@ -22,13 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Constants {
-	public static final String			UPLOAD_STATUS_OF_AWAITING_VALIDATION							= "AWAITING_VALIDATION";
-	public static final String			UPLOAD_STATUS_OF_COMPLETED										= "COMPLETED";
-	public static final String			UPLOAD_STATUS_OF_ERROR_IN_DATA_VALIDATION						= "ERROR_IN_DATA_VALIDATION";
-	public static final String			UPLOAD_STATUS_OF_ERROR_IN_FILE_VALIDATION						= "ERROR_IN_FILE_VALIDATION";
-	public static final String			UPLOAD_STATUS_OF_ERROR_ON_DATA_IMPORT							= "ERROR_ON_DATA_IMPORT";
-	public static final String			UPLOAD_STATUS_OF_STATUS_NOT_DEFINED								= "STATUS_NOT_DEFINED";
-	public static final String			UPLOAD_STATUS_OF_VALIDATED										= "VALIDATED";
+	public static final String			UPLOAD_STATUS_OF_AWAITING_VALIDATION				= "AWAITING_VALIDATION";
+	public static final String			UPLOAD_STATUS_OF_COMPLETED								= "COMPLETED";
+	public static final String			UPLOAD_STATUS_OF_ERROR_IN_DATA_VALIDATION			= "ERROR_IN_DATA_VALIDATION";
+	public static final String			UPLOAD_STATUS_OF_ERROR_IN_FILE_VALIDATION			= "ERROR_IN_FILE_VALIDATION";
+	public static final String			UPLOAD_STATUS_OF_ERROR_ON_DATA_IMPORT				= "ERROR_ON_DATA_IMPORT";
+	public static final String			UPLOAD_STATUS_OF_STATUS_NOT_DEFINED					= "STATUS_NOT_DEFINED";
+	public static final String			UPLOAD_STATUS_OF_VALIDATED								= "VALIDATED";
 	public static final String			ADMIN_TAB														= "Administration";
 	public static final String			STUDY_TAB														= "Study";
 	public static final String			SUBJECT_TAB														= "Subject";
@@ -62,10 +62,9 @@ public class Constants {
 	public static final String			RESET																= "reset";
 	public static final String			CLOSE																= "close";
 	public static final String			ADD_PHONE														= "addPhone";
-	public static final int				MODE_NEW														= 1;
+	public static final int				MODE_NEW															= 1;
 	public static final int				MODE_EDIT														= 2;
 	public static final int				MODE_READ														= 3;
-	//public static final int				MODE_EDIT_USER_ROLE_ONLY										= 4;
 
 	/* Person */
 	public static final String			PERSON_PREFERRED_EMAIL										= "linkSubjectStudy.person.preferredEmail";
@@ -74,25 +73,29 @@ public class Constants {
 	public static final String			PERSON_OTHER_EMAIL											= "linkSubjectStudy.person.otherEmail";
 	public static final String			PERSON_PREFERRED_NAME										= "linkSubjectStudy.person.preferredName";
 	public static final String			PERSON_VITAL_STATUS											= "linkSubjectStudy.person.vitalStatus";
-	public static final String			PERSON_PERSON_ID											= "linkSubjectStudy.person.id";
-	public static final String			SUBJECT_UID													= "linkSubjectStudy.subjectUID";
-	public static final String			PERSON_FIRST_NAME											= "linkSubjectStudy.person.firstName";
+	public static final String			PERSON_PERSON_ID												= "linkSubjectStudy.person.id";
+	public static final String			SUBJECT_UID														= "linkSubjectStudy.subjectUID";
+	public static final String			PERSON_FIRST_NAME												= "linkSubjectStudy.person.firstName";
 	public static final String			PERSON_MIDDLE_NAME											= "linkSubjectStudy.person.middleName";
-	public static final String			PERSON_LAST_NAME											= "linkSubjectStudy.person.lastName";
+	public static final String			PERSON_LAST_NAME												= "linkSubjectStudy.person.lastName";
+	public static final String			PERSON_ETHNICITY_TYPE									= "linkSubjectStudy.person.ethnicityType";	
+	public static final String			PERSON_ETHNICITY_TYPE_NAME									= "linkSubjectStudy.person.ethnicityType.name";	
 	public static final String			SUBJECT_PREVIOUS_LAST_NAME									= "subjectPreviousLastname";
-	public static final String			PERSON														= "person";
-	public static final String			GENDER_TYPE													= "genderType";
-	public static final String			ID															= "id";
-	public static final String			SUBJECT_STATUS												= "linkSubjectStudy.subjectStatus";
-	public static final String			SUBJECT_STATUS_ID											= "id";
-	public static final String			VITAL_STATUS												= "vitalStatus";
-	public static final String			STATUS_NAME													= "statusName";
+	public static final String			PERSON															= "person";
+	public static final String			GENDER_TYPE														= "genderType";
+	public static final String			ETHNICITY_TYPE													= "ethnicityType";
+	public static final String			ID																	= "id";
+	public static final String			SUBJECT_STATUS													= "linkSubjectStudy.subjectStatus";
+	public static final String			SUBJECT_STATUS_ID												= "id";
+	public static final String			SUBJECT_AGE_AT_ENROLLMENT									= "linkSubjectStudy.ageAtEnrollment";
+	public static final String			SUBJECT_DATE_OF_ENROLLMENT									= "linkSubjectStudy.dateOfEnrollment";	
+	public static final String			VITAL_STATUS													= "vitalStatus";
+	public static final String			STATUS_NAME														= "statusName";
 	public static final String			PERSON_MARITAL_STATUS										= "linkSubjectStudy.person.maritalStatus";
 	public static final String			PERSON_CONTACT_METHOD										= "linkSubjectStudy.person.personContactMethod";
-	public static final String			PERSON_DOB													= "linkSubjectStudy.person.dateOfBirth";
-	public static final String			PERSON_CURRENT_OR_DEATH_AGE									= "linkSubjectStudy.person.currentOrDeathAge";
-	public static final String			PERSON_DOD													= "linkSubjectStudy.person.dateOfDeath";
-	public static final String			PERSON_COMMENT												= "linkSubjectStudy.comment";
+	public static final String			PERSON_DOB														= "linkSubjectStudy.person.dateOfBirth";
+	public static final String			PERSON_DOD														= "linkSubjectStudy.person.dateOfDeath";
+	public static final String			PERSON_COMMENT													= "linkSubjectStudy.comment";
 	public static final String			PERSON_DATE_LAST_KNOWN_ALIVE								= "linkSubjectStudy.person.dateLastKnownAlive";
 	public static final String			PERSON_CONSENT_DATE											= "linkSubjectStudy.consentDate";
 	public static final String			PERSON_CONSENT_DOWNLOADED									= "linkSubjectStudy.consentDownloaded";
@@ -154,13 +157,19 @@ public class Constants {
 	public static final String			STUDY_ID															= "study.id";
 	public static final String			STUDY_NAME														= "study.name";
 	public static final String			STUDY_DESCRIPTION												= "study.description";
+	public static final String			STUDY_DESCRIPTION_WORDCOUNT								= "study.description.wordcount";
 	public static final String			STUDY_STATUS													= "study.studyStatus";
 	public static final String			STUDY_DATE_OF_APPLICATION									= "study.dateOfApplication";
 	public static final String			STUDY_CONTACT_PERSON											= "study.contactPerson";
 	public static final String			STUDY_CONTACT_PERSON_PHONE									= "study.contactPersonPhone";
+	public static final String			STUDY_CONTACT_PERSON_EMAIL									= "study.contactPersonEmail";
 	public static final String			STUDY_ESTIMATED_YEAR_OF_COMPLETION						= "study.estimatedYearOfCompletion";
 	public static final String			STUDY_CHIEF_INVESTIGATOR									= "study.chiefInvestigator";
+	public static final String			STUDY_CHIEF_INVESTIGATOR_PHONE							= "study.chiefInvestigatorPhone";
+	public static final String			STUDY_CHIEF_INVESTIGATOR_EMAIL							= "study.chiefInvestigatorEmail";
 	public static final String			STUDY_CO_INVESTIGATOR										= "study.coInvestigator";
+	public static final String			STUDY_CO_INVESTIGATOR_PHONE								= "study.coInvestigatorPhone";
+	public static final String			STUDY_CO_INVESTIGATOR_EMAIL								= "study.coInvestigatorEmail";
 	public static final String			STUDY_AUTO_GENERATE_SUBJECTUID							= "study.autoGenerateSubjectUid";
 	public static final String			STUDY_AUTO_GENERATE_BIOCOLLECTIONUID					= "study.autoGenerateBiocollectionUid";
 	public static final String			STUDY_AUTO_GENERATE_BIOSPECIMENUID						= "study.autoGenerateBiospecimenUid";
@@ -292,6 +301,9 @@ public class Constants {
 
 	public static final String			SUBJECT_CONSENT_TO_ACTIVE_CONTACT						= "linkSubjectStudy.consentToActiveContact";
 	public static final String			SUBJECT_CONSENT_TO_USEDATA								= "linkSubjectStudy.consentToUseData";
+	public static final String			SUBJECT_CONSENT_TO_SHAREDATA							= "linkSubjectStudy.consentToShareData";
+	public static final String			SUBJECT_CONSENT_TO_USEBIOSPECIMEN					= "linkSubjectStudy.consentToUseBiospecimen";
+	public static final String			SUBJECT_CONSENT_TO_SHAREBIOSPECIMEN					= "linkSubjectStudy.consentToShareBiospecimen";
 	public static final String			SUBJECT_CONSENT_PASSIVE_DATA_GATHER						= "linkSubjectStudy.consentToPassiveDataGathering";
 	public static final String			SUBJECT_HEARD_ABOUT_STUDY_FROM							= "linkSubjectStudy.heardAboutStudy";
 	public static final String			SUBJECT_AUTO_GENERATED									= "Auto-generated";
@@ -344,18 +356,27 @@ public class Constants {
 	public static final String			UPLOAD_TYPE_NAME										= "name";
 
 	// Exception messages
-	public static final String			IO_EXCEPTION												= "IOException: Input error. ";
+	public static final String			IO_EXCEPTION													= "IOException: Input error. ";
 	public static final String			FILE_FORMAT_EXCEPTION										= "File Format Exception: Input error. ";
-	public static final String			ARK_SYSTEM_EXCEPTION										= "General ARK System Exception: ";
+	public static final String			ARK_SYSTEM_EXCEPTION											= "General ARK System Exception: ";
 	public static final String			ARK_BASE_EXCEPTION											= "Base ARK System Exception: ";
 
-	public static final String[]		SUBJECT_TEMPLATE_HEADER										= { "SUBJECTUID", "TITLE", "FIRST_NAME", "MIDDLE_NAME", "LAST_NAME", "PREFERRED_NAME", "DATE_OF_BIRTH",
-			"VITAL_STATUS", "GENDER", "STATUS", "DATE_OF_DEATH",  "DATE_LAST_KNOWN_ALIVE", "CAUSE_OF_DEATH", "MARITAL_STATUS", "PREFERRED_CONTACT", "EMAIL",
-			"BUILDING_NAME", "STREET_ADDRESS", "SUBURB", "STATE", "COUNTRY", "POST_CODE", "ADDRESS_SOURCE", "ADDRESS_STATUS",
-			"ADDRESS_TYPE", "ADDRESS_DATE_RECEIVED", "ADDRESS_COMMENTS", "IS_PREFERRED_MAILING_ADDRESS", "PHONE_AREA_CODE",
-			"PHONE_NUMBER", "PHONE_TYPE", "PHONE_STATUS", "PHONE_SOURCE", "PHONE_COMMENTS","SILENT", "PHONE_DATE_RECEIVED", 
-			"PREVIOUS_LAST_NAME", "OTHER_EMAIL", "HEARD_ABOUT_STUDY" , "COMMENTS", "EMAIL_STATUS", "OTHER_EMAIL_STATUS", "EMAIL_STATUS",
-			"CONSENT_DATE", "CONSENT_STATUS", "CONSENT_TYPE", "CONSENT_TO_PASSIVE_DATA_GATHERING", "CONSENT_TO_ACTIVE_CONTACT", "CONSENT_TO_USE_DATA"		
+	public static final String[]		SUBJECT_TEMPLATE_HEADER										= { 
+			"SUBJECTUID", 
+			"SUBJECT_STATUS", 
+			"DATE_OF_ENROLLMENT", 
+			"AGE_AT_ENROLLMENT", 
+			"OTHER_ID", 
+			"ETHNICITY", 
+			"GENDER", 
+			"COMMENTS", 
+			"CONSENT_DATE", 
+			"CONSENT_STATUS", 
+			"CONSENT_TO_USE_DATA", 
+			"CONSENT_TO_USE_BIOSPECIMEN", 
+			"CONSENT_TO_SHARE_DATA", 
+			"CONSENT_TO_SHARE_BIOSPECIMEN",
+			"SUBSTUDYS"
 	};
 	
 	public static final String[] SUBJECT_CONSENT_TEMPLATE_HEADER = {"SUBJECTUID", "STUDY_COMPONENT", "STUDY_COMPONENT_STATUS","COMPLETED_DATE" ,"CONSENT_TYPE","CONSENT_STATUS",
@@ -363,16 +384,14 @@ public class Constants {
 
 	
 	//TODO this is all for validation and templates.  maybe we need some form of validation mapping to db, entities or something like that as this will not be maintainable for long
-	public static final String[][]	SUBJECT_OR_FAMILY_CUSTOM_FIELD_DATA_TEMPLATE_CELLS										= {
-			{ "", "SUBJECTUID OR FAMILYUID", "YOUR_FIRST_CUSTOM_FIELD_NAME_HERE", "YOUR_SECOND_CUSTOM_FIELD_NAME_HERE", "AND SO ON"},
-			{ "DESCRIPTION", "The unique identifier assigned for this subject or family.", "Value for first custom field","Value for second field", "AND SO ON" },
-			{ "NOTE: This is the common template to upload the Subject or the Family custom field data.", "This must match the subjectUID in the database or if it's a FAMILYUID it should be the valid FAMILYUID of a SUBJECT", "" , "", "" },
-			{ "		 Please make sure to use either one of a data set.", "", "" , "", "" },
-			{ "		 Removed this first column, and replace row 2 with your actual custom field names (the headers only appear once, row 3 will have your next subject or family and his/her values", "", "" , "", "" } };
+	public static final String[][]	SUBJECT_CUSTOM_FIELD_TEMPLATE_CELLS										= {
+			{ "", "SUBJECTUID", "YOUR_FIRST_CUSTOM_FIELD_NAME_HERE", "YOUR_SECOND_CUSTOM_FIELD_NAME_HERE", "AND SO ON"},
+			{ "DESCRIPTION", "The unique identifier assigned for this subject.  This must match the subjectUID in the database", "Value for first custom field","Value for second field", "AND SO ON" },
+			{ "NOTE: Removed this first column, and replace row 2 with your actual custom field names (the headers only appear once, row 3 will have your next subject and his/her values", "", "" , "", "" } };
 
 	public static final String[][]	SUBJECT_CONSENT_FIELD_TEMPLATE_CELLS										= {
 		{ "", "SUBJECTUID", "STUDY_COMPONENT", "STUDY_COMPONENT_STATUS", "COMPLETED_DATE","CONSENT_TYPE","CONSENT_STATUS","CONSENT_DOWNLOADED","CONSENTED_BY","CONSENT_DATE","COMMENT"},
-		{ "DESCRIPTION", "The unique identifier assigned for this subject.  This must match the subjectUID in the database", "Valid study component name","Valid study component Status","If status is completed then (dd/mm/yyyy)","Valid consent type","Valid consent status","Yes/No","","dd/mm/yyyy","" },
+		{ "DESCRIPTION", "The unique identifier assigned for this subject.  This must match the subjectUID in the database", "Valid study componenet name","Valid study component Status","If status is completed then (dd/mm/yyyy)","Valid consent type","Valid consent status","Yes/No","","dd/mm/yyyy","" },
 		{ "NOTE: Removed this first column", "", "" , "", "","","","" ,"","",""} };
 	
 	public static final String[] SUBJECT_ATTACHMENT_TEMPLATE_HEADER = {"SUBJECTUID", "FILE_NAME_WITH_FULL_PATH", "STUDY_COMPONENT","COMMENT"};
@@ -380,48 +399,163 @@ public class Constants {
 	public static final String[][] SUBJECT_ATTACHMENT_TEMPLATE_CELLS = {
 		{"", "SUBJECTUID", "FILE_NAME_WITH_FULL_PATH", "STUDY_COMPONENT","COMMENT"},
 		{"DESCRIPTION", "The unique identifier assigned for this subject.  This must match the subjectUID in the database","File name with full path. Ex:/mnt/data/arkAttachments/sample.csv", "Valid study component name","" },
-		{ "NOTE: Removed this first column", "", "" , "", ""}};
+		{ "NOTE: Removed this first column", "", "" , "", ""}
+		};
 	
 	//TODO this is all for validation and templates.  maybe we need some form of validation mapping to db, entities or something like that as this will not be maintainable for long
 	public static final String[][]	SUBJECT_TEMPLATE_CELLS										= {
-			{ "", "SUBJECTUID", "TITLE", "FIRST_NAME", "MIDDLE_NAME", "LAST_NAME", "PREFERRED_NAME", "DATE_OF_BIRTH", "VITAL_STATUS", "GENDER", "STATUS", "DATE_OF_DEATH", "DATE_LAST_KNOWN_ALIVE", "CAUSE_OF_DEATH",
-			"MARITAL_STATUS", "PREFERRED_CONTACT", "EMAIL", 
-			"BUILDING_NAME", "STREET_ADDRESS", "SUBURB", "STATE", "COUNTRY", "POST_CODE", "ADDRESS_SOURCE", "ADDRESS_STATUS",
-			"ADDRESS_TYPE", "ADDRESS_DATE_RECEIVED", "ADDRESS_COMMENTS", "IS_PREFERRED_MAILING_ADDRESS", "PHONE_AREA_CODE",
-			"PHONE_NUMBER", "PHONE_TYPE", "PHONE_STATUS", "PHONE_SOURCE", "PHONE_COMMENTS","SILENT", "PHONE_DATE_RECEIVED", 
-			"PREVIOUS_LAST_NAME", "OTHER_EMAIL", "HEARD_ABOUT_STUDY" , "COMMENTS", "EMAIL_STATUS", "OTHER_EMAIL_STATUS",
-			"CONSENT_DATE", "CONSENT_STATUS", "CONSENT_TYPE", "CONSENT_TO_PASSIVE_DATA_GATHERING", "CONSENT_TO_ACTIVE_CONTACT", "CONSENT_TO_USE_DATA"},
-			{ "DESCRIPTION", "The unique identifier assigned for this subject.  This may be automatically generated on upload into The Ark", "The title by which the subject prefers to be addressed",
-			"The subjects first name", "The subjects middle name", "The subjects last or family name", "The name by which the subject prefers to be addressed", "The date the subject was born",
-			"The subject's vital status", "The subject's gender", "The status of the subject as it pertains to the study", "The date the subject died, if known",  "The date the subject was last known to be alive", "The cause of death",
-			"The marital status of the subject", "The preferred method for contacting the subject", "The subject's primary email address", 
-			"BUILDING_NAME", "STREET_ADDRESS", "SUBURB", "STATE", "COUNTRY", "POST_CODE", "ADDRESS_SOURCE", "ADDRESS_STATUS",
-			"ADDRESS_TYPE", "ADDRESS_DATE_RECEIVED", "ADDRESS_COMMENTS", "IS_PREFERRED_MAILING_ADDRESS", "PHONE_AREA_CODE",
-			"PHONE_NUMBER", "PHONE_TYPE", "PHONE_STATUS", "PHONE_SOURCE", "PHONE_COMMENTS","SILENT", "Date that the phone number was recorded", 
-			"PREVIOUS_LAST_NAME", "OTHER_EMAIL", "HEARD_ABOUT_STUDY" , "COMMENTS", "EMAIL_STATUS", "OTHER_EMAIL_STATUS",
-			"CONSENT_DATE", "CONSENT_STATUS", "CONSENT_TYPE", "CONSENT_TO_PASSIVE_DATA_GATHERING", "CONSENT_TO_ACTIVE_CONTACT", "CONSENT_TO_USE_DATA"},
-			{ "FORMAT", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "DD/MM/YYYY", "CHARACTER", "CHARACTER", "CHARACTER", "DD/MM/YYYY", "DD/MM/YYYY", "ALPHANUMERIC", "CHARACTER",
-			"CHARACTER", "ALPHANUMERIC" , 
-			"CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER",
-			"CHARACTER", "DD/MM/YYYY", "CHARACTER", "CHARACTER", "ALPHANUMERIC",
-			"ALPHANUMERIC", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER","SILENT", "DD/MM/YYYY", "CHARACTER", "CHARACTER", "CHARACTER" , "CHARACTER", "CHARACTER", "CHARACTER",
-			"DD/MM/YYYY", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER"},
-			{ "MANDATORY", "Yes - unless assigned on upload", "No", "No", "No", "No", "No", "No", "No", "No", "Yes", "No", "No", "No", "No", "No",  "No", 
-				"No", "No", "No", "No", "No", "No", "No", "No",
-				"No", "No", "No", "No", "No",
-				"No", "No", "No", "No", "No","No", "No", "No", "No", "No" , "No" , "No", "No",
-				"No", "No", "No" , "No" , "No", "No"},
-			{ "VALID VALUES", "", "Unknown, Br, Capt, Col, Cpl, Dean, Dr, Fr, Lac, Major, Miss, Mr, Mrs, Ms, Past, Prof, Pstr, Rev, Sir, Sr", "", "", "", "", "", "Alive, Deceased, Unknown",
-			"Male, Female, Unknown", "Subject, Prospect, Withdrawn Subject, Archive", "", "", "", "Married, Single, Divorced, Unknown", "Email, Home telephone, Mobile telephone, Post", "", 
-			"", "", "", "", "", "",  //last three on this line are state country and postcode - i really could enforce something 
-			"", "", "", "", "", "", "",
-			"", "", "", "", "","", "", "", "", "" , "", "Unknown, Verified, Unverified, Bounced", "Unknown, Verified, Unverified, Bounced",
-			"", "Consented, Ineligible, Refused, Withdrawn, Pending", "Electronic, Hard Copy" , "Yes, No, Pending, Unavailable, Limited, Revoked" , "Yes, No, Pending, Unavailable, Limited, Revoked", "Yes, No, Pending, Unavailable, Limited, Revoked"},
-			{ "NOTE: Removed this first column, and replace rows 2 to 6", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-				"", "", "", "", "", "", "", "",
-				"", "", "", "", "",
-				"", "", "", "", "","", "", "" , "", "" , "" , "" , "",
-				"", "", "", "", "","", ""} };
+			{
+				"",
+				"SUBJECTUID", 
+				"SUBJECT_STATUS", 
+				"DATE_OF_ENROLLMENT", 
+				"AGE_AT_ENROLLMENT",
+				"OTHER_ID", 
+				"ETHNICITY", 
+				"GENDER", 
+				"COMMENTS", 
+				"CONSENT_DATE", 
+				"CONSENT_STATUS", 
+				"CONSENT_TO_USE_DATA", 
+				"CONSENT_TO_USE_BIOSPECIMEN", 
+				"CONSENT_TO_SHARE_DATA", 
+				"CONSENT_TO_SHARE_BIOSPECIMEN",
+				"SUBSTUDYS"
+			},
+			{ 
+				"DESCRIPTION", 
+				"The unique identifier assigned for this subject.  This may be automatically generated on upload into The Ark", 
+				"Subject Status", 
+				"The date when the participant was enrolled",
+				"The age of the partcipant at enrollment",
+				"Other IDs", 
+				"The subject's Ethnicity", 
+				"The subject's gender", 
+				"COMMENTS", 
+				"CONSENT_DATE", 
+				"CONSENT_STATUS", 
+				"CONSENT_TO_USE_DATA", 
+				"CONSENT_TO_USE_BIOSPECIMEN", 
+				"CONSENT_TO_SHARE_DATA", 
+				"CONSENT_TO_SHARE_BIOSPECIMEN",
+				"IDs for other related studies"
+			},
+			{ 
+				"FORMAT", 
+				"CHARACTER", 
+				"CHARACTER", 
+				"DD/MM/YYYY",
+				"NUMERIC",
+				"CHARACTER", 
+				"CHARACTER", 
+				"CHARACTER", 
+				"CHARACTER", 
+				"DD/MM/YYYY", 
+				"CHARACTER", 
+				"CHARACTER", 
+				"CHARACTER", 
+				"CHARACTER", 
+				"CHARACTER",
+				"CHARACTER",
+				"CHARACTER"
+			},
+			{ 
+				"MANDATORY", 
+				"Yes - unless assigned on upload", 
+				"Yes", 
+				"No", 
+				"No",
+				"No",
+				"No", 
+				"No", 
+				"No", 
+				"No", 
+				"No", 
+				"No", 
+				"No", 
+				"No", 
+				"No", 
+				"No"
+			},
+			{ 
+				"VALID VALUES", 
+				"", 
+				"Current, Withdrawn, Archive", 
+				"",
+				"",
+				"",
+				"Admixed, African, European, Asian, Other", 
+				"Male, Female, Unknown", 
+				"", 
+				"", 
+				"Consented, Withdrawn, Unknown", 
+				"Yes, No, Unavailable" , 
+				"Yes, No, Unavailable", 
+				"Yes, No, Unavailable", 
+				"Yes, No, Unavailable",
+				""
+			},
+			{ 
+				"NOTE: Removed this first column, and replace rows 2 to 6", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"",
+				"",
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				""
+			} 
+		};
+	
+	//TODO this is all for validation and templates.  maybe we need some form of validation mapping to db, entities or something like that as this will not be maintainable for long
+		public static final String[][]	SUBJECT_TEMPLATE_CELLSs										= {
+				{ "", "SUBJECTUID", "TITLE", "FIRST_NAME", "MIDDLE_NAME", "LAST_NAME", "PREFERRED_NAME", "DATE_OF_BIRTH", "VITAL_STATUS", "GENDER", "STATUS", "DATE_OF_DEATH", "DATE_LAST_KNOWN_ALIVE", "CAUSE_OF_DEATH",
+				"MARITAL_STATUS", "PREFERRED_CONTACT", "EMAIL", 
+				"BUILDING_NAME", "STREET_ADDRESS", "SUBURB", "STATE", "COUNTRY", "POST_CODE", "ADDRESS_SOURCE", "ADDRESS_STATUS",
+				"ADDRESS_TYPE", "ADDRESS_DATE_RECEIVED", "ADDRESS_COMMENTS", "IS_PREFERRED_MAILING_ADDRESS", "PHONE_AREA_CODE",
+				"PHONE_NUMBER", "PHONE_TYPE", "PHONE_STATUS", "PHONE_SOURCE", "PHONE_COMMENTS","SILENT", "PHONE_DATE_RECEIVED", 
+				"PREVIOUS_LAST_NAME", "OTHER_EMAIL", "HEARD_ABOUT_STUDY" , "COMMENTS", "EMAIL_STATUS", "OTHER_EMAIL_STATUS",
+				"CONSENT_DATE", "CONSENT_STATUS", "CONSENT_TYPE", "CONSENT_TO_PASSIVE_DATA_GATHERING", "CONSENT_TO_ACTIVE_CONTACT", "CONSENT_TO_USE_DATA"},
+				{ "DESCRIPTION", "The unique identifier assigned for this subject.  This may be automatically generated on upload into The Ark", "The title by which the subject prefers to be addressed",
+				"The subjects first name", "The subjects middle name", "The subjects last or family name", "The name by which the subject prefers to be addressed", "The date the subject was born",
+				"The subject's vital status", "The subject's gender", "The status of the subject as it pertains to the study", "The date the subject died, if known",  "The date the subject was last known to be alive", "The cause of death",
+				"The marital status of the subject", "The preferred method for contacting the subject", "The subject's primary email address", 
+				"BUILDING_NAME", "STREET_ADDRESS", "SUBURB", "STATE", "COUNTRY", "POST_CODE", "ADDRESS_SOURCE", "ADDRESS_STATUS",
+				"ADDRESS_TYPE", "ADDRESS_DATE_RECEIVED", "ADDRESS_COMMENTS", "IS_PREFERRED_MAILING_ADDRESS", "PHONE_AREA_CODE",
+				"PHONE_NUMBER", "PHONE_TYPE", "PHONE_STATUS", "PHONE_SOURCE", "PHONE_COMMENTS","SILENT", "Date that the phone number was recorded", 
+				"PREVIOUS_LAST_NAME", "OTHER_EMAIL", "HEARD_ABOUT_STUDY" , "COMMENTS", "EMAIL_STATUS", "OTHER_EMAIL_STATUS",
+				"CONSENT_DATE", "CONSENT_STATUS", "CONSENT_TYPE", "CONSENT_TO_PASSIVE_DATA_GATHERING", "CONSENT_TO_ACTIVE_CONTACT", "CONSENT_TO_USE_DATA"},
+				{ "FORMAT", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "DD/MM/YYYY", "CHARACTER", "CHARACTER", "CHARACTER", "DD/MM/YYYY", "DD/MM/YYYY", "ALPHANUMERIC", "CHARACTER",
+				"CHARACTER", "ALPHANUMERIC" , 
+				"CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER",
+				"CHARACTER", "DD/MM/YYYY", "CHARACTER", "CHARACTER", "ALPHANUMERIC",
+				"ALPHANUMERIC", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER","SILENT", "DD/MM/YYYY", "CHARACTER", "CHARACTER", "CHARACTER" , "CHARACTER", "CHARACTER", "CHARACTER",
+				"DD/MM/YYYY", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER", "CHARACTER"},
+				{ "MANDATORY", "Yes - unless assigned on upload", "No", "No", "No", "No", "No", "No", "No", "No", "Yes", "No", "No", "No", "No", "No",  "No", 
+					"No", "No", "No", "No", "No", "No", "No", "No",
+					"No", "No", "No", "No", "No",
+					"No", "No", "No", "No", "No","No", "No", "No", "No", "No" , "No" , "No", "No",
+					"No", "No", "No" , "No" , "No", "No"},
+				{ "VALID VALUES", "", "Unknown, Br, Capt, Col, Cpl, Dean, Dr, Fr, Lac, Major, Miss, Mr, Mrs, Ms, Past, Prof, Pstr, Rev, Sir, Sr", "", "", "", "", "", "Alive, Deceased, Unknown",
+				"Male, Female, Unknown", "Subject, Prospect, Withdrawn Subject, Archive", "", "", "", "Married, Single, Divorced, Unknown", "Email, Home telephone, Mobile telephone, Post", "", 
+				"", "", "", "", "", "",  //last three on this line are state country and postcode - i really could enforce something 
+				"", "", "", "", "", "", "",
+				"", "", "", "", "","", "", "", "", "" , "", "Unknown, Verified, Unverified, Bounced", "Unknown, Verified, Unverified, Bounced",
+				"", "Consented, Ineligible, Refused, Withdrawn, Pending", "Electronic, Hard Copy" , "Yes, No, Pending, Unavailable, Limited, Revoked" , "Yes, No, Pending, Unavailable, Limited, Revoked", "Yes, No, Pending, Unavailable, Limited, Revoked"},
+				{ "NOTE: Removed this first column, and replace rows 2 to 6", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
+					"", "", "", "", "", "", "", "",
+					"", "", "", "", "",
+					"", "", "", "", "","", "", "" , "", "" , "" , "" , "",
+					"", "", "", "", "","", ""} };
 
 	// 1 digit, 1 lower, 1 upper, 1 symbol "~!@#$%^&*()_-+={}[]:;\"<>|", from 6 to 20
 	public static final String			PASSWORD_PATTERN												= "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@#$%^&*()_\\-\\+\\=\\{\\}\\[\\]:;\\\"<>|]).{6,20})";
@@ -439,7 +573,6 @@ public class Constants {
 	public static final String PEDIGREE_RELATIONSHIP="pedigree.relationship";
 	public static final String PEDIGREE_TWIN="pedigree.twin";
 	public static final String PEDIGREE_RELATIONSHIP_DELETE="pedigree.relationship.delete";
-	public static final String PEDIGREE_INBREED="pedigree.inbreed";
 	
 	public static final String MALE = "male";
 	public static final String FEMALE = "female";
@@ -459,19 +592,9 @@ public class Constants {
 	public static final String ARK_SUBJECT_ATTACHEMENT_DIR="attachments";
 	public static final String ARK_SUBJECT_CORRESPONDENCE_DIR="correspondence";
 	public static final String ARK_STUDY_COMPONENT_DIR="studycomponent";
-	
 	public static final String PHONE_DETAIL_PANEL="phoneDetailPanel";
 	public static final String ADDRESS_DETAIL_PANEL="addressDetailPanel";
 	
-	public static final String INBREED_ALLOWED="inbreedAllowed";
-	
-	public static final String STUDY_CALENDAR_ID = "studyCalendar.id";
-	public static final String STUDY_CALENDAR_NAME = "studyCalendar.name";
-	public static final String STUDY_CALENDAR_START_DATE = "studyCalendar.startDate";
-	public static final String STUDY_CALENDAR_END_DATE = "studyCalendar.endDate";
-	public static final String STUDY_CALENDAR_DESCRIPTION = "studyCalendar.description";
-	public static final String STUDY_CALENDAR_STUDY_COMP = "studyCalendar.studyComp";
-	
-	public static final Integer MAXIMUM_ACCEPTABLE_AGE = 150;
+
 	
 }

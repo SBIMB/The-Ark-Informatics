@@ -664,15 +664,3 @@ input, button, textarea, select { font-size: 8pt; }
 .customFieldDataView > tbody > tr > td >.label {
 	text-align: right;
 }
-nobreakws{
-	    white-space: nowrap;
-}
-
-.historyPanel {
-	display:inline;
-}
-.labelSubtext {
-	font-family: verdana, arial, times, sans-serif; font-size:6pt;
-	padding: 0px;
-	margin-top:1px;
-}

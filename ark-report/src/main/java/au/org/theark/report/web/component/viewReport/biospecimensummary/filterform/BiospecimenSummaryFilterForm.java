@@ -27,6 +27,7 @@ import org.wicketstuff.jasperreports.handlers.CsvResourceHandler;
 import org.wicketstuff.jasperreports.handlers.PdfResourceHandler;
 
 import au.org.theark.core.exception.EntityNotFoundException;
+import au.org.theark.core.model.lims.entity.BioSampletype;
 import au.org.theark.core.model.report.entity.ReportOutputFormat;
 import au.org.theark.core.model.report.entity.ReportTemplate;
 import au.org.theark.core.model.study.entity.Study;
@@ -43,6 +44,7 @@ public class BiospecimenSummaryFilterForm extends AbstractReportFilterForm<Biosp
 	private static final long serialVersionUID = 1L;
 	
 	private DropDownChoice<Study> studyDropDown;
+	private DropDownChoice<BioSampletype> biospecimenTypeDropDown;
 	private TextField<String> subjectUidTextField;
 
 	public BiospecimenSummaryFilterForm(String id,
@@ -55,6 +57,7 @@ public class BiospecimenSummaryFilterForm extends AbstractReportFilterForm<Biosp
 	protected void initialiseCustomFilterComponents() {
 		this.subjectUidTextField=new TextField<String>(Constants.BIOSPECIMEN_SUMMARY_REPORT_SUBJECT_UID);
 		initStudyDropDown();
+		initBiospecimenTypeDropDown();
 		addFilterFormComponents();
 		addValidators();
 	}
@@ -71,8 +74,21 @@ public class BiospecimenSummaryFilterForm extends AbstractReportFilterForm<Biosp
 		this.studyDropDown = new DropDownChoice(Constants.BIOSPECIMEN_SUMMARY_REPORT_STUDY, studies, defaultChoiceRenderer);
 	}
 	
+	private void initBiospecimenTypeDropDown() {
+		List<BioSampletype> biospecimenTypes =null;
+		try{
+			biospecimenTypes= reportService.getBiospecimenTypeList();
+		}catch(EntityNotFoundException ene){
+			ene.printStackTrace();
+		}
+		
+		ChoiceRenderer defaultChoiceRenderer = new ChoiceRenderer(au.org.theark.core.Constants.NAME, au.org.theark.core.Constants.ID);
+		this.biospecimenTypeDropDown = new DropDownChoice(Constants.BIOSPECIMEN_SUMMARY_REPORT_BIOSPECIMENTYPE, biospecimenTypes, defaultChoiceRenderer);
+	}
+	
 	private void addFilterFormComponents() {
 		this.add(studyDropDown);
+		this.add(biospecimenTypeDropDown);
 		this.add(subjectUidTextField);
 	}
 
@@ -84,6 +100,7 @@ public class BiospecimenSummaryFilterForm extends AbstractReportFilterForm<Biosp
 	protected void onGenerateProcess(AjaxRequestTarget target) {
 		ReportTemplate reportTemplate = cpModel.getObject().getSelectedReportTemplate();
 		ReportOutputFormat reportOutputFormat = cpModel.getObject().getSelectedOutputFormat();
+		BioSampletype ReportBiospecimenType = cpModel.getObject().getBiospecimenType();
 
 		// show report
 		ServletContext context = ((WebApplication) getApplication()).getServletContext();
@@ -95,7 +112,12 @@ public class BiospecimenSummaryFilterForm extends AbstractReportFilterForm<Biosp
 		try {
 			design = JRXmlLoader.load(reportFile);
 			if (design != null) {
-				design.setName(au.org.theark.report.service.Constants.LIMS_BIOSPECIMEN_SUMMARY_REPORT_NAME); // set the output file name to match report title
+				if(ReportBiospecimenType != null && ReportBiospecimenType.getSampletype() != "Nucleic Acid" )
+					design.setName(au.org.theark.report.service.Constants.LIMS_BIOSPECIMEN_SUMMARY_REPORT_NAME); // set the output file name to match report title
+				else{
+					design.setName(au.org.theark.report.service.Constants.LIMS_NUCLEIC_ACID_SUMMARY_REPORT_NAME);
+				}
+				
 				if (reportOutputFormat.getName().equals(au.org.theark.report.service.Constants.CSV_REPORT_FORMAT)) {
 					design.setIgnorePagination(true); // don't paginate CSVs
 				}
@@ -113,9 +135,14 @@ public class BiospecimenSummaryFilterForm extends AbstractReportFilterForm<Biosp
 		Study selectedStudy =  getModelObject().getStudy();
 		parameters.put("studyName", selectedStudy.getName());
 		
+		BioSampletype selectedBiospecimenType = getModelObject().getBiospecimenType();
+		if(selectedBiospecimenType!=null)
+			parameters.put("bioSpecimenTypeName", selectedBiospecimenType.getName());
+		
 		BiospecimenSummaryReportVO biospecimenSummaryReportVO = new BiospecimenSummaryReportVO();
 		biospecimenSummaryReportVO.setStudy(getModelObject().getStudy());
 		biospecimenSummaryReportVO.setSubjectUID(getModelObject().getSubjectUID());
+		biospecimenSummaryReportVO.setBiospecimenType(getModelObject().getBiospecimenType());
 		
 		BiospecimenSummaryReportDataSource reportDS= new BiospecimenSummaryReportDataSource(reportService, biospecimenSummaryReportVO);
 		

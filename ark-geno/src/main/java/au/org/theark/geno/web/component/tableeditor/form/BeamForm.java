@@ -34,6 +34,7 @@ import au.org.theark.core.web.form.AbstractDetailForm;
 import au.org.theark.core.web.form.AbstractModalDetailForm;
 import au.org.theark.geno.model.vo.BeamListVO;
 import au.org.theark.geno.model.vo.BeamVO;
+import au.org.theark.geno.model.vo.RowListVO;
 import au.org.theark.geno.service.IArkGenoService;
 import au.org.theark.study.service.IStudyService;
 
@@ -234,6 +235,10 @@ public class BeamForm extends AbstractDetailForm<BeamListVO>{
 			this.info("Columns updated successfully. New Column IDs won't appear until page has been reloaded.");
 		}
 		target.add(feedBackPanel);
+	}
+	
+	@Override
+	protected void onTest(Form<BeamListVO> containerForm, AjaxRequestTarget target) {
 	}
 
 	@Override

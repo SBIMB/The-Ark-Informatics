@@ -34,18 +34,15 @@ import org.slf4j.LoggerFactory;
 import au.org.theark.core.model.study.entity.ArkFunction;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.service.IArkCommonService;
+import au.org.theark.core.web.component.customfield.CustomFieldContainerPanel;
 import au.org.theark.core.web.component.menu.AbstractArkTabPanel;
 import au.org.theark.core.web.component.tabbedPanel.ArkAjaxTabbedPanel;
-import au.org.theark.phenotypic.service.IPhenotypicService;
 import au.org.theark.phenotypic.web.Constants;
-import au.org.theark.phenotypic.web.component.phenodatacategory.PhenoDataCategoryContainerPanel;
-import au.org.theark.phenotypic.web.component.phenodatadictionary.PhenoDataDictionaryContainerPanel;
+import au.org.theark.phenotypic.web.component.customdataupload.CustomDataUploadContainerPanel;
+import au.org.theark.phenotypic.web.component.customfieldgroup.CustomFieldGroupContainerPanel;
 import au.org.theark.phenotypic.web.component.phenodataentry.PhenoCollectionDataEntryContainerPanel;
-import au.org.theark.phenotypic.web.component.phenodatasetdefinition.DataDictionaryGroupContainerPanel;
-import au.org.theark.phenotypic.web.component.phenodataupload.PhenoDataUploadContainerPanel;
-import au.org.theark.phenotypic.web.component.phenofielduploader.PhenoDataSetCategoryFieldUploadContainerPanel;
-
-
+//import au.org.theark.phenotypic.web.component.phenodatauploader.PhenoDataUploadContainerPanel;
+import au.org.theark.phenotypic.web.component.phenofielduploader.FieldUploadContainerPanel;
 
 @SuppressWarnings({ "serial", "unused" })
 public class PhenotypicSubMenuTab extends AbstractArkTabPanel {
@@ -57,7 +54,6 @@ public class PhenotypicSubMenuTab extends AbstractArkTabPanel {
 	private transient Long				studyId;
 	private WebMarkupContainer			arkContextMarkup;
 	private List<ITab>					moduleSubTabsList	= new ArrayList<ITab>();
-	
 
 	public PhenotypicSubMenuTab(String id, WebMarkupContainer arkContextMarkup) {
 		super(id);
@@ -87,26 +83,27 @@ public class PhenotypicSubMenuTab extends AbstractArkTabPanel {
 
 		// Clear cache to determine permissions
 		processAuthorizationCache(au.org.theark.core.Constants.ARK_MODULE_PHENOTYPIC, arkFunction);
-		
-		if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_DATA_CATEGORY)) {
-			panelToReturn = new PhenoDataCategoryContainerPanel(panelId, false, arkFunction);
-		}
-		else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_DATA_DICTIONARY)) {
-			panelToReturn = new PhenoDataDictionaryContainerPanel(panelId, true, arkFunction);
+
+		if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_DATA_DICTIONARY)) {
+			// attach the fields to this "Data Dictionary" function
+			panelToReturn = new CustomFieldContainerPanel(panelId, false, arkFunction,false);
 		}
 		else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_DATA_DICTIONARY_UPLOAD)) {
-			panelToReturn = new PhenoDataSetCategoryFieldUploadContainerPanel(panelId, arkFunction);
+			//ArkFunction function = iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_DATA_DICTIONARY);
+			panelToReturn = new FieldUploadContainerPanel(panelId, arkFunction);
 		}
 		else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_PHENO_COLLECTION)) {
-			panelToReturn = new DataDictionaryGroupContainerPanel(panelId, arkFunction);
+			//ArkFunction function = iArkCommonService.getArkFunctionByName(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_PHENO_COLLECTION);
+			panelToReturn = new CustomFieldGroupContainerPanel(panelId, arkFunction);
 		}
 		else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_FIELD_DATA)) {
 			panelToReturn = new PhenoCollectionDataEntryContainerPanel(panelId).initialisePanel();
+			//panelToReturn = new FieldDataContainerPanel(panelId);
 		}
 		else if (arkFunction.getName().equalsIgnoreCase(au.org.theark.core.Constants.FUNCTION_KEY_VALUE_FIELD_DATA_UPLOAD)) {
 			//panelToReturn = new FieldDataUploadContainerPanel(panelId); //OLD Code
 			//panelToReturn = new PhenoDataUploadContainerPanel(panelId);
-			panelToReturn = new PhenoDataUploadContainerPanel(panelId, arkFunction);
+			panelToReturn = new CustomDataUploadContainerPanel(panelId, arkFunction);
 			
 		}
 	/*	TODO trav put new uploader here

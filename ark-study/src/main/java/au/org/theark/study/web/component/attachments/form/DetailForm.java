@@ -186,6 +186,10 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 		}
 		processErrors(target);
 	}
+	
+	@Override
+	protected void onTest(Form<SubjectVO> containerForm, AjaxRequestTarget target) {
+	}
 
 	protected void onCancel(AjaxRequestTarget target) {
 		SubjectVO subjectVo = new SubjectVO();

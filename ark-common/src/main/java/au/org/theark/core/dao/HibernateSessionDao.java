@@ -31,15 +31,20 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author nivedann
  * 
  */
-public abstract class HibernateSessionDao {
+public abstract class HibernateSessionDao{
 
 	private SessionFactory	sessionFactory;
 	private Dialect			dialect;
 
 	@Autowired
 	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-		dialect = ((SessionFactoryImpl) sessionFactory).getDialect();
+		try{
+			this.sessionFactory = sessionFactory;
+			dialect = ((SessionFactoryImpl) sessionFactory).getDialect();
+		}catch(Exception ex){
+			ex.getSuppressed();
+		}
+		
 	}
 
 	/**

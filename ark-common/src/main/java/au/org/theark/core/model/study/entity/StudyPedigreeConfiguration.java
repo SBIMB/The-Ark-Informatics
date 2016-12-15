@@ -13,12 +13,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
 import au.org.theark.core.Constants;
 
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Entity
 @Table(name = "STUDY_PEDIGREE_CONFIG", schema = Constants.STUDY_SCHEMA)
 public class StudyPedigreeConfiguration implements Serializable {
@@ -35,9 +31,6 @@ public class StudyPedigreeConfiguration implements Serializable {
 
 	private Boolean statusAllowed;
 	private Boolean ageAllowed;
-	private CustomField familyId;
-	
-	private Boolean inbreedAllowed;
 
 	@Id
 	@SequenceGenerator(name = "study_pedigree_config_generator", sequenceName = "STUDYPEDIGREECONFIG_SEQUENCE")
@@ -98,23 +91,4 @@ public class StudyPedigreeConfiguration implements Serializable {
 		this.ageAllowed = ageAllowed;
 	}
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "FAMILY_ID")
-	public CustomField getFamilyId() {
-		return familyId;
-	}
-
-	public void setFamilyId(CustomField familyId) {
-		this.familyId = familyId;
-	}
-
-	@Column(name = "INBREED_ALLOWED")
-	public Boolean getInbreedAllowed() {
-		return inbreedAllowed;
-	}
-
-	public void setInbreedAllowed(Boolean inbreedAllowed) {
-		this.inbreedAllowed = inbreedAllowed;
-	}
-	
 }

@@ -37,9 +37,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
-
 import au.org.theark.core.Constants;
 
 @Entity
@@ -63,8 +60,6 @@ public class Address implements java.io.Serializable {
 	private String comments;
 	private Boolean preferredMailingAddress;
 	private String source;
-	private Date validFrom;
-	private Date validTo;
 
 	private Set<StudySite> studySites = new HashSet<StudySite>(0);
 
@@ -88,7 +83,6 @@ public class Address implements java.io.Serializable {
 	}
 
 	// TODO Lets keep naming consistant
-	@Audited
 	@Column(name = "STREET_ADDRESS")
 	public String getStreetAddress() {
 		return this.streetAddress;
@@ -98,7 +92,6 @@ public class Address implements java.io.Serializable {
 		this.streetAddress = streetAddress;
 	}
 
-	@Audited
 	@Column(name = "POST_CODE", length = 10)
 	public String getPostCode() {
 		return this.postCode;
@@ -107,8 +100,7 @@ public class Address implements java.io.Serializable {
 	public void setPostCode(String postCode) {
 		this.postCode = postCode;
 	}
-	
-	@Audited
+
 	@Column(name = "CITY", length = 30)
 	public String getCity() {
 		return this.city;
@@ -117,8 +109,7 @@ public class Address implements java.io.Serializable {
 	public void setCity(String city) {
 		this.city = city;
 	}
-	
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ADDRESS_STATUS_ID")
 	public AddressStatus getAddressStatus() {
@@ -138,7 +129,6 @@ public class Address implements java.io.Serializable {
 		this.studySites = studySites;
 	}
 
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ADDRESS_TYPE_ID")
 	public AddressType getAddressType() {
@@ -149,7 +139,6 @@ public class Address implements java.io.Serializable {
 		this.addressType = addressType;
 	}
 
-	@Audited
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATE_RECEIVED", length = 10)
 	public Date getDateReceived() {
@@ -164,13 +153,11 @@ public class Address implements java.io.Serializable {
 		this.comments = comments;
 	}
 
-	@Audited
 	@Column(name = "COMMENTS", length = 255)
 	public String getComments() {
 		return comments;
 	}
 
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "COUNTRY_ID")
 	public Country getCountry() {
@@ -181,7 +168,6 @@ public class Address implements java.io.Serializable {
 		this.country = country;
 	}
 
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "STATE_ID")
 	public State getState() {
@@ -192,7 +178,6 @@ public class Address implements java.io.Serializable {
 		this.state = state;
 	}
 
-	@Audited
 	@Column(name = "OTHER_STATE", length = 45)
 	public String getOtherState() {
 		return otherState;
@@ -201,8 +186,7 @@ public class Address implements java.io.Serializable {
 	public void setOtherState(String otherState) {
 		this.otherState = otherState;
 	}
-	
-	@Audited
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "PERSON_ID")
 	public Person getPerson() {
@@ -213,7 +197,6 @@ public class Address implements java.io.Serializable {
 		this.person = person;
 	}
 
-	@Audited
 	@Column(name = "PREFERRED_MAILING_ADDRESS", nullable = false)
 	public Boolean getPreferredMailingAddress() {
 		return preferredMailingAddress;
@@ -223,7 +206,6 @@ public class Address implements java.io.Serializable {
 		this.preferredMailingAddress = preferredMailingAddress;
 	}
 
-	@Audited
 	@Column(name = "ADDRESS_LINE_1")
 	public String getAddressLineOne() {
 		return addressLineOne;
@@ -233,7 +215,6 @@ public class Address implements java.io.Serializable {
 		this.addressLineOne = addressLineOne;
 	}
 
-	@Audited
 	@Column(name = "SOURCE")
 	public String getSource() {
 		return source;
@@ -242,25 +223,4 @@ public class Address implements java.io.Serializable {
 	public void setSource(String source) {
 		this.source = source;
 	}
-
-	@Temporal(TemporalType.DATE)
-	@Column(name = "VALID_FROM", length = 7)
-	public Date getValidFrom() {
-		return validFrom;
-	}
-
-	public void setValidFrom(Date validFrom) {
-		this.validFrom = validFrom;
-	}
-
-	@Temporal(TemporalType.DATE)
-	@Column(name = "VALID_TO", length = 7)
-	public Date getValidTo() {
-		return validTo;
-	}
-
-	public void setValidTo(Date validTo) {
-		this.validTo = validTo;
-	}
-	
 }
