@@ -46,6 +46,7 @@ import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkUser;
 import au.org.theark.core.model.study.entity.ConsentStatus;
 import au.org.theark.core.model.study.entity.ConsentType;
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.GenderType;
 import au.org.theark.core.model.study.entity.MaritalStatus;
 import au.org.theark.core.model.study.entity.PersonContactMethod;
@@ -72,6 +73,9 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 
 	private static final long								serialVersionUID	= 6510243238571556231L;
 	protected static final Logger							log					= LoggerFactory.getLogger(DetailForm.class);
+	
+	@SpringBean(name = Constants.LIMS_SERVICE)
+	private ILimsService										iLimsService;
 
 	@SpringBean(name = au.org.theark.core.Constants.ARK_COMMON_SERVICE)
 	private IArkCommonService<Void>						iArkCommonService;
@@ -83,13 +87,17 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 	protected TextField<String>							previousLastNameTxtFld;
 	protected TextField<String>							preferredNameTxtFld;
 
-	protected DateTextField									dateOfBirthTxtFld;
-	protected DateTextField									dateOfDeathTxtFld;
+	protected DateTextField								dateOfBirthTxtFld;
+	protected DateTextField								dateOfDeathTxtFld;
+	protected TextField<Integer>						ageAtEnrollmentTxtFld;
+	protected DateTextField								dateOfBirthTxtFld;
+	protected DateTextField								dateOfEnrollmentTxtFld;
+	protected DateTextField								dateOfDeathTxtFld;
 	protected TextField<String>							causeOfDeathTxtFld;
 
 	// Custom Fields and Consents at Subject Study Level
 	protected TextField<String>							amdrifIdTxtFld;
-	protected TextField<Long>								yearOfFirstMamogramTxtFld;
+	protected TextField<Long>							yearOfFirstMamogramTxtFld;
 	protected TextField<String>							yearOfRecentMamogramTxtFld;
 	protected TextField<String>							totalNumberOfMamogramsTxtFld;
 	protected DropDownChoice<YesNo>						consentToActiveContactDdc;
@@ -103,6 +111,7 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 	// Reference Data
 	protected DropDownChoice<TitleType>					titleTypeDdc;
 	protected DropDownChoice<VitalStatus>				vitalStatusDdc;
+	protected DropDownChoice<EthnicityType>				ethnicityTypeDdc;
 	protected DropDownChoice<GenderType>				genderTypeDdc;
 	protected DropDownChoice<SubjectStatus>			subjectStatusDdc;
 	protected DropDownChoice<MaritalStatus>			maritalStatusDdc;
@@ -116,6 +125,10 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 	protected WebMarkupContainer							wmcPreferredEmailContainer;
 	protected WebMarkupContainer							wmcDeathDetailsContainer;
 	protected ContainerForm									containerForm;
+	
+	private MultiLineLabel	otherIDLabel;
+	private TextField<String> otherIDTxtFld;
+	private TextField<String> otherIDSourceTxtFld;
 
 	protected Study											study;
 	
@@ -168,8 +181,51 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 	public void initialiseDetailForm() {
 		subjectUIDTxtFld = new TextField<String>(Constants.SUBJECT_UID);
 		subjectUIDTxtFld.setOutputMarkupId(true);
+		
+		dateOfEnrollmentTxtFld = new DateTextField(Constants.SUBJECT_DATE_OF_ENROLLMENT, au.org.theark.core.Constants.DD_MM_YYYY);
+		ArkDatePicker doeDatePicker = new ArkDatePicker();
+		doeDatePicker.bind(dateOfEnrollmentTxtFld);
+		dateOfEnrollmentTxtFld.add(doeDatePicker);
+		
+		otherIDSourceTxtFld = new TextField<String>("otherIDSource") {
+			private static final long serialVersionUID = 1L;
+			
+			protected void onBeforeRender() {
+				this.setDefaultModel(new Model<String>(""));
+				super.onBeforeRender();
+			}
+		};
+		otherIDSourceTxtFld.setModel(new Model<String>(""));
+		otherIDTxtFld = new TextField<String>("otherIDTxtFld") {
+			private static final long serialVersionUID = 1L;
+			
+			protected void onBeforeRender() {
+				this.setDefaultModel(new Model<String>(""));
+				super.onBeforeRender();
+			}
+		};
+		otherIDTxtFld.setModel(new Model<String>(""));
+		
+		/*otherIDLabel = new MultiLineLabel("otherId", "") {
+			private static final long serialVersionUID = 1L;
 
-		firstNameTxtFld = new TextField<String>(Constants.PERSON_FIRST_NAME);
+			protected void onBeforeRender() {
+				if(!isNew()) {
+					Set<OtherID> otherIDs = containerForm.getModelObject().getLinkSubjectStudy().getPerson().getOtherIDs();
+					String otherIDstring = "";
+					for(OtherID o : otherIDs) {
+						otherIDstring += o.getOtherID_Source() + ": " + o.getOtherID() + "\n";
+					}
+					this.setDefaultModel(new Model<String>(otherIDstring));
+				} else {
+					this.setDefaultModel(new Model<String>(""));
+				}
+				super.onBeforeRender();
+			}
+		};*/
+		
+		ageAtEnrollmentTxtFld = new TextField<Integer>(Constants.SUBJECT_AGE_AT_ENROLLMENT);
+		/*firstNameTxtFld = new TextField<String>(Constants.PERSON_FIRST_NAME);
 		middleNameTxtFld = new TextField<String>(Constants.PERSON_MIDDLE_NAME);
 		lastNameTxtFld = new TextField<String>(Constants.PERSON_LAST_NAME);
 
@@ -212,6 +268,11 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 		Collection<VitalStatus> vitalStatusList = iArkCommonService.getVitalStatus();
 		ChoiceRenderer<VitalStatus> vitalStatusRenderer = new ChoiceRenderer<VitalStatus>(Constants.NAME, Constants.ID);
 		vitalStatusDdc = new DropDownChoice<VitalStatus>(Constants.PERSON_VITAL_STATUS, (List<VitalStatus>) vitalStatusList, vitalStatusRenderer);
+*/
+		// Ethnicity Type
+		Collection<EthnicityType> ethnicityTypeList = iArkCommonService.getEthnicityTypes();
+		ChoiceRenderer<EthnicityType> ethnicityTypeRenderer = new ChoiceRenderer<EthnicityType>(Constants.NAME, Constants.ID);
+		ethnicityTypeDdc = new DropDownChoice<EthnicityType>(Constants.PERSON_ETHNICITY_TYPE, (List<EthnicityType>) ethnicityTypeList, ethnicityTypeRenderer);
 
 		// Gender Type
 		Collection<GenderType> genderTypeList = iArkCommonService.getGenderTypes();
@@ -222,7 +283,28 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 		List<SubjectStatus> subjectStatusList = iArkCommonService.getSubjectStatus();
 		ChoiceRenderer<SubjectStatus> subjectStatusRenderer = new ChoiceRenderer<SubjectStatus>(Constants.NAME, Constants.SUBJECT_STATUS_ID);
 		subjectStatusDdc = new DropDownChoice<SubjectStatus>(Constants.SUBJECT_STATUS, subjectStatusList, subjectStatusRenderer);
+		subjectStatusDdc.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
+					private static final long	serialVersionUID	= 1L;
+
+					@Override
+					protected void onUpdate(AjaxRequestTarget target) {
+						if(subjectStatusDdc.getModelObject().getName().equalsIgnoreCase("Archive")) {
+							Biospecimen biospecimenCriteria = new Biospecimen();
+							biospecimenCriteria.setLinkSubjectStudy(containerForm.getModelObject().getLinkSubjectStudy());
+							biospecimenCriteria.setStudy(containerForm.getModelObject().getLinkSubjectStudy().getStudy());
+							// check no biospecimens exist
+							long count = iLimsService.getBiospecimenCount(biospecimenCriteria);
+							if(count >0) {
+								error("You cannot archive this subject as there are Biospecimens associated ");
+								target.focusComponent(subjectStatusDdc);
+							}
+						}
+						processErrors(target);
+					}
+				});
+		
+		
 		// Marital Status
 		Collection<MaritalStatus> maritalStatusList = iArkCommonService.getMaritalStatus();
 		ChoiceRenderer<MaritalStatus> maritalStatusRender = new ChoiceRenderer<MaritalStatus>(Constants.NAME, Constants.ID);
@@ -269,12 +351,18 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 		arkCrudContainerVO.getDetailPanelFormContainer().add(dateOfBirthTxtFld);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(vitalStatusDdc);
 
+		arkCrudContainerVO.getDetailPanelFormContainer().add(dateOfEnrollmentTxtFld);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(otherIDSourceTxtFld);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(subjectStatusDdc);
 		// Death details only be edited when vital status set to deceased
 		wmcDeathDetailsContainer.add(dateOfDeathTxtFld);
 		wmcDeathDetailsContainer.add(causeOfDeathTxtFld);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(wmcDeathDetailsContainer);
-
+		arkCrudContainerVO.getDetailPanelFormContainer().add(ageAtEnrollmentTxtFld);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(ethnicityTypeDdc);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(genderTypeDdc);
+		//arkCrudContainerVO.getDetailPanelFormContainer().add(otherIDLabel);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(otherIDTxtFld);
 	}
 
 	/*

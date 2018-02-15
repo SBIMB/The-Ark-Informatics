@@ -68,6 +68,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.DigestUtils;
 
+import za.ac.theark.core.model.study.entity.UploadMethod;
 import au.org.theark.core.Constants;
 import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.EntityExistsException;
@@ -263,6 +264,13 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		Study study = (Study) getSession().get(Study.class, id);
 		return study;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public Collection<EthnicityType> getEthnicityTypes() {
+		Example example = Example.create(new EthnicityType());
+		Criteria criteria = getSession().createCriteria(EthnicityType.class).add(example);
+		return criteria.list();
+	}
 
 	@SuppressWarnings("unchecked")
 	public Collection<TitleType> getTitleType() {
@@ -359,6 +367,10 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 
 			if (subjectVO.getLinkSubjectStudy().getPerson().getGenderType() != null) {
 				criteria.add(Restrictions.eq("p.genderType.id", subjectVO.getLinkSubjectStudy().getPerson().getGenderType().getId()));
+			}
+			
+			if (subjectVO.getLinkSubjectStudy().getPerson().getEthnicityType() != null) {
+				criteria.add(Restrictions.eq("p.ethnicityType.id", subjectVO.getLinkSubjectStudy().getPerson().getEthnicityType().getId()));
 			}
 
 			if (subjectVO.getLinkSubjectStudy().getPerson().getVitalStatus() != null) {
@@ -777,6 +789,18 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		}
 		return genderType;
 	}
+	
+	public EthnicityType getEthnicityType(String name) {
+		Criteria criteria = getSession().createCriteria(EthnicityType.class);
+		criteria.add(Restrictions.eq("name", name));
+		EthnicityType ethnicityType = new EthnicityType();
+		List<EthnicityType> results = criteria.list();
+		if (!results.isEmpty()) {
+			ethnicityType = (EthnicityType) results.get(0);
+		}
+		return ethnicityType;
+	}
+
 
 	public VitalStatus getVitalStatus(String name) {
 		Criteria criteria = getSession().createCriteria(VitalStatus.class);
@@ -877,6 +901,10 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			if (subjectVO.getLinkSubjectStudy().getPerson().getGenderType() != null) {
 				criteria.add(Restrictions.eq("p.genderType.id", subjectVO.getLinkSubjectStudy().getPerson().getGenderType().getId()));
 			}
+			
+			if (subjectVO.getLinkSubjectStudy().getPerson().getEthnicityType() != null) {
+				criteria.add(Restrictions.eq("p.ethnicityType.id", subjectVO.getLinkSubjectStudy().getPerson().getEthnicityType().getId()));
+			}
 
 			if (subjectVO.getLinkSubjectStudy().getPerson().getVitalStatus() != null) {	
 				criteria.add(Restrictions.eq("p.vitalStatus.id", subjectVO.getLinkSubjectStudy().getPerson().getVitalStatus().getId()));
@@ -898,6 +926,10 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 				}
 			}
 		}
+		if (subjectVO.getLinkSubjectStudy().getAgeAtEnrollment() != null){
+		if (subjectVO.getLinkSubjectStudy().getAgeAtEnrollment() != 0) {
+			criteria.add(Restrictions.eq("ageAtEnrollment", subjectVO.getLinkSubjectStudy().getAgeAtEnrollment()));
+		}}
 
 		if (subjectVO.getLinkSubjectStudy().getSubjectUID() != null && subjectVO.getLinkSubjectStudy().getSubjectUID().length() > 0) {
 			criteria.add(Restrictions.ilike("subjectUID", subjectVO.getLinkSubjectStudy().getSubjectUID(), MatchMode.ANYWHERE));
@@ -1251,8 +1283,16 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			//studyUpload.setUploadStatus(getUploadStatusForUndefined());
 			studyUpload.setUploadStatus(getUploadStatusFor(Constants.UPLOAD_STATUS_STATUS_NOT_DEFINED));
 		}
-		Subject currentUser = SecurityUtils.getSubject();
-		String userId = (String) currentUser.getPrincipal();
+			if (studyUpload.getUploadMethod()==null){
+			studyUpload.setUploadMethod(getUploadMethod(Long.valueOf("1")));
+		}
+		log.info(" "+studyUpload.getUploadMethod().getName().toString().equalsIgnoreCase("Automated"));
+		if(studyUpload.getUploadMethod().getName().toString().equalsIgnoreCase("Automated")){
+			userId = "arkadmin@ark.sbimb.wits.ac.za";
+		}else{
+			currentUser = SecurityUtils.getSubject();
+			userId = (String) currentUser.getPrincipal();
+		}
 		studyUpload.setUserId(userId);
 		getSession().save(studyUpload);
 		// getSession().flush();
@@ -1260,6 +1300,18 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 
 	public void updateUpload(Upload studyUpload) {
 		getSession().update(studyUpload);
+	}
+	
+	public UploadMethod getUploadMethod(Long id) {
+		Criteria criteria = getSession().createCriteria(UploadMethod.class);
+		criteria.add(Restrictions.eq("id", id));
+		return (UploadMethod) criteria.uniqueResult();
+	}
+	
+	public UploadType getUploadType(Long id) {
+		Criteria criteria = getSession().createCriteria(UploadType.class);
+		criteria.add(Restrictions.eq("id", id));
+		return (UploadType) criteria.uniqueResult();
 	}
 
 	public String getDelimiterTypeNameByDelimiterChar(char delimiterCharacter) {
@@ -2028,6 +2080,37 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 		Query query = getSession().createQuery(queryString);
 		query.setParameter("search", search);
 		return query.list();
+	}
+	
+	public List<Study> getAllStudies(){
+		Criteria criteria = getSession().createCriteria(Study.class);
+		criteria.addOrder(Order.asc("name"));
+		log.info(criteria.list().size() + "" );
+		return criteria.list();
+	}
+	
+	public List<Study> getAllParentStudies(){
+		Criteria criteria = getSession().createCriteria(Study.class);
+		criteria.addOrder(Order.asc("name"))
+		.add(Restrictions.isNull("parentStudy"));		
+		log.info(criteria.list().size() + "" );
+		return criteria.list();
+	}
+	
+	public List<Study> getAllSubStudiesList(Study study){
+		Criteria criteria = getSession().createCriteria(Study.class);
+		criteria.add(Restrictions.eq("parentStudy", study));
+		criteria.addOrder(Order.asc("name"));
+		log.info(criteria.list().size() + "" );
+		return criteria.list();
+	}
+	
+	public Hashtable<String, Study> getAllSubStudiesHashTable(Study study){
+		Hashtable<String, Study> subStudies = new Hashtable<String, Study>();
+		for(Study s : getAllSubStudiesList(study)){
+			subStudies.put(s.getName(), s);
+		}
+		return subStudies;
 	}
 
 	public List<CustomFieldDisplay> getSelectedBiocollectionCustomFieldDisplaysForSearch(Search search) {
@@ -3696,9 +3779,14 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 					map.put(field.getPublicFieldName(), biospecimen.getBiospecimenProtocol().getName());
 				}
 			}
-			else if (field.getFieldName().equalsIgnoreCase("purity")) {
-				if(biospecimen.getPurity() != null){
-					map.put(field.getPublicFieldName(), biospecimen.getPurity()!=null?biospecimen.getPurity().toString():"");
+			else if (field.getFieldName().equalsIgnoreCase("purity280")) {
+				if(biospecimen.getPurity280() != null){
+					map.put(field.getPublicFieldName(), biospecimen.getPurity280()!=null?biospecimen.getPurity280().toString():"");
+				}
+			}
+			else if (field.getFieldName().equalsIgnoreCase("purity230")) {
+				if(biospecimen.getPurity230() != null){
+					map.put(field.getPublicFieldName(), biospecimen.getPurity230()!=null?biospecimen.getPurity230().toString():"");
 				}
 			}
 			else if (field.getFieldName().equalsIgnoreCase("quality")) {
@@ -3713,14 +3801,19 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 			}
 			else if (field.getFieldName().equalsIgnoreCase("site")) {
 				if(biospecimen.getInvCell()!=null){
-					map.put(field.getPublicFieldName(), biospecimen.getInvCell().getInvBox().getInvRack().getInvFreezer().getInvSite().getName());
+					map.put(field.getPublicFieldName(), biospecimen.getInvCell().getInvBox().getInvRack().getInvShelf().getInvFreezer().getInvSite().getName());
 				}
 			}
 			else if (field.getFieldName().equalsIgnoreCase("freezer")) {
 					if(biospecimen.getInvCell()!=null){		
-						map.put(field.getPublicFieldName(), biospecimen.getInvCell().getInvBox().getInvRack().getInvFreezer().getName());
+						map.put(field.getPublicFieldName(), biospecimen.getInvCell().getInvBox().getInvRack().getInvShelf().getInvFreezer().getName());
 					}
 			}
+			else if (field.getFieldName().equalsIgnoreCase("shelf")) {
+				if(biospecimen.getInvCell()!=null){		
+					map.put(field.getPublicFieldName(), biospecimen.getInvCell().getInvBox().getInvRack().getInvShelf().getInvFreezer().getName());
+				}
+		}
 			else if (field.getFieldName().equalsIgnoreCase("rack")) {
 				if(biospecimen.getInvCell()!=null){
 					map.put(field.getPublicFieldName(), biospecimen.getInvCell().getInvBox().getInvRack().getName());

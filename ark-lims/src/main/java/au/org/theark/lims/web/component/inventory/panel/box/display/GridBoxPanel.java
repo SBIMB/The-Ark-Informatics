@@ -126,7 +126,8 @@ public class GridBoxPanel extends Panel {
 		StringBuilder str = new StringBuilder();
 		InvBox box = iInventoryService.getInvBox(limsVo.getInvBox().getId()); //limsVo.getInvBox();
 		InvRack rack = box.getInvRack();
-		InvFreezer freezer = rack.getInvFreezer();
+		InvShelf shelf = rack.getInvShelf();
+		InvFreezer freezer = shelf.getInvFreezer();
 		InvSite site  = freezer.getInvSite();
 		log.info(site.getName());
 		
@@ -135,6 +136,8 @@ public class GridBoxPanel extends Panel {
 		str.append(site.getName());
 		str.append(" > ");
 		str.append(freezer.getName());
+		str.append(" > ");
+		str.append(shelf.getName());
 		str.append(" > ");
 		str.append(rack.getName());
 		str.append(" > ");

@@ -330,15 +330,25 @@ public interface ILimsService {
 	 * @return
 	 */
 	public Double getQuantityAvailable(Biospecimen biospecimen);
-
+	
+	public BiospecimenGrade getBiospecimenGradeByName(String name);
+	
 	public List<BiospecimenGrade> getBiospecimenGradeList();
+	
+	public BiospecimenStorage getBiospecimenStorageByName(String name);
 
 	public List<BiospecimenStorage> getBiospecimenStorageList();
 
+	public BiospecimenAnticoagulant getBiospecimenAnticoagulantByName(String name);
+	
 	public List<BiospecimenAnticoagulant> getBiospecimenAnticoagulantList();
 
+	public BiospecimenStatus getBiospecimenStatusByName(String name);
+	
 	public List<BiospecimenStatus> getBiospecimenStatusList();
 
+	public BiospecimenQuality getBiospecimenQualityByName(String name);
+	
 	public List<BiospecimenQuality> getBiospecimenQualityList();
 	
 	public String getNextGeneratedBiospecimenUID(Study study);
@@ -375,6 +385,8 @@ public interface ILimsService {
 	
 	public void batchAliquotBiospecimens(List<Biospecimen> biospecimenList);
 
+	public BiospecimenProtocol getBiospecimenProtocolByName(String name);
+	
 	public List<BiospecimenProtocol> getBiospecimenProtocolList();
 
 	public List<Biospecimen> getRootBiospecimensForBiocollection(BioCollection bc);

@@ -93,14 +93,14 @@ public abstract class AbstractInventoryDetailForm<T> extends Form<T> {
 	 * @param tree
 	 * @param node 
 	 */
-	public AbstractInventoryDetailForm(String id, FeedbackPanel feedbackPanel, WebMarkupContainer detailContainer, Form<T> containerForm, InventoryLinkTree tree, DefaultMutableTreeNode node, Panel containerPaenl) {
+	public AbstractInventoryDetailForm(String id, FeedbackPanel feedbackPanel, WebMarkupContainer detailContainer, Form<T> containerForm, InventoryLinkTree tree, DefaultMutableTreeNode node, Panel containerPanel) {
 		super(id, containerForm.getModel());
 		this.feedbackPanel = feedbackPanel;
 		this.detailContainer = detailContainer;
 		this.containerForm = containerForm;
 		this.tree = tree;
 		this.node = node;
-		this.containerPanel = containerPaenl;
+		this.containerPanel = containerPanel;
 		setOutputMarkupPlaceholderTag(true);
 		setModelObject(containerForm.getModelObject());
 		initialiseForm();

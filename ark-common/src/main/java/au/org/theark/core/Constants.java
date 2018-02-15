@@ -86,6 +86,7 @@ public class Constants {
 	public static final String DD_MM_YYYY = "dd/MM/yyyy";
 	public static final String DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy hh:mm:ss";
 	public static final String	yyyy_MM_dd_hh_mm_ss_S	= "yyyy-MM-dd hh:mm:ss.S";
+	public static final String HH_MM_SS = "HH:mm:ss";
 
 	/* Phenotypic data file column names */
 	public static final String SUBJECTUID = "SUBJECTUID";
@@ -265,6 +266,7 @@ public class Constants {
 	public static final String ENTITY_TYPE_CUSTOM_FIELD_GROUP = "Custom Field Group";
 	public static final String ENTITY_TYPE_INV_SITE = "InvSite";
 	public static final String ENTITY_TYPE_INV_FREEZER = "InvFreezer";
+	public static final String ENTITY_TYPE_INV_SHELF = "InvShelf";
 	public static final String ENTITY_TYPE_INV_RACK = "InvRack";
 	public static final String ENTITY_TYPE_INV_BOX = "InvBox";
 	public static final String ENTITY_TYPE_INV_CELL = "InvCell";
@@ -328,6 +330,7 @@ public class Constants {
 	public static final String FUNCTION_KEY_VALUE_FUNCTION = "FUNCTION";
 	public static final String FUNCTION_KEY_VALUE_MODULE_FUNCTION = "MODULE_FUNCTION";
 	public static final String FUNCTION_KEY_VALUE_ROLE = "ROLE";
+	public static final String FUNCTION_KEY_VALUE_REDCap = "REDCap";
 	public static final String FUNCTION_KEY_VALUE_MODULE_ROLE = "MODULE_ROLE";
 	public static final String FUNCTION_KEY_VALUE_ROLE_POLICY_TEMPLATE = "ROLE_POLICY_TEMPLATE";
 	public static final String FUNCTION_KEY_VALUE_LIMS_CUSTOM_FIELD_CATEGORY = "LIMS_CUSTOM_FIELD_CATEGORY";
@@ -350,7 +353,8 @@ public class Constants {
 	public static final String FUNCTION_KEY_VALUE_GENO_TABLE = "GENO_TABLE";
 	public static final String FUNCTION_KEY_VALUE_AUDIT = "Audit";
 	public static final String FUNCTION_KEY_VALUE_SETTING = "Settings";
-
+	public static final String FUNCTION_KEY_VALUE_BIOSPECIMEN_SHIPPING = "BIOSPECIMEN_SHIPPING";
+	
 	public static final String FUNCTION_KEY_VALUE_GENE = "GENE";
 	public static final String FUNCTION_KEY_VALUE_DISEASE = "DISEASE";
 	public static final String FUNCTION_KEY_VALUE_DISEASE_CUSTOM_FIELDS = "DISEASE_CUSTOM_FIELDS";
@@ -400,7 +404,8 @@ public class Constants {
 	public static final int PALETTE_ROWS = 5;
 
 	/* Default "from" paramter for emails */
-	public static final String ARK_ADMIN_EMAIL = "admin@the-ark.org.au";
+	public static final String ARK_ADMIN_EMAIL = "admin@ark.sbimb.wits.ac.za";
+	public static final String ARK_NOREPLY_EMAIL =  "noreply@ark.sbimb.wits.ac.za";
 
 	public static final String[] DATA_DICTIONARY_HEADER = { "FIELD_NAME",
 			"FIELD_TYPE", "DESCRIPTION", "QUESTION", "UNITS", "ENCODED_VALUES",
@@ -564,12 +569,47 @@ public class Constants {
 	public static final String[] BIOCOLLECTION_TEMPLATE_HEADER = { "SUBJECTUID",
 		"BIOCOLLECTIONUID","NAME","COLLECTIONDATE","COMMENTS"};
 	
-	public static final String[] BIOSPECIMEN_TEMPLATE_HEADER = { "SUBJECTUID",
-		"BIOSPECIMENUID", "BIOCOLLECTIONUID", "SAMPLETYPE", "QUANTITY",
-		"UNITS", "TREATMENT", "CONCENTRATION", "SITE", "FREEZER", "RACK", "BOX", "ROW", "COLUMN" };
+	public static final String[] BIOSPECIMEN_TEMPLATE_HEADER = { 
+		"SUBJECTUID", 
+		"BIOCOLLECTIONUID", 
+		"BIOCOLLECTIONNAME",
+		"AGEATCOLLECTION",
+		"BIOCOLLECTIONCOMMENTS",
+		"BIOCOLLECTIONDATE",
+		"BIOSPECIMENUID", 
+		"PARENTID",
+		"AMOUNTUSED",
+		"BIOTRANSACTION",
+		"SAMPLETYPE", 
+		"BIOCOLLECTIONDATE", 
+		"BIOCOLLECTIONTIME", 
+		"PROCESSDATE", 
+		"PROCESSTIME",
+		"COMMENTS", 
+		"BARCODED", 
+		"GRADE", 
+		"STOREDIN", 
+		"ANTICOAGULANTTYPE", 
+		"STATUS",	
+		"PROTOCOL",	
+		"PURITY280", 
+		"PURITY230", 
+		"QUALITY",
+		"QUANTITY", 
+		"UNITS", 
+		"TREATMENT", 
+		"CONCENTRATION", 
+		"SITE", 
+		"FREEZER", 
+		"SHELF", 
+		"RACK", 
+		"BOX", 
+		"ROW", 
+		"COLUMN" 
+	};
 	
 	public static final String[] BIOSPECIMEN_INVENTORY_TEMPLATE_HEADER = {"BIOSPECIMENUID",
-		"SITE", "FREEZER", "RACK", "BOX", "ROW","COLUMN" };
+		"SITE", "FREEZER", "SHELF", "RACK", "BOX", "ROW","COLUMN" };
 	
 	public static final String[][] BIOCOLLECTION_TEMPLATE_CELLS = {
 		{ "", "SUBJECTUID",  "BIOCOLLECTIONUID","NAME","COLLECTIONDATE","COMMENTS" },
@@ -632,58 +672,202 @@ public class Constants {
 			{ "NOTE: Removed this first column, and replace rows 2 to 5", "", "", "", "", "", "", ""} };
 	
 	public static final String[][] BIOSPECIMEN_TEMPLATE_CELLS = {
-			{ "", "SUBJECTUID", "BIOSPECIMENUID", "BIOCOLLECTIONUID",
-					"SAMPLETYPE", "QUANTITY", "UNITS", "TREATMENT", "CONCENTRATION", "SITE",
-					"FREEZER", "RACK", "BOX", "ROW", "COLUMN" },
+			{ 
+				"", 
+				"SUBJECTUID", 
+				"BIOCOLLECTIONUID", 
+				"BIOCOLLECTIONNAME",
+				"AGEATCOLLECTION",
+				"BIOCOLLECTIONCOMMENTS",
+				"BIOCOLLECTIONDATE",
+				"BIOSPECIMENUID", 
+				"PARENTID",
+				"AMOUNTUSED",
+				"BIOTRANSACTION",
+				"SAMPLETYPE", 
+				"BIOCOLLECTIONDATE", 
+				"BIOCOLLECTIONTIME", 
+				"PROCESSDATE", 
+				"PROCESSTIME",
+				"COMMENTS", 
+				"BARCODED", 
+				"GRADE", 
+				"STOREDIN", 
+				"ANTICOAGULANTTYPE", 
+				"STATUS", 
+				"PROTOCOL",	
+				"PURITY280", 
+				"PURITY230", 
+				"QUALITY",
+				"QUANTITY", 
+				"UNITS", 
+				"TREATMENT", 
+				"CONCENTRATION", 
+				"SITE", 
+				"FREEZER", 
+				"SHELF", 
+				"RACK", 
+				"BOX", 
+				"ROW", 
+				"COLUMN" 
+			},
 			{
-					"DESCRIPTION",
-					"The unique identifier assigned for this subject.",
-					"The unique identifier of the biospecimen",
-					"The unique identifier of collection to which the biospecimen is associated with",
-					"The sample type of the biospecimen",
-					"The quantity of the bispecimen", 
-					"The units of quanity",
-					"The treatment type of the bispecimen",
-					"The concentration of the bispecimen",
-					"The site of the bispecimen location",
-					"The freezer of the bispecimen location",
-					"The rack of the bispecimen location",
-					"The box of the bispecimen location",
-					"The row of the bispecimen location",
-					"The column of the bispecimen location" },
-			{ 		"MANDATORY", 
-					"Mandatory IF study not set to autogenerate id's for biospecimens", 
-					"Mandatory IF study not set to autogenerate id's for biocollections", "" +
-					"Yes", 
-					"Yes", 
-					"Yes", 
-					"Yes", 
-					"Yes",
-					"No",
-					"No", 
-					"No", 
-					"No", 
-					"No", 
-					"No", 
-					"No" },
+				"DESCRIPTION",
+				"The unique identifier assigned for this subject.",
+				"The unique identifier of collection to which the biospecimen is associated with",
+				"The name of collection to which the biospecimen is associated with",
+				"The age of collection to which the biospecimen is associated with",
+				"The comments of collection to which the biospecimen is associated with",
+				"The date of collection to which the biospecimen is associated with",
+				"The unique identifier of the biospecimen",
+				"The unique identifier of the biospecimen's parent",
+				"The quantity of biospecimen's parent used",
+				"The biotransaction of the biospecimen",
+				"The sample type of the biospecimen",
+				"The date when the biospecimen was collected",
+				"The time when the biospecimen was collected",
+				"The date when the biospecimen was processed",
+				"The time when the biospecimen was processed",
+				"Comments associated with the specimen",
+				"Is the biospecimen barcoded or not?",
+				"The grade of the biospecimen",
+				"Type of storage container",
+				"The tube used to collect blood sample",
+				"The status of the biospecimen",
+				"The protocol used to process the biospecimen",
+				"The 260/280 purity of the DNA",
+				"The 260/230 purity of the DNA",
+				"The quality of the biospecimen",
+				"The quantity of the biospecimen", 
+				"The units of quanity",
+				"The treatment type of the biospecimen",
+				"The concentration of the biospecimen",
+				"The site of the biospecimen location",
+				"The freezer of the biospecimen location",
+				"The shelf of the biospecimen location",
+				"The rack of the biospecimen location",
+				"The box of the biospecimen location",
+				"The row of the biospecimen location",
+				"The column of the biospecimen location" 
+			},
+			{ 		
+				"MANDATORY", 
+				"Mandatory IF study not set to autogenerate id's for biospecimens", 
+				"Mandatory IF study not set to autogenerate id's for biocollections", "" +
+				"No", 
+				"Yes",
+				"No",
+				"No",
+				"Yes", 
+				"No",
+				"Mandatory IF biospecimen's parent is set",
+				"Mandatory IF biospecimen's parent is set",
+				"Yes",
+				"Yes",
+				"No",
+				"Yes",
+				"Yes", 
+				"No", 
+				"No", 
+				"No", 
+				"Yes", 
+				"Yes",
+				"Yes",
+				"No",
+				"No",
+				"No",
+				"Yes",
+				"Yes",
+				"No",
+				"No",
+				"Yes",
+				"Yes",
+				"Yes",
+				"Yes",
+				"Yes",
+				"Yes",
+				"Yes",
+				"Yes"
+			},
 			{
-					"VALID VALUES",
-					"",
-					"",
-					"",
-					"",
-					"",
-					"",
-					"70% Alcohol Fixed, Formalin Fixed, Frozen, RN later, RNA later, then Formalin Fixed, RNA later, then Snap Frozen, Tissue Cultured, Unprocessed",
-					"",
-					"", 
-					"", 
-					"", 
-					"", 
-					"", 
-					""},
-			{ "NOTE: Removed this first column, and replace rows 2 to 5", "", "",
-					"", "", "", "", "", "", "", "", "", "", "", "" } };
+	 			"VALID VALUES",
+	 			"",
+	 			"",
+	 			"",
+	 			"",
+	 			"",
+	 			"",
+	 			"",
+	 			"",
+	 			"",
+	 			"Processed, Aliquoted",
+	 			"Blood / Whole Blood, Blood / Whole Blood (ACD), Blood / Whole Blood (EDTA), Blood / Whole Blood (KO/NaF), Blood / Whole Blood (LH), Blood / Buffy Coat, Blood / Buffy Coat (ACD), Blood / Buffy Coat (EDTA), Blood / Buffy Coat (KO/NaF), Blood / Buffy Coat (LH), Blood / Cord blood, Blood / Lymphocytes, Blood / Plasma, Blood / Plasma (ACD), Blood / Plasma (EDTA), Blood / Plasma (KO/NaF), Blood / Plasma (LH), Blood / Red Blood Cells, Blood / Serum, Blood / Transformed lymphoblasts (T), Nucleic Acid / DNA, Nucleic Acid / RNA, Nulcleic Acid / RNA Later, Tissue /Tissue, Tissue / Buccal Swab, Tissue / Placenta, Saliva / DNA_sal, Saliva / Oragene (OS), Urine",
+	 			"",
+	 			"",
+	 			"", 
+	 			"", 
+	 			"",
+	 			"Yes, No",
+	 			"Within Specification, Poor, NA",
+	 			"Microtube 2D, Microtube, Oragene, 2, DNA_SAL, 2ml Cryovial, Vacutainer",
+	 			"N/A, ACD, EDTA, Lithium Heparin (LH), Potassium Oxalate (KO),  Sodium Fluoride (NaF)",
+	 			"Pending, Received, Processed, Discarded",
+	 			"Oragene, Qiagen, QiaSymphony, Salting out, Other, Unknown",
+	 			"",
+	 			"",
+	 			"Ambient Temperature, Refrigerated Short term(<6mths), Refrigerated Long term(>6mths), Frozen short term (<6mths), Frozen long term (>6mths)",
+	 			"",
+	 			"ml, mg, ul, g",
+	 			"70% Alcohol Fixed, Formalin Fixed, Frozen, RN later, RNA later, then Formalin Fixed, RNA later, then Snap Frozen, Tissue Cultured, Unprocessed",
+	 			"",
+	 			"",
+	 			"",
+	 			"",
+	 			"",
+	 			"",
+	 			"",
+	 			""
+	 		},
+			{ 
+	 			"NOTE: Removed this first column, and replace rows 2 to 5", 
+	 			"", 
+	 			"",
+				"", 
+				"", 
+				"",
+				"",
+				"",
+				"", 
+				"", 
+				"", 
+				"", 
+				"",
+				"",
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"",
+				""
+			} 
+	 	};
 	public static final String DOWNLOAD_FILE = "downloadFile";
 	public static final String DOWNLOAD_EXCLUDE_UIS = "downloadExcludUIs";
 	

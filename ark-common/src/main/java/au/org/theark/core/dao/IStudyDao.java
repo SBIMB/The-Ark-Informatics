@@ -26,6 +26,7 @@ import au.org.theark.core.model.study.entity.*;
 
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 
+import za.ac.theark.core.model.study.entity.UploadMethod;
 import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.EntityExistsException;
 import au.org.theark.core.exception.EntityNotFoundException;
@@ -98,6 +99,13 @@ public interface IStudyDao {
 	 * @return List<PhoneType>
 	 */
 	public List<PhoneType> getListOfPhoneType();
+	
+	/**
+	 * An interface fetch a list of Ethnicity types.
+	 * 
+	 * @return
+	 */
+	public Collection<EthnicityType> getEthnicityTypes();
 
 	/**
 	 * An interface fetch a list of Title types.
@@ -278,6 +286,13 @@ public interface IStudyDao {
 	public void createAuditHistory(AuditHistory auditHistory, String userId, Study study);
 
 	/**
+	 * Create an AuditHistory
+	 * @param auditHistory
+	 */
+	public void createAuditHistory(AuditHistory auditHistory, String userId, StudyStatus studyStatus, String s);
+
+	
+	/**
 	 * Get a List of PersonContactMethod(s)
 	 * @return
 	 */
@@ -352,6 +367,13 @@ public interface IStudyDao {
 	 * @return
 	 */
 	public GenderType getGenderType(String name);
+	
+	/**
+	 * Get a GenderType based on a name
+	 * @param name
+	 * @return
+	 */
+	public EthnicityType getEthnicityType(String name);
 
 	/**
 	 * Get a VitalStatus based on a name
@@ -514,6 +536,18 @@ public interface IStudyDao {
 	 * @param studyUpload
 	 */
 	public void updateUpload(Upload studyUpload);
+
+	/**
+	 * Retrieves an UploadMethod 
+	 * @param UploadMethod ID
+	 */
+	public UploadMethod getUploadMethod(Long id);
+	
+	/**
+	 * Retrieves an UploadType 
+	 * @param UploadType ID
+	 */
+	public UploadType getUploadType(Long id);
 	
 	/**
 	 * Get the delimiter name by the character
@@ -618,6 +652,14 @@ public interface IStudyDao {
 	public List<EmailStatus> getAllEmailStatuses();
 	
 	public List<EmailAccountType> getEmailAccountTypes();
+	
+	public List<Study> getAllStudies();
+	
+	public List<Study> getAllParentStudies();
+	
+	public List<Study> getAllSubStudiesList(Study study);
+	
+	public Hashtable<String, Study> getAllSubStudiesHashTable(Study study);
 	
 	public List<Upload> searchUploadsForBiospecimen(Upload uploadCriteria, List studyListForUser);
 

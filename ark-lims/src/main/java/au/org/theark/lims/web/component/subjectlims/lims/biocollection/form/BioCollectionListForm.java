@@ -81,6 +81,7 @@ public class BioCollectionListForm extends Form<LimsVO> {
 	private Label														idLblFld;
 	private Label														biocollectionLblFld;
 	private Label														nameLblFld;
+	private Label														patientAgeLblFld;
 	private Label														commentsLblFld;
 	private Label														collectionDateLblFld;
 	private Panel														modalContentPanel;
@@ -270,12 +271,20 @@ public class BioCollectionListForm extends Form<LimsVO> {
 				else {
 					new Label("bioCollection.surgeryDate", "");
 				}
+				
+				if (bioCollection.getPatientAge() != null) {
+					patientAgeLblFld = new Label("bioCollection.patientAge", bioCollection.getPatientAge().toString());
+				}
+				else {
+					patientAgeLblFld = new Label("bioCollection.patientAge", "");
+				}
 
 				commentsLblFld = new Label("bioCollection.comments", bioCollection.getComments());
 
 				item.add(idLblFld);
 				item.add(rowDetailsWMC);
 				item.add(nameLblFld);
+				item.add(patientAgeLblFld);
 				item.add(collectionDateLblFld);
 				item.add(commentsLblFld);
 

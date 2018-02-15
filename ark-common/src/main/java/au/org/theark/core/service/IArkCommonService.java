@@ -37,6 +37,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 
+import za.ac.theark.core.model.study.entity.UploadMethod;
 import au.org.theark.core.dao.ReCaptchaContextSource;
 import au.org.theark.core.exception.ArkAlreadyBeingUsedException;
 import au.org.theark.core.exception.ArkCheckSumNotSameException;
@@ -117,6 +118,8 @@ public interface IArkCommonService<T> {
 	public Collection<VitalStatus> getVitalStatus();
 
 	public Collection<GenderType> getGenderTypes();
+	
+	public Collection<EthnicityType> getEthnicityTypes();
 
 	public List<PhoneType> getListOfPhoneType();
 
@@ -142,6 +145,14 @@ public interface IArkCommonService<T> {
 	public Collection<EmailStatus> getAllEmailStatuses();
 	
 	public List<EmailAccountType> getEmailAccountTypes();
+
+	public List<Study> getAllStudies();
+	
+	public List<Study> getAllParentStudies();
+	
+	public List<Study> getAllSubStudiesList(Study study);
+	
+	public Hashtable<String, Study> getAllSubStudiesHashTable(Study study);
 
 	public List<Country> getCountries();
 
@@ -297,7 +308,7 @@ public interface IArkCommonService<T> {
 	 * @param name
 	 * @return
 	 */
-	public TitleType getTitleType(String name);
+	public TitleType getTitleTypes(String name);
 
 	/**
 	 * Returns an instance of Marital Status for a given String that represents
@@ -769,6 +780,12 @@ public interface IArkCommonService<T> {
 	public Payload createPayload(byte[] bytes);
 
 	public Payload getPayloadForUpload(Upload upload);
+
+	public UploadStatus getUploadStatusForUploaded();
+
+	public UploadStatus getUploadStatusForAwaitingValidation();
+	
+	public UploadMethod getUploadMethod(Long id);
 
 	public UploadStatus getUploadStatusFor(String uploadStatusConstant);
 

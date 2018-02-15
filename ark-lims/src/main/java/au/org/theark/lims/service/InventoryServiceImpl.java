@@ -13,6 +13,7 @@ import au.org.theark.core.model.lims.entity.InvBox;
 import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.model.lims.entity.InvColRowType;
 import au.org.theark.core.model.lims.entity.InvFreezer;
+import au.org.theark.core.model.lims.entity.InvShelf;
 import au.org.theark.core.model.lims.entity.InvRack;
 import au.org.theark.core.model.lims.entity.InvSite;
 import au.org.theark.core.model.lims.entity.StudyInvSite;

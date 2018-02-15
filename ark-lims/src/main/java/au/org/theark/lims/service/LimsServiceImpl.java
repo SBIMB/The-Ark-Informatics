@@ -739,23 +739,42 @@ public class LimsServiceImpl implements ILimsService {
 	public Double getQuantityAvailable(Biospecimen biospecimen){
 		return iBiospecimenDao.getQuantityAvailable(biospecimen);
 	}
-
+	
+	public BiospecimenAnticoagulant getBiospecimenAnticoagulantByName(String name) {
+		return iBiospecimenDao.getBiospecimenAnticoagulantByName(name);
+	}
+	
 	public List<BiospecimenAnticoagulant> getBiospecimenAnticoagulantList() {
 		return iBiospecimenDao.getBiospecimenAnticoagulantList();
+	}
+	
+	public BiospecimenGrade getBiospecimenGradeByName(String name) {
+		return iBiospecimenDao.getBiospecimenGradeByName(name);
 	}
 
 	public List<BiospecimenGrade> getBiospecimenGradeList() {
 		return iBiospecimenDao.getBiospecimenGradeList();
 	}
-
+	
+	public BiospecimenQuality getBiospecimenQualityByName(String name) {
+		return iBiospecimenDao.getBiospecimenQualityByName(name);
+	}	
+	
 	public List<BiospecimenQuality> getBiospecimenQualityList() {
 		return iBiospecimenDao.getBiospecimenQualityList();
+	}
+	
+	public BiospecimenStatus getBiospecimenStatusByName(String name){
+		return iBiospecimenDao.getBiospecimenStatusByName(name);
 	}
 
 	public List<BiospecimenStatus> getBiospecimenStatusList() {
 		return iBiospecimenDao.getBiospecimenStatusList();
 	}
-
+	
+	public BiospecimenStorage getBiospecimenStorageByName(String name){
+		return iBiospecimenDao.getBiospecimenStorageByName(name);
+	}
 	public List<BiospecimenStorage> getBiospecimenStorageList() {
 		return iBiospecimenDao.getBiospecimenStorageList();
 	}
@@ -868,6 +887,10 @@ public class LimsServiceImpl implements ILimsService {
 		iBiospecimenDao.batchAliquotBiospecimens(biospecimenList);		
 	}
 
+	public BiospecimenProtocol getBiospecimenProtocolByName(String name) {
+		return iBiospecimenDao.getBiospecimenProtocolByName(name);
+	}
+	
 	public List<BiospecimenProtocol> getBiospecimenProtocolList() {
 		return iBiospecimenDao.getBiospecimenProtocolList();
 	}

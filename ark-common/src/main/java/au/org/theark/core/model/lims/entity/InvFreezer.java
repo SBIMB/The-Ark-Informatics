@@ -70,7 +70,7 @@ public class InvFreezer implements java.io.Serializable {
 	private Date			commissiondate;
 	private Date			lastservicedate;
 	private String			description;
-	private List<InvRack>	invRacks	= new ArrayList<InvRack>(0);
+	private List<InvShelf>	invShelves	= new ArrayList<InvShelf>(0);
 	protected String			siteFreezer;
 
 	public InvFreezer() {
@@ -83,7 +83,7 @@ public class InvFreezer implements java.io.Serializable {
 	}
 
 	public InvFreezer(Long id, InvSite invSite, Integer deleted, String location, String status, Integer capacity, String lastservicenote, String name, Integer available, Date decommissiondate,
-			Date commissiondate, Date lastservicedate, String description, List<InvRack> invRacks) {
+			Date commissiondate, Date lastservicedate, String description, List<InvShelf> invShelves) {
 		this.id = id;
 		this.invSite = invSite;
 		this.deleted = deleted;
@@ -97,7 +97,7 @@ public class InvFreezer implements java.io.Serializable {
 		this.commissiondate = commissiondate;
 		this.lastservicedate = lastservicedate;
 		this.description = description;
-		this.invRacks = invRacks;
+		this.invShelves = invShelves;
 	}
 
 	@Id
@@ -234,17 +234,17 @@ public class InvFreezer implements java.io.Serializable {
 
 	@OrderBy(value="name")
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "invFreezer")
-	public List<InvRack> getInvRacks() { 
-		return this.invRacks; 
+	public List<InvShelf> getInvShelves() { 
+		return this.invShelves; 
 	}
 	
-	public void setInvRacks(List<InvRack> invRacks) { 
-		this.invRacks = invRacks; 
+	public void setInvShelves(List<InvShelf> invShelves) { 
+		this.invShelves = invShelves; 
 	}
 
 	@Transient
-	public List<InvRack> getChildren() {
-		return getInvRacks();
+	public List<InvShelf> getChildren() {
+		return getInvShelves();
 	}
 	
 	@Transient

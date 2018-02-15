@@ -26,11 +26,12 @@ import au.org.theark.core.model.study.entity.ArkFunction;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkModuleFunction;
 import au.org.theark.core.model.study.entity.ArkModuleRole;
+import za.ac.theark.core.model.study.entity.ArkRedcap;
 import au.org.theark.core.model.study.entity.ArkRole;
 import au.org.theark.core.model.study.entity.ArkRolePolicyTemplate;
 import au.org.theark.core.model.study.entity.Study;
 import au.org.theark.core.vo.ArkVo;
-
+import au.org.theark.core.vo.RedcapVO;
 
 /**
  * @author cellis
@@ -65,6 +66,7 @@ public class AdminVO implements ArkVo, Serializable {
 		this.arkRole = new ArkRole();
 		this.arkModule = new ArkModule();
 		this.arkFunction = new ArkFunction();
+		this.arkRedcap = new ArkRedcap();
 		this.setArkModuleFunction(new ArkModuleFunction());
 		this.setArkModuleRole(new ArkModuleRole());
 		this.arkRolePolicyTemplate = new ArkRolePolicyTemplate();
@@ -127,6 +129,17 @@ public class AdminVO implements ArkVo, Serializable {
 	 */
 	public void setArkFunction(ArkFunction arkFunction) {
 		this.arkFunction = arkFunction;
+	}
+	
+	/**
+	 * @param arkRedcap the arkRedcap to set
+	 */
+	public ArkRedcap getArkRedcap() {
+		return arkRedcap;
+	}
+
+	public void setArkRedcap(ArkRedcap arkRedcap) {
+		this.arkRedcap = arkRedcap;
 	}
 
 	/**

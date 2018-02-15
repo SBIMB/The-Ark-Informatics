@@ -98,6 +98,30 @@ public interface IInventoryService {
 	public void deleteInvFreezer(LimsVO modelObject);
 	
 	/**
+	 * Create a Shelf based on the supplied LimsVO
+	 * 
+	 * @param modelObject
+	 *           the LimsVO object
+	 */
+	public void createInvShelf(LimsVO modelObject);
+
+	/**
+	 * Update a Shelf based on the supplied LimsVO
+	 * 
+	 * @param modelObject
+	 *           the LimsVO object
+	 */
+	public void updateInvShelf(LimsVO modelObject);
+
+	/**
+	 * Delete a Shelf based on the supplied LimsVO
+	 * 
+	 * @param modelObject
+	 *           the LimsVO object
+	 */
+	public void deleteInvShelf(LimsVO modelObject);
+	
+	/**
 	 * Create a Rack based on the supplied LimsVO
 	 * 
 	 * @param modelObject
@@ -182,6 +206,13 @@ public interface IInventoryService {
 	public InvFreezer getInvFreezer(Long id);
 	
 	/**
+	 * Get invShelf by id
+	 * @param id
+	 * @return
+	 */
+	public InvShelf getInvShelf(Long id);
+	
+	/**
 	 * Get invRack by id
 	 * @param id
 	 * @return
@@ -223,6 +254,15 @@ public interface IInventoryService {
 	 * @throws ArkSystemException
 	 */
 	public List<InvFreezer> searchInvFreezer(InvFreezer invFreezer, List<Study> studyListForUser) throws ArkSystemException;
+	
+	/**
+	 * Search on a particular shelf
+	 * @param invShelf
+	 * @param studyListForUser 
+	 * @return a List of InvTank(s)
+	 * @throws ArkSystemException
+	 */
+	public List<InvShelf> searchInvShelf(InvShelf invShelf, List<Study> studyListForUser) throws ArkSystemException;
 	
 	/**
 	 * Search on a particular Rack
@@ -268,7 +308,7 @@ public interface IInventoryService {
 	
 	public boolean hasAllocatedCells(InvBox invBox);
 
-	public InvCell getInvCellByLocationNames(String siteName, String freezerName, String rackName, String boxName, String row, String column) throws ArkSystemException;
+	public InvCell getInvCellByLocationNames(String siteName, String freezerName, String shelfName, String rackName, String boxName, String row, String column) throws ArkSystemException;
 
 	public InvCell getNextAvailableInvCell(InvBox invBox);
 

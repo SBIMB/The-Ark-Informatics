@@ -78,7 +78,7 @@ public class RackDetailForm extends AbstractInventoryDetailForm<LimsVO> {
 	private TextField<Integer>			capacityTxtFld;
 	private TextField<Integer>			availableTxtFld;
 	private TextArea<String>			descriptionTxtAreaFld;
-	private DropDownChoice<InvFreezer>	invTankDdc;
+	private DropDownChoice<InvFreezer>	invShelfDdc;
 
 	/**
 	 * 
@@ -101,7 +101,7 @@ public class RackDetailForm extends AbstractInventoryDetailForm<LimsVO> {
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
 				String rackName = (getComponent().getDefaultModelObject().toString() != null ? getComponent().getDefaultModelObject().toString() : new String());
-				InvRack invRack=iInventoryService.getInvRackByNameForFreezer(invTankDdc.getModelObject(), rackName);
+				InvRack invRack=iInventoryService.getInvRackByNameForShelf(invShelfDdc.getModelObject(), rackName);
 				if (invRack != null && invRack.getId() != null) {
 					error("Rack name must be unique for a freezer. Please try again.");
 					target.focusComponent(getComponent());
@@ -136,7 +136,7 @@ public class RackDetailForm extends AbstractInventoryDetailForm<LimsVO> {
 		availableTxtFld.setEnabled(false);
 		descriptionTxtAreaFld = new TextArea<String>("invRack.description");
 		
-		initInvFreezerDdc();
+		initInvShelfDdc();
 		
 		attachValidators();
 		addComponents();
@@ -147,8 +147,8 @@ public class RackDetailForm extends AbstractInventoryDetailForm<LimsVO> {
 		deleteButton.setEnabled(containerForm.getModelObject().getInvRack().getChildren().isEmpty());
 	}
 	
-	private void initInvFreezerDdc() {
-		List<InvFreezer> invFreezerList = new ArrayList<InvFreezer>(0);
+	private void initInvShelfDdc() {
+		List<InvShelf> invShelfList = new ArrayList<InvShelf>(0);
 		
 		List<Study> studyListForUser = new ArrayList<Study>(0);
 		studyListForUser.add(containerForm.getModelObject().getStudy());
@@ -170,19 +170,19 @@ public class RackDetailForm extends AbstractInventoryDetailForm<LimsVO> {
 		*/
 		
 		try {
-			invFreezerList = iInventoryService.searchInvFreezer(new InvFreezer(), studyListForUser);
+			invShelfList = iInventoryService.searchInvShelf(new InvShelf(), studyListForUser);
 		}
 		catch (ArkSystemException e) {
 			log.error(e.getMessage());
 		}
-		ChoiceRenderer<InvFreezer> choiceRenderer = new ChoiceRenderer<InvFreezer>("siteFreezer", Constants.ID);
-		invTankDdc = new DropDownChoice<InvFreezer>("invRack.invFreezer", (List<InvFreezer>) invFreezerList, choiceRenderer);
+		ChoiceRenderer<InvShelf> choiceRenderer = new ChoiceRenderer<InvShelf>("FreezerShelf", Constants.ID);
+		invTankDdc = new DropDownChoice<InvFreezer>("invRack.invShelf", (List<InvShelf>) invShelfList, choiceRenderer);
 		invTankDdc.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 			private static final long	serialVersionUID	= 1L;
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
 				String rackName = (nameTxtFld.getModelObject().toString() != null ? nameTxtFld.getModelObject().toString() : new String());
-				InvRack invRack=iInventoryService.getInvRackByNameForFreezer(invTankDdc.getModelObject(), rackName);
+				InvRack invRack=iInventoryService.getInvRackByNameForShelf(invTankDdc.getModelObject(), rackName);
 				if (invRack != null && invRack.getId() != null) {
 					error("Rack name must be unique for a freezer. Please try again.");
 					target.focusComponent(getComponent());
@@ -196,7 +196,7 @@ public class RackDetailForm extends AbstractInventoryDetailForm<LimsVO> {
 	protected void attachValidators() {
 		nameTxtFld.setRequired(true).setLabel(new StringResourceModel("error.name.required", this, new Model<String>("Name")));
 		nameTxtFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_NAME_MAX_LENGTH_50));
-		invTankDdc.setRequired(true).setLabel(new StringResourceModel("error.freezer.required", this, new Model<String>("Freezer")));
+		invShelfDdc.setRequired(true).setLabel(new StringResourceModel("error.shelf.required", this, new Model<String>("Shelf")));
 		capacityTxtFld.setRequired(true).setLabel(new StringResourceModel("error.capacity.required", this, new Model<String>("Capacity")));
 		MinimumValidator<Integer> minValue = new MinimumValidator<Integer>(new Integer(0));
 		capacityTxtFld.add(minValue);

@@ -26,6 +26,7 @@ import au.org.theark.core.model.lims.entity.InvBox;
 import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.model.lims.entity.InvColRowType;
 import au.org.theark.core.model.lims.entity.InvFreezer;
+import au.org.theark.core.model.lims.entity.InvShelf;
 import au.org.theark.core.model.lims.entity.InvRack;
 import au.org.theark.core.model.lims.entity.InvSite;
 import au.org.theark.core.model.lims.entity.StudyInvSite;
@@ -99,6 +100,30 @@ public interface IInventoryDao {
 	 *           the InvFreezer object
 	 */
 	public void deleteInvFreezer(InvFreezer invFreezer);
+	
+	/**
+	 * Create a Shelf based on the supplied LimsVO
+	 * 
+	 * @param invShelf
+	 *           the InvShelf object
+	 */
+	public void createInvShelf(InvShelf invShelf);
+
+	/**
+	 * Update a Shelf based on the supplied LimsVO
+	 * 
+	 * @param invShelf
+	 *           the InvShelf object
+	 */
+	public void updateInvShelf(InvShelf invShelf);
+
+	/**
+	 * Delete a Shelf based on the supplied LimsVO
+	 * 
+	 * @param invShelf
+	 *           the InvShelf object
+	 */
+	public void deleteInvShelf(InvShelf invShelf);
 	
 	/**
 	 * Create a Rack based on the supplied InvRack
@@ -217,6 +242,13 @@ public interface IInventoryDao {
 	public InvFreezer getInvFreezer(Long id);
 	
 	/**
+	 * Get an InvShelf based on the specified id
+	 * @param id
+	 * @return
+	 */
+	public InvShelf getInvShelf(Long id);
+	
+	/**
 	 * Get an InvRack based on the specified id
 	 * @param id
 	 * @return
@@ -245,6 +277,15 @@ public interface IInventoryDao {
 	 * @throws ArkSystemException
 	 */
 	public List<InvFreezer> searchInvFreezer(InvFreezer invFreezer, List<Study> studyListForUser) throws ArkSystemException;
+	
+	/**
+	 * Search on a particular shelf
+	 * @param invShelf
+	 * @param studyListForUser 
+	 * @return a List of InvShelf(s)
+	 * @throws ArkSystemException
+	 */
+	public List<InvShelf> searchInvShelf(InvShelf invShelf, List<Study> studyListForUser) throws ArkSystemException;
 	
 	/**
 	 * Search on a particular rack
@@ -283,13 +324,17 @@ public interface IInventoryDao {
 
 	public boolean hasAllocatedCells(InvBox invBox);
 	
-	public InvCell getInvCellByLocationNames(String siteName, String freezerName, String rackName, String boxName, String row, String column) throws ArkSystemException;
+	public InvCell getInvCellByLocationNames(String siteName, String freezerName, String shelfName, String rackName, String boxName, String row, String column) throws ArkSystemException;
 
 	public void batchUpdateInvCells(List<InvCell> updateInvCells);
 
 	public InvCell getNextAvailableInvCell(InvBox invBox);
 
 	public Integer countAvailableCellsForBox(InvBox invBox);
+	
+	public Integer countAvailableBoxSpaceForRack(InvRack invRack);
+	
+	public Integer countAvailableRacksForShelf(InvShelf invShelf);
 
 	public void createStudyInvSite(StudyInvSite studyInvSite);
 
@@ -305,7 +350,9 @@ public interface IInventoryDao {
 	
 	public InvFreezer getFreezerByNameForSite(InvSite invSite,String freezerName);
 	
-	public InvRack getRackByNameForFreezer(InvFreezer invFreezer,String rackName);
+	public InvShelf getShelfByNameForFreezer(InvFreezer invFreezer,String shelfName);
+	
+	public InvRack getRackByNameForShelf(InvShelf invShelf,String rackName);
 	
 	public InvBox getBoxByNameForRack(InvRack invRack,String boxName);
 }

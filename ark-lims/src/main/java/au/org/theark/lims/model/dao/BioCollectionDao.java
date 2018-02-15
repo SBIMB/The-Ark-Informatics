@@ -106,6 +106,9 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 
 		if (bioCollection.getStudy() != null)
 			criteria.add(Restrictions.eq("study", bioCollection.getStudy()));
+		
+		if (bioCollection.getPatientAge() != null)
+			criteria.add(Restrictions.eq("patientAge", bioCollection.getPatientAge()));
 
 		if (bioCollection.getCollectionDate() != null)
 			criteria.add(Restrictions.eq("collectionDate", bioCollection.getCollectionDate()));
@@ -322,6 +325,11 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 
 		if (bioCollectionCriteria.getCollectionDate() != null) {
 			criteria.add(Restrictions.eq("collectionDate", bioCollectionCriteria.getCollectionDate()));
+		}
+
+		if (bioCollectionCriteria.getPatientAge() != null) {
+			criteria.add(Restrictions.eq("patientAge", bioCollectionCriteria.getPatientAge()));
+			log.info(bioCollectionCriteria.getPatientAge().toString());
 		}
 
 		if (bioCollectionCriteria.getSurgeryDate() != null) {

@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import au.org.theark.core.exception.EntityNotFoundException;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkUser;
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.GenderType;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
 import au.org.theark.core.model.study.entity.Person;
@@ -81,10 +82,13 @@ public class SearchForm extends AbstractSearchForm<LimsVO> {
 	private TextField<String>					firstNameTxtFld;
 	private TextField<String>					middleNameTxtFld;
 	private TextField<String>					lastNameTxtFld;
-	private DropDownChoice<VitalStatus>		vitalStatusDdc;
-	private DropDownChoice<GenderType>		genderTypeDdc;
+	private DropDownChoice<VitalStatus>			vitalStatusDdc;
+	private DropDownChoice<SubjectStatus>		subjectStatusDdc;
+	private TextField<Integer>					ageAtEnrollment;
+	private DropDownChoice<EthnicityType>		ethnicityTypeDdc;
+	private DropDownChoice<GenderType>			genderTypeDdc;
 	private DateTextField						dateOfBirthTxtFld;
-	private CompoundPropertyModel<LimsVO>	cpmModel;
+	private CompoundPropertyModel<LimsVO>		cpmModel;
 
 	/**
 	 * Constructor
@@ -140,6 +144,9 @@ public class SearchForm extends AbstractSearchForm<LimsVO> {
 		add(middleNameTxtFld);
 		add(lastNameTxtFld);
 		add(vitalStatusDdc);
+		add(subjectStatusDdc);
+		add(ageAtEnrollment);
+		add(ethnicityTypeDdc);
 		add(genderTypeDdc);
 		add(dateOfBirthTxtFld);
 	}
@@ -152,6 +159,8 @@ public class SearchForm extends AbstractSearchForm<LimsVO> {
 
 		initStudyDdc();
 		initVitalStatusDdc();
+		initSubjectStatusDdc();
+		initEthnicityTypeDdc();
 		initSubjectStatusDdc();
 		initGenderTypeDdc();
 
@@ -187,6 +196,16 @@ public class SearchForm extends AbstractSearchForm<LimsVO> {
 		List<SubjectStatus> subjectStatusList = iArkCommonService.getSubjectStatus();
 		ChoiceRenderer<SubjectStatus> subjectStatusRenderer = new ChoiceRenderer<SubjectStatus>(Constants.NAME, Constants.SUBJECT_STATUS_ID);
 		new DropDownChoice<SubjectStatus>(Constants.SUBJECT_STATUS, subjectStatusPm, subjectStatusList, subjectStatusRenderer);
+	}
+	
+	private void initEthnicityTypeDdc() {
+		CompoundPropertyModel<LimsVO> subjectCpm = cpmModel;
+		PropertyModel<LinkSubjectStudy> linkSubjectStudyPm = new PropertyModel<LinkSubjectStudy>(subjectCpm, "linkSubjectStudy");
+		PropertyModel<Person> personPm = new PropertyModel<Person>(linkSubjectStudyPm, Constants.PERSON);
+		PropertyModel<EthnicityType> ethnicityTypePm = new PropertyModel<EthnicityType>(personPm, Constants.ETHNICITY_TYPE);
+		Collection<EthnicityType> ethnicityTypeList = iArkCommonService.getEthnicityTypes();
+		ChoiceRenderer<EthnicityType> ethnicityTypeRenderer = new ChoiceRenderer<EthnicityType>(Constants.NAME, Constants.ID);
+		ethnicityTypeDdc = new DropDownChoice<EthnicityType>(Constants.ETHNICITY_TYPE, ethnicityTypePm, (List<EthnicityType>) ethnicityTypeList, ethnicityTypeRenderer);
 	}
 
 	private void initGenderTypeDdc() {

@@ -80,6 +80,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import za.ac.theark.core.model.study.entity.UploadMethod;
 import au.org.theark.core.Constants;
 import au.org.theark.core.dao.ArkLdapContextSource;
 import au.org.theark.core.dao.IArkAuthorisation;
@@ -346,6 +347,15 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		return studyDao.getSubject(subjectVO);
 	}
 
+	/* (non-Javadoc)
+	 * 
+	 * @see au.org.theark.core.service.IArkCommonService#getGenderType()
+	 */
+	public Collection<EthnicityType> getEthnicityTypes() {
+
+		return studyDao.getEthnicityTypes();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -495,6 +505,10 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 	public void createAuditHistory(AuditHistory auditHistory, String userId, Study study) {
 		studyDao.createAuditHistory(auditHistory, userId, study);
 	}
+	
+	public void createAuditHistory(AuditHistory auditHistory, String userId, StudyStatus studyStatus, String s) {
+		studyDao.createAuditHistory(auditHistory, userId, studyStatus, new String());
+	}
 
 	public List<PersonContactMethod> getPersonContactMethodList() {
 		return studyDao.getPersonContactMethodList();
@@ -549,6 +563,10 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 
 	public GenderType getGenderType(String name) {
 		return studyDao.getGenderType(name);
+	}
+	
+	public EthnicityType getEthnicityType(String name) {
+		return studyDao.getEthnicityType(name);
 	}
 
 	public VitalStatus getVitalStatus(String name) {
@@ -982,9 +1000,9 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 				String host = InetAddress.getLocalHost().getHostName();
 
 				// Message title
-				model.put("title", "Message from The ARK");
+				model.put("title", "Message from The ARK INFORMATICS");
 				// Message header
-				model.put("header", "Message from The ARK");
+				model.put("header", "Message from The ARK INFORMATICS");
 				// Message subject
 				model.put("subject", simpleMailMessage.getSubject());
 				// Message text
@@ -1302,6 +1320,18 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		return studyDao.getUploadTypesForSubject(study);
 	}
 
+	public UploadMethod getUploadMethod(Long id){
+		return studyDao.getUploadMethod(id);
+	}
+	
+	public UploadType getUploadType(Long id){
+		return studyDao.getUploadType(id);
+	}
+	
+	public Collection<UploadType> getUploadTypesForSubject() {
+		return studyDao.getUploadTypesForSubject();
+	}
+
 	public Collection<UploadType> getUploadTypesForLims() {
 		return studyDao.getUploadTypesForLims();
 	}
@@ -1330,6 +1360,22 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		return studyDao.getEmailAccountTypes();
 	}
 
+	public List<Study> getAllStudies(){
+		return studyDao.getAllStudies();
+	}
+	
+	public List<Study> getAllParentStudies(){
+		return studyDao.getAllParentStudies();
+	}
+	
+	public List<Study> getAllSubStudiesList(Study study){
+		return studyDao.getAllSubStudiesList(study);
+	}
+
+	public Hashtable<String, Study> getAllSubStudiesHashTable(Study study){
+		return studyDao.getAllSubStudiesHashTable(study);
+	}
+	
 	public List<Upload> searchUploadsForBiospecimen(Upload uploadCriteria, List studyListForUser) {
 		return studyDao.searchUploadsForBiospecimen(uploadCriteria, studyListForUser);
 	}

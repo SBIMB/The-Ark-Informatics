@@ -15,6 +15,7 @@ import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.EntityNotFoundException;
 import au.org.theark.core.model.lims.entity.InvBox;
 import au.org.theark.core.model.lims.entity.InvFreezer;
+import au.org.theark.core.model.lims.entity.InvShelf;
 import au.org.theark.core.model.lims.entity.InvRack;
 import au.org.theark.core.model.lims.entity.InvSite;
 import au.org.theark.core.model.study.entity.ArkModule;
@@ -103,7 +104,15 @@ public class TreeModel {
 		for (InvFreezer freezer : freezers){
 			DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(freezer);
 			parentNode.add(childNode);
-			addRacks(childNode, freezer.getInvRacks());
+			addShelves(childNode, freezer.getInvShelves());
+		}
+	}
+	
+	void addShelves(DefaultMutableTreeNode parentNode, List<InvShelf> shelves){
+		for (InvShelf shelf : shelves){
+			DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(shelf);
+			parentNode.add(childNode);
+			addRacks(childNode, shelf.getInvRacks());
 		}
 	}
 	

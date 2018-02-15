@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import za.ac.theark.core.dao.IRedcapDao;
 import au.org.theark.admin.model.dao.IAdminDao;
 import au.org.theark.admin.model.vo.AdminVO;
 import au.org.theark.admin.model.vo.ArkRoleModuleFunctionVO;
@@ -47,6 +48,7 @@ import au.org.theark.core.model.study.entity.ArkRolePolicyTemplate;
 @Service(au.org.theark.admin.service.Constants.ARK_ADMIN_SERVICE)
 public class AdminServiceImpl<T> implements IAdminService<T> {
 	private IAdminDao	iAdminDao;
+	private IRedcapDao iRedcapDao;
 
 	public IAdminDao getAdminDao() {
 		return iAdminDao;
@@ -55,6 +57,15 @@ public class AdminServiceImpl<T> implements IAdminService<T> {
 	@Autowired
 	public void setAdminDao(IAdminDao adminDao) {
 		this.iAdminDao = adminDao;
+	}
+	
+	public IRedcapDao getiRedcapDao() {
+		return iRedcapDao;
+	}
+
+	@Autowired
+	public void setiRedcapDao(IRedcapDao iRedcapDao) {
+		this.iRedcapDao = iRedcapDao;
 	}
 
 	public void createArkRolePolicyTemplate(AdminVO adminVo) {
@@ -235,5 +246,15 @@ public class AdminServiceImpl<T> implements IAdminService<T> {
 
 	public List<ArkModuleRole> searchPageableArkModuleRoles(ArkModuleRole arkModulRoleCriteria, int first, int count) {
 		return iAdminDao.searchPageableArkModuleRoles(arkModulRoleCriteria, first, count);
+	}
+	
+	@Override
+	public void createOrUpdateArkRedcap(AdminVO adminVO) {
+		iRedcapDao.createOrUpdateArkRedcap(adminVO.getArkRedcap());		
+	}
+
+	@Override
+	public void deleteArkRedcap(AdminVO adminVO) {
+		iRedcapDao.deleteArkRedcap(adminVO.getArkRedcap());			
 	}
 }

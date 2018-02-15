@@ -96,7 +96,8 @@ public class Biospecimen implements java.io.Serializable {
 	private Double							concentration;
 	private Double							amount;
 	private BiospecimenProtocol		biospecimenProtocol;
-	private Double							purity;
+	private Double							purity280;
+	private Double							purity230;
 	
 
 	private Set<BioTransaction>		bioTransactions	= new HashSet<BioTransaction>(0);
@@ -460,13 +461,22 @@ public class Biospecimen implements java.io.Serializable {
 		return ((quantity == null) ? 0 : quantity) * ((concentration == null) ? 0 : concentration);
 	}
 	
-	@Column(name = "PURITY")
-	public Double getPurity() {
-		return purity;
+	@Column(name = "PURITY280")
+	public Double getPurity280() {
+		return purity280;
 	}
 
-	public void setPurity(Double purity) {
-		this.purity = purity;
+	public void setPurity280(Double purity280) {
+		this.purity280 = purity280;
+	}
+	
+	@Column(name = "PURITY230")
+	public Double getPurity230() {
+		return purity230;
+	}
+
+	public void setPurity230(Double purity230) {
+		this.purity230 = purity230;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
