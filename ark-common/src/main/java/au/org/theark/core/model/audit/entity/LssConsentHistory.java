@@ -55,14 +55,13 @@ public class LssConsentHistory implements java.io.Serializable {
 	private ConsentOption				consentToActiveContact;
 	private ConsentOption				consentToPassiveDataGathering;
 	private ConsentOption				consentToUseData;
-	private ConsentStatus				consentStatus;
-	private ConsentOption				consentToUseData;
 	private ConsentOption				consentToUseBiospecimen;
 	private ConsentOption				consentToShareData;
 	private ConsentOption				consentToShareBiospecimen;
+	private ConsentStatus				consentStatus;
 	private ConsentType					consentType;
-	private Date							consentDate;
-	private YesNo							consentDownloaded;
+	private Date						consentDate;
+	private YesNo						consentDownloaded;
 
 	@Id
 	@SequenceGenerator(name = "LSS_CONSENT_HISTORY_SEQ", sequenceName = "LSS_CONSENT_HISTORY_SEQUENCE")
@@ -108,7 +107,7 @@ public class LssConsentHistory implements java.io.Serializable {
 		return linkSubjectStudy;
 	}
 	
-	@Temporal(TemporalType.DATE)
+	/*@Temporal(TemporalType.DATE)
 	@Column(name = "CONSENT_DATE", length = 7)
 	public Date getConsentDate() {
 		return consentDate;
@@ -126,7 +125,7 @@ public class LssConsentHistory implements java.io.Serializable {
 
 	public void setConsentStatus(ConsentStatus consentStatus) {
 		this.consentStatus = consentStatus;
-	}
+	}*/
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CONSENT_TO_PASSIVE_DATA_GATHERING_ID")
