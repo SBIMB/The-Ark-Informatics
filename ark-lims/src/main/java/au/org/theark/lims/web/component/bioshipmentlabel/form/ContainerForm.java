@@ -21,13 +21,14 @@ package au.org.theark.lims.web.component.bioshipmentlabel.form;
 import org.apache.wicket.model.CompoundPropertyModel;
 
 import au.org.theark.core.model.lims.entity.BarcodeLabel;
+import au.org.theark.core.model.lims.entity.BioShipmentLabel;
 import au.org.theark.core.web.form.AbstractContainerForm;
 
 /**
  * @author cellis
  * 
  */
-public class ContainerForm extends AbstractContainerForm<BarcodeLabel> {
+public class ContainerForm extends AbstractContainerForm<BioShipmentLabel> {
 
 
 	private static final long	serialVersionUID	= -6773446229285764994L;
@@ -36,7 +37,7 @@ public class ContainerForm extends AbstractContainerForm<BarcodeLabel> {
 	 * @param id
 	 * @param cpmModel
 	 */
-	public ContainerForm(String id, CompoundPropertyModel<BarcodeLabel> cpmModel) {
+	public ContainerForm(String id, CompoundPropertyModel<BioShipmentLabel> cpmModel) {
 		super(id, cpmModel);
 	}
 }

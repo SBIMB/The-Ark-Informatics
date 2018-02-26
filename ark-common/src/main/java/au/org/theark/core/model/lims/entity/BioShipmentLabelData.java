@@ -38,11 +38,11 @@ import au.org.theark.core.model.Constants;
  */
 @Entity
 @Table(name = "barcode_label_data", schema = Constants.LIMS_TABLE_SCHEMA)
-public class BioshipmentMethod implements java.io.Serializable {
+public class BioShipmentLabelData implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Long			id;
-	private BarcodeLabel	barcodeLabel;
+	private BioShipmentLabel	bioShipmentLabel;
 	private String			command;
 	private Integer		xCoord;
 	private Integer		yCoord;
@@ -59,13 +59,13 @@ public class BioshipmentMethod implements java.io.Serializable {
 	private String			quoteRight;
 	private String			lineFeed;
 
-	public BioshipmentMethod() {
+	public BioShipmentLabelData() {
 	}
 
-	public BioshipmentMethod(Long id, Bioshipment bioshipment, String command, Integer xCoord, Integer yCoord, String p1, String p2, String p3, String p4, String p5, String p6, String p7, String p8,
+	public BioShipmentLabelData(Long id, BioShipmentLabel bioShipmentLabel, String command, Integer xCoord, Integer yCoord, String p1, String p2, String p3, String p4, String p5, String p6, String p7, String p8,
 			String quoteLeft, String data, String quoteRight, String lineFeed) {
 		this.id = id;
-		this.barcodeLabel = barcodeLabel;
+		this.bioShipmentLabel = bioShipmentLabel;
 		this.command = command;
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
@@ -97,12 +97,12 @@ public class BioshipmentMethod implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BARCODE_LABEL_ID", nullable = false)
-	public BarcodeLabel getBarcodeLabel() {
-		return this.barcodeLabel;
+	public BioShipmentLabel getBioShipmentLabel() {
+		return this.bioShipmentLabel;
 	}
 
-	public void setBarcodeLabel(BarcodeLabel barcodeLabel) {
-		this.barcodeLabel = barcodeLabel;
+	public void setBioShipmentLabel(BioShipmentLabel bioShipmentLabel) {
+		this.bioShipmentLabel = bioShipmentLabel;
 	}
 
 	@Column(name = "COMMAND", length = 10)

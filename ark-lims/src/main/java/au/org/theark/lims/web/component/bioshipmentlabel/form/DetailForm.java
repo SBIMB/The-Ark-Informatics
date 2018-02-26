@@ -25,12 +25,8 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -42,31 +38,27 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.string.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.theark.core.model.lims.entity.BarcodeLabel;
-import au.org.theark.core.model.lims.entity.BarcodeLabelData;
-import au.org.theark.core.model.study.entity.ArkModule;
-import au.org.theark.core.model.study.entity.ArkUser;
+import au.org.theark.core.model.lims.entity.BioShipmentLabel;
+import au.org.theark.core.model.lims.entity.BioShipmentLabelData;
 import au.org.theark.core.model.study.entity.Study;
 import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.vo.ArkCrudContainerVO;
-import au.org.theark.core.vo.ArkUserVO;
 import au.org.theark.core.web.form.AbstractDetailForm;
 import au.org.theark.lims.service.ILimsAdminService;
 import au.org.theark.lims.web.Constants;
-import au.org.theark.lims.web.component.barcodelabeldata.BarcodeLabelDataPanel;
+import au.org.theark.lims.web.component.bioshipmentlabeldata.BioShipmentLabelDataPanel;
 import au.org.theark.lims.web.component.button.PrinterListPanel;
 
 /**
  * @author cellis
  * 
  */
-public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
+public class DetailForm extends AbstractDetailForm<BioShipmentLabel> {
 
 
 	private static final long					serialVersionUID	= 6808980290575067265L;
@@ -85,11 +77,11 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 	private TextArea<String>					descriptionTxtArea;
 	private TextField<Number>					versionTxtFld;
 	
-	private Panel 									barcodeLabelDataPanel;
-	private Label									barcodeLabelTemplateLbl;
-	private DropDownChoice<BarcodeLabel>	barcodeLabelTemplateDdc;
-	private TextArea<String> 					exampleBarcodeDataFile;
-	StringValue barcodePrinterName;
+	private Panel 								bioShipmentLabelDataPanel;
+	private Label								bioShipmentLabelTemplateLbl;
+	private DropDownChoice<BioShipmentLabel>	bioShipmentLabelTemplateDdc;
+	private TextArea<String> 					exampleBioShipmentDataFile;
+	StringValue BioShipmentPrinterName;
 	
 	private PrinterListPanel printerList;
 
@@ -112,7 +104,7 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 		descriptionTxtArea = new TextArea<String>("description");
 		versionTxtFld = new TextField<Number>("version");
 		
-		barcodeLabelTemplateLbl = new Label("barcodeLabelTemplateLbl", "Clone from Barcode Label Template:"){
+		bioShipmentLabelTemplateLbl = new Label("bioShipmentLabelTemplateLbl", "Clone from BioShipment Label Template:"){
 
 			private static final long	serialVersionUID	= 1L;
 
@@ -124,12 +116,12 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 		};
 
 		initStudyDdc();
-		initBarcodeLabelTemplateDdc();
+		initBioShipmentLabelTemplateDdc();
 		
-		barcodeLabelDataPanel = new EmptyPanel("barcodeLabelDataPanel");
-		exampleBarcodeDataFile = new TextArea<String>("exampleBarcodeDataFile", new Model<String>(""));
-		exampleBarcodeDataFile.setEnabled(false);
-		exampleBarcodeDataFile.setVisible(isNew());
+		bioShipmentLabelDataPanel = new EmptyPanel("bioShipmentLabelDataPanel");
+		exampleBioShipmentDataFile = new TextArea<String>("exampleBioShipmentDataFile", new Model<String>(""));
+		exampleBioShipmentDataFile.setEnabled(false);
+		exampleBioShipmentDataFile.setVisible(isNew());
 
 		addDetailFormComponents();
 		attachValidators();
@@ -138,15 +130,15 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 	@Override
 	public void onBeforeRender() {
 		if(!isNew()) {
-			BarcodeLabelDataPanel barcodeLabelDataPanel = new BarcodeLabelDataPanel("barcodeLabelDataPanel", containerForm.getModelObject(), feedBackPanel);
-			barcodeLabelDataPanel.initialisePanel();
-			arkCrudContainerVO.getDetailPanelFormContainer().addOrReplace(barcodeLabelDataPanel);
-			exampleBarcodeDataFile.setModelObject(iLimsAdminService.getBarcodeLabelTemplate(containerForm.getModelObject()));
+			BioShipmentLabelDataPanel bioShipmentLabelDataPanel = new BioShipmentLabelDataPanel("BioShipmentLabelDataPanel", containerForm.getModelObject(), feedBackPanel);
+			bioShipmentLabelDataPanel.initialisePanel();
+			arkCrudContainerVO.getDetailPanelFormContainer().addOrReplace(bioShipmentLabelDataPanel);
+			exampleBioShipmentDataFile.setModelObject(iLimsAdminService.getBioShipmentLabelTemplate(containerForm.getModelObject()));
 		}
 		
-		String selected = new String();
-		if(containerForm.getModelObject().getBarcodePrinterName() != null) {
-			selected = containerForm.getModelObject().getBarcodePrinterName();
+		/*String selected = new String();
+		if(containerForm.getModelObject().getBioShipmentPrinterName() != null) {
+			selected = containerForm.getModelObject().getBioShipmentPrinterName();
 		}
 		printerList = new PrinterListPanel("printerList", selected, isNew());
 		printerList.add(new AbstractDefaultAjaxBehavior() {
@@ -163,9 +155,9 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 
 			@Override
 			protected void respond(AjaxRequestTarget arg0) {
-				barcodePrinterName = RequestCycle.get().getRequest().getQueryParameters().getParameterValue("selectedPrinter");
+				BioShipmentPrinterName = RequestCycle.get().getRequest().getQueryParameters().getParameterValue("selectedPrinter");
 			}
-		});
+		});*/
 		arkCrudContainerVO.getDetailPanelFormContainer().addOrReplace(printerList);
 		super.onBeforeRender();
 	}
@@ -192,14 +184,14 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
-				target.add(barcodeLabelTemplateDdc);
+				target.add(bioShipmentLabelTemplateDdc);
 			}
 		});
 	}
 	
-	private void initBarcodeLabelTemplateDdc() {
-		ChoiceRenderer<BarcodeLabel> choiceRenderer = new ChoiceRenderer<BarcodeLabel>("nameAndVersion", Constants.ID);
-		barcodeLabelTemplateDdc = new DropDownChoice<BarcodeLabel>("barcodeLabelTemplate") {
+	private void initBioShipmentLabelTemplateDdc() {
+		ChoiceRenderer<BioShipmentLabel> choiceRenderer = new ChoiceRenderer<BioShipmentLabel>("nameAndVersion", Constants.ID);
+		bioShipmentLabelTemplateDdc = new DropDownChoice<BioShipmentLabel>("BioShipmentLabelTemplate") {
 
 			private static final long	serialVersionUID	= 1L;
 
@@ -207,35 +199,35 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 			protected void onBeforeRender() {
 				super.onBeforeRender();
 				setVisible(isNew());
-				List<BarcodeLabel> choices = iLimsAdminService.getBarcodeLabelTemplates();
+				List<BioShipmentLabel> choices = iLimsAdminService.getBioShipmentLabelTemplates();
 				this.setChoices(choices);
 			}
 		};
-		barcodeLabelTemplateDdc.setOutputMarkupPlaceholderTag(true);
-		barcodeLabelTemplateDdc.setChoiceRenderer(choiceRenderer);
+		bioShipmentLabelTemplateDdc.setOutputMarkupPlaceholderTag(true);
+		bioShipmentLabelTemplateDdc.setChoiceRenderer(choiceRenderer);
 		
-		barcodeLabelTemplateDdc.add(new AjaxFormComponentUpdatingBehavior("onChange") {
+		bioShipmentLabelTemplateDdc.add(new AjaxFormComponentUpdatingBehavior("onChange") {
 
 			private static final long	serialVersionUID	= 1L;
 
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
-				// Clone data from other BarcodeLabel
-				if (barcodeLabelTemplateDdc.getModelObject() != null) {
-					String labelPrefix = barcodeLabelTemplateDdc.getModelObject().getLabelPrefix();
-					String labelSuffix = barcodeLabelTemplateDdc.getModelObject().getLabelSuffix();
-					Long version = barcodeLabelTemplateDdc.getModelObject().getVersion();
+				// Clone data from other BioShipmentLabel
+				if (bioShipmentLabelTemplateDdc.getModelObject() != null) {
+					String labelPrefix = bioShipmentLabelTemplateDdc.getModelObject().getLabelPrefix();
+					String labelSuffix = bioShipmentLabelTemplateDdc.getModelObject().getLabelSuffix();
+					Long version = bioShipmentLabelTemplateDdc.getModelObject().getVersion();
 					
 					// Set default/required values
 					containerForm.getModelObject().setLabelPrefix(labelPrefix);
 					containerForm.getModelObject().setLabelSuffix(labelSuffix);
 					containerForm.getModelObject().setVersion(version);
 					
-					exampleBarcodeDataFile.setModelObject(iLimsAdminService.getBarcodeLabelTemplate(barcodeLabelTemplateDdc.getModelObject()));
-					exampleBarcodeDataFile.setVisible(true);
-					target.add(exampleBarcodeDataFile);
+					exampleBioShipmentDataFile.setModelObject(iLimsAdminService.getBioShipmentLabelTemplate(bioShipmentLabelTemplateDdc.getModelObject()));
+					exampleBioShipmentDataFile.setVisible(true);
+					target.add(exampleBioShipmentDataFile);
 					
-					nameTxtFld.setModelObject(barcodeLabelTemplateDdc.getModelObject().getName());
+					nameTxtFld.setModelObject(bioShipmentLabelTemplateDdc.getModelObject().getName());
 					target.add(nameTxtFld);
 
 					versionTxtFld.setModelObject(version);
@@ -251,10 +243,10 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 		arkCrudContainerVO.getDetailPanelFormContainer().add(studyDdc);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(descriptionTxtArea);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(versionTxtFld);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(barcodeLabelDataPanel);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(barcodeLabelTemplateLbl);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(barcodeLabelTemplateDdc);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(exampleBarcodeDataFile);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(bioShipmentLabelDataPanel);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(bioShipmentLabelTemplateLbl);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(bioShipmentLabelTemplateDdc);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(exampleBioShipmentDataFile);
 		add(arkCrudContainerVO.getDetailPanelFormContainer());
 	}
 
@@ -277,7 +269,7 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 	 */
 	@Override
 	protected void onCancel(AjaxRequestTarget target) {
-		containerForm.setModelObject(new BarcodeLabel());
+		containerForm.setModelObject(new BioShipmentLabel());
 	}
 
 	/*
@@ -288,8 +280,8 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 	 */
 	@Override
 	protected void onDeleteConfirmed(AjaxRequestTarget target, String selection) {
-		iLimsAdminService.deleteBarcodeLabel(containerForm.getModelObject());
-		containerForm.info("The Barcode label record was deleted successfully.");
+		iLimsAdminService.deleteBioShipmentLabel(containerForm.getModelObject());
+		containerForm.info("The BioShipment label record was deleted successfully.");
 		editCancelProcess(target);
 		onCancel(target);
 	}
@@ -305,23 +297,23 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 	}
 
 	@Override
-	protected void onSave(Form<BarcodeLabel> containerForm, AjaxRequestTarget target) {
-		if(barcodePrinterName == null) {
-			this.error("Barcode Printer is required");
+	protected void onSave(Form<BioShipmentLabel> containerForm, AjaxRequestTarget target) {
+		if(BioShipmentPrinterName == null) {
+			this.error("BioShipment Printer is required");
 		}
 		else {
-			containerForm.getModelObject().setBarcodePrinterName(barcodePrinterName.toString());
+			//containerForm.getModelObject().setBioShipmentPrinterName(BioShipmentPrinterName.toString());
 		
 			if (isNew()) {
-				if (barcodeLabelTemplateDdc.getModelObject() != null) {
-					List<BarcodeLabelData> cloneBarcodeLabelDataList = iLimsAdminService.getBarcodeLabelDataByBarcodeLabel(barcodeLabelTemplateDdc.getModelObject());
-					List<BarcodeLabelData> barcodeLabelDataList = new ArrayList<BarcodeLabelData>(0);
-					for (Iterator<BarcodeLabelData> iterator = cloneBarcodeLabelDataList.iterator(); iterator.hasNext();) {
-						BarcodeLabelData clonebarcodeLabelData = (BarcodeLabelData) iterator.next();
-						BarcodeLabelData barcodeLabelData = new BarcodeLabelData();
-						// Copy parent details to new barcodeLabelData
+				if (bioShipmentLabelTemplateDdc.getModelObject() != null) {
+					List<BioShipmentLabelData> cloneBioShipmentLabelDataList = iLimsAdminService.getBioShipmentLabelDataByBioShipmentLabel(bioShipmentLabelTemplateDdc.getModelObject());
+					List<BioShipmentLabelData> BioShipmentLabelDataList = new ArrayList<BioShipmentLabelData>(0);
+					for (Iterator<BioShipmentLabelData> iterator = cloneBioShipmentLabelDataList.iterator(); iterator.hasNext();) {
+						BioShipmentLabelData cloneBioShipmentLabelData = (BioShipmentLabelData) iterator.next();
+						BioShipmentLabelData BioShipmentLabelData = new BioShipmentLabelData();
+						// Copy parent details to new BioShipmentLabelData
 						try {
-							PropertyUtils.copyProperties(barcodeLabelData, clonebarcodeLabelData);
+							PropertyUtils.copyProperties(BioShipmentLabelData, cloneBioShipmentLabelData);
 						}
 						catch (IllegalAccessException e) {
 							log.error(e.getMessage());
@@ -332,26 +324,26 @@ public class DetailForm extends AbstractDetailForm<BarcodeLabel> {
 						catch (NoSuchMethodException e) {
 							log.error(e.getMessage());
 						}
-						barcodeLabelData.setId(null);
-						barcodeLabelDataList.add(barcodeLabelData);
+						BioShipmentLabelData.setId(null);
+						BioShipmentLabelDataList.add(BioShipmentLabelData);
 					}
-					containerForm.getModelObject().setBarcodeLabelData(barcodeLabelDataList);
+					containerForm.getModelObject().setBioShipmentLabelData(BioShipmentLabelDataList);
 				}
 				
-				iLimsAdminService.createBarcodeLabel(containerForm.getModelObject());
+				iLimsAdminService.createBioShipmentLabel(containerForm.getModelObject());
 			}
 			else {
-				iLimsAdminService.updateBarcodeLabel(containerForm.getModelObject());
+				iLimsAdminService.updateBioShipmentLabel(containerForm.getModelObject());
 			}
-			this.info("Barcode label: " + containerForm.getModelObject().getName() + " was created/updated successfully.");
+			this.info("BioShipment label: " + containerForm.getModelObject().getName() + " was created/updated successfully.");
 		}
 		target.add(feedBackPanel);
 		onSavePostProcess(target);
 	}
 	
-	@Override
-	protected void onTest(Form<BarcodeLabel> containerForm, AjaxRequestTarget target) {
-	}
+	/*@Override
+	protected void onTest(Form<BioShipmentLabel> containerForm, AjaxRequestTarget target) {
+	}*/
 
 	/*
 	 * (non-Javadoc)

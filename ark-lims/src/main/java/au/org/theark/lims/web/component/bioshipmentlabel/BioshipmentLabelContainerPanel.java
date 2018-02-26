@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.theark.core.exception.EntityNotFoundException;
-import au.org.theark.core.model.lims.entity.BioshipmentLabel;
+import au.org.theark.core.model.lims.entity.BioShipmentLabel;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkUser;
 import au.org.theark.core.model.study.entity.Study;
@@ -53,13 +53,13 @@ import au.org.theark.lims.web.component.bioshipmentlabel.form.ContainerForm;
  * @author cellis
  * 
  */
-public class BioshipmentLabelContainerPanel extends AbstractContainerPanel<BioshipmentLabel> {
+public class BioshipmentLabelContainerPanel extends AbstractContainerPanel<BioShipmentLabel> {
 
 	private static final long	serialVersionUID	= 2114933695455527870L;
 
 	private static final Logger										log					= LoggerFactory.getLogger(BioshipmentLabelContainerPanel.class);
 
-	protected CompoundPropertyModel<BioshipmentLabel>				cpModel;
+	protected CompoundPropertyModel<BioShipmentLabel>				cpModel;
 
 	protected ArkCrudContainerVO										arkCrudContainerVO;
 
@@ -67,8 +67,8 @@ public class BioshipmentLabelContainerPanel extends AbstractContainerPanel<Biosh
 	protected ContainerForm												containerForm;
 	protected Panel														resultsListPanel;
 
-	private ArkDataProvider<BioshipmentLabel, ILimsAdminService>	dataProvider;
-	private DataView<BioshipmentLabel>									dataView;
+	private ArkDataProvider<BioShipmentLabel, ILimsAdminService>	dataProvider;
+	private DataView<BioShipmentLabel>									dataView;
 	
 	@SpringBean(name = au.org.theark.core.Constants.ARK_COMMON_SERVICE)
 	private IArkCommonService<Void>									iArkCommonService;
@@ -79,13 +79,13 @@ public class BioshipmentLabelContainerPanel extends AbstractContainerPanel<Biosh
 	public BioshipmentLabelContainerPanel(String id, WebMarkupContainer arkContextMarkup) {
 		super(id);
 		this.arkContextMarkup = arkContextMarkup;
-		BioshipmentLabel bioshipmentLabel = new BioshipmentLabel();
+		BioShipmentLabel bioshipmentLabel = new BioShipmentLabel();
 		Long sessionStudyId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.STUDY_CONTEXT_ID);
 		if(sessionStudyId != null) {
 			Study study = iArkCommonService.getStudy(sessionStudyId);
 			bioshipmentLabel.setStudy(study);
 		}
-		cpModel = new CompoundPropertyModel<BioshipmentLabel>(bioshipmentLabel);
+		cpModel = new CompoundPropertyModel<BioShipmentLabel>(bioshipmentLabel);
 		arkCrudContainerVO = new ArkCrudContainerVO();
 
 		initialisePanel();
@@ -135,30 +135,30 @@ public class BioshipmentLabelContainerPanel extends AbstractContainerPanel<Biosh
 
 	private void initialiseDataView() {
 		// Data provider to paginate resultList
-		dataProvider = new ArkDataProvider<BioshipmentLabel, ILimsAdminService>(iLimsAdminService) {
+		dataProvider = new ArkDataProvider<BioShipmentLabel, ILimsAdminService>(iLimsAdminService) {
 
 			private static final long	serialVersionUID	= 1L;
 			List<Study> studyListForUser =  getStudyListForUser();
 
 			public int size() {
-				return (int)service.getBioshipmentLabelCount(model.getObject(), studyListForUser).intValue();
+				return (int)service.getBioShipmentLabelCount(model.getObject(), studyListForUser).intValue();
 			}
 
-			public Iterator<BioshipmentLabel> iterator(int first, int count) {
-				List<BioshipmentLabel> listCollection = new ArrayList<BioshipmentLabel>();
+			public Iterator<BioShipmentLabel> iterator(int first, int count) {
+				List<BioShipmentLabel> listCollection = new ArrayList<BioShipmentLabel>();
 				if (ArkPermissionHelper.isActionPermitted(au.org.theark.core.Constants.SEARCH)) {
-					listCollection = service.searchPageableBioshipmentLabels(model.getObject(), first, count, studyListForUser);
+					listCollection = service.searchPageableBioShipmentLabels(model.getObject(), first, count, studyListForUser);
 				}
 				return listCollection.iterator();
 			}
 		};
 		// Set the criteria into the data provider's model
-		dataProvider.setModel(new LoadableDetachableModel<BioshipmentLabel>() {
+		dataProvider.setModel(new LoadableDetachableModel<BioShipmentLabel>() {
 
 			private static final long	serialVersionUID	= 1L;
 
 			@Override
-			protected BioshipmentLabel load() {
+			protected BioShipmentLabel load() {
 				return cpModel.getObject();
 			}
 		});

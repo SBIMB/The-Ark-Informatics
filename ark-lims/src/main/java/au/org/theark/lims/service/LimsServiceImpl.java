@@ -783,8 +783,8 @@ public class LimsServiceImpl implements ILimsService {
 		return iBiospecimenDao.getNextGeneratedBiospecimenUID(study);
 	}
 
-	public void batchInsertBiospecimensAndUpdateInventoryCell(Collection<Biospecimen> insertBiospecimens) {
-		iBiospecimenDao.batchInsertBiospecimensAndUpdateInventoryCell(insertBiospecimens);
+	public void batchInsertBiospecimensAndUpdateInventoryCell(Collection<Biospecimen> Biospecimens) {
+		iBiospecimenDao.batchInsertBiospecimensAndUpdateInventoryCell(Biospecimens);
 	}
 
 	public void batchUpdateBiospecimens(Collection<Biospecimen> updateBiospecimens) {

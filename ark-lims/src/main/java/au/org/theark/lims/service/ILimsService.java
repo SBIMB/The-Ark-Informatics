@@ -361,7 +361,7 @@ public interface ILimsService {
 	
 	public StringBuffer uploadAndReportMatrixBiocollectionFile(Study study, InputStream inputStream, long size, String fileFormat, char delimiterChar);
 
-	public void batchInsertBiospecimensAndUpdateInventoryCell(Collection<Biospecimen> insertBiospecimens);
+	public void batchInsertBiospecimensAndUpdateInventoryCell(Collection<Biospecimen> Biospecimens);
 
 	public void batchUpdateBiospecimens(Collection<Biospecimen> updateSubjects);
 

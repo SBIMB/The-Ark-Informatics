@@ -7,6 +7,7 @@ import au.org.theark.core.exception.EntityNotFoundException;
 import au.org.theark.core.model.study.entity.ArkUser;
 import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.vo.ArkUserVO;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.hibernate.Criteria;
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Repository;
 import au.org.theark.core.dao.HibernateSessionDao;
 import au.org.theark.core.model.lims.entity.BarcodeLabel;
 import au.org.theark.core.model.lims.entity.BarcodeLabelData;
+import au.org.theark.core.model.lims.entity.BioShipmentLabel;
+import au.org.theark.core.model.lims.entity.BioShipmentLabelData;
 import au.org.theark.core.model.lims.entity.BiospecimenUidPadChar;
 import au.org.theark.core.model.lims.entity.BiospecimenUidTemplate;
 import au.org.theark.core.model.lims.entity.BiospecimenUidToken;
@@ -33,10 +36,10 @@ import au.org.theark.core.model.study.entity.Study;
 public class LimsAdminDao extends HibernateSessionDao implements ILimsAdminDao {
 	private static final Logger log	= LoggerFactory.getLogger(LimsAdminDao.class);
 
-	private IArkCommonService iArkCommonService;
+	private IArkCommonService<?> iArkCommonService;
 
 	@Autowired
-	public void setiArkCommonService(IArkCommonService iArkCommonService) {
+	public void setiArkCommonService(IArkCommonService<?> iArkCommonService) {
 		this.iArkCommonService = iArkCommonService;
 	}
 
@@ -64,7 +67,7 @@ public class LimsAdminDao extends HibernateSessionDao implements ILimsAdminDao {
 	public void updateBarcodeLabelData(BarcodeLabelData barcodeLabelData) {
 		getSession().update(barcodeLabelData);
 	}
-
+	
 	public BarcodeLabel searchBarcodeLabel(BarcodeLabel barcodeLabel) {
 		Criteria criteria = getSession().createCriteria(BarcodeLabel.class);
 		if (barcodeLabel.getId() != null) {
@@ -128,6 +131,12 @@ public class LimsAdminDao extends HibernateSessionDao implements ILimsAdminDao {
 		return totalCount;
 	}
 
+	public long getBioShipmentLabelCount(BioShipmentLabel object) {
+		Criteria criteria = buildBioShipmentLabelCriteria(object);
+		criteria.setProjection(Projections.rowCount());
+		Long totalCount = (Long) criteria.uniqueResult();
+		return totalCount;
+	}
 
 	public List<BarcodeLabel> searchPageableBarcodeLabels(BarcodeLabel object, int first, int count) {
 		Criteria criteria = buildBarcodeLabelCriteria(object);
@@ -135,6 +144,97 @@ public class LimsAdminDao extends HibernateSessionDao implements ILimsAdminDao {
 		criteria.setMaxResults(count);
 		criteria.add(Restrictions.ne("study", new Study(new Long(0))));
 		List<BarcodeLabel> list = criteria.list();
+		return list;
+	}
+
+	
+	public void createBioShipmentLabel(BioShipmentLabel bioShipmentLabel) {
+		getSession().save(bioShipmentLabel);
+	}
+	
+	public void createBioShipmentLabelData(BioShipmentLabelData bioShipmentLabelData) {
+		getSession().save(bioShipmentLabelData);
+	}
+	
+	
+	public void deleteBioShipmentLabel(BioShipmentLabel bioShipmentLabel) {
+		getSession().delete(bioShipmentLabel);
+	}
+	
+	public void deleteBioShipmentLabelData(BioShipmentLabelData bioShipmentLabelData) {
+		getSession().delete(bioShipmentLabelData);
+	}
+	
+	public void updateBioShipmentLabel(BioShipmentLabel bioShipmentLabel) {
+		getSession().update(bioShipmentLabel);
+	}
+	
+	public void updateBioShipmentLabelData(BioShipmentLabelData bioShipmentLabelData) {
+		getSession().update(bioShipmentLabelData);
+	}
+
+	public BioShipmentLabel searchBioShipmentLabel(BioShipmentLabel bioShipmentLabel) {
+		Criteria criteria = getSession().createCriteria(BarcodeLabel.class);
+		if (bioShipmentLabel.getId() != null) {
+			criteria.add(Restrictions.eq("id", bioShipmentLabel.getId()));
+		}
+		else {
+			if (bioShipmentLabel.getStudy() != null) {
+				if(bioShipmentLabel.getStudy().getParentStudy() != null && bioShipmentLabel.getStudy().getParentStudy().getId() != null) {
+					// Use parent study
+					criteria.add(Restrictions.eq("study", bioShipmentLabel.getStudy().getParentStudy()));
+				}
+				else {	
+					criteria.add(Restrictions.eq("study", bioShipmentLabel.getStudy()));
+				}
+			}
+			
+/*			if (barcodeLabel.getBarcodePrinter() != null && barcodeLabel.getBarcodePrinter().getId() != null) {
+				criteria.add(Restrictions.eq("barcodePrinter", barcodeLabel.getBarcodePrinter()));
+			}
+	*/		
+			if (bioShipmentLabel.getName() != null) {
+				criteria.add(Restrictions.eq("name", bioShipmentLabel.getName()));
+			}
+			
+			// Restrict to latest version of label
+			DetachedCriteria versionCriteria = DetachedCriteria.forClass(BioShipmentLabel.class);
+			versionCriteria.add(Restrictions.eq("name", bioShipmentLabel.getName()));
+
+			if (bioShipmentLabel.getStudy() != null) {
+				if(bioShipmentLabel.getStudy().getParentStudy() != null && bioShipmentLabel.getStudy().getParentStudy().getId() != null) {
+					// Use parent study
+					versionCriteria.add(Restrictions.eq("study", bioShipmentLabel.getStudy().getParentStudy()));
+				}
+				else {	
+					versionCriteria.add(Restrictions.eq("study", bioShipmentLabel.getStudy()));
+				}
+			}
+			versionCriteria.setProjection(Projections.max("version"));
+			
+			criteria.add(Property.forName("version").eq(versionCriteria));
+		}
+		
+		BioShipmentLabel result = (BioShipmentLabel) criteria.uniqueResult();
+		return result;
+	}
+
+	public BioShipmentLabelData searchBioShipmentLabelData(BioShipmentLabelData bioShipmentLabelData) {
+		Criteria criteria = getSession().createCriteria(BarcodeLabelData.class);
+		if (bioShipmentLabelData.getId() != null) {
+			criteria.add(Restrictions.eq("id", bioShipmentLabelData.getId()));
+		}
+		
+		BioShipmentLabelData result = (BioShipmentLabelData) criteria.uniqueResult();
+		return result;
+	}
+
+	public List<BioShipmentLabel> searchPageableBioShipmentLabels(BioShipmentLabel object, int first, int count) {
+		Criteria criteria = buildBioShipmentLabelCriteria(object);
+		criteria.setFirstResult(first);
+		criteria.setMaxResults(count);
+		criteria.add(Restrictions.ne("study", new Study(new Long(0))));
+		List<BioShipmentLabel> list = criteria.list();
 		return list;
 	}
 
@@ -162,15 +262,53 @@ public class LimsAdminDao extends HibernateSessionDao implements ILimsAdminDao {
 		}
 		
 		/*if(barcodeLabel.getBarcodePrinter() != null) {
-			criteria.add(Restrictions.eq("barcodePrinter", barcodeLabel.getBarcodePrinter()));
+		criteria.add(Restrictions.eq("barcodePrinter", barcodeLabel.getBarcodePrinter()));
 		}*/
-
+	
 		if (barcodeLabel.getName() != null) {
 			criteria.add(Restrictions.eq("name", barcodeLabel.getName()));
 		}
-
+	
 		if (barcodeLabel.getDescription() != null) {
 			criteria.add(Restrictions.ilike("description", barcodeLabel.getDescription(), MatchMode.ANYWHERE));
+		}
+		
+		return criteria;
+	}
+		
+	protected Criteria buildBioShipmentLabelCriteria(BioShipmentLabel bioShipmentLabel) {
+		Criteria criteria = getSession().createCriteria(BarcodeLabel.class);
+		
+		if (bioShipmentLabel.getId() != null) {
+			criteria.add(Restrictions.eq("id", bioShipmentLabel.getId()));
+		}
+		
+		if(bioShipmentLabel.getStudy() != null) {
+			criteria.add(Restrictions.eq("study", bioShipmentLabel.getStudy()));
+		} else {
+		    try {
+				Subject currentUser = SecurityUtils.getSubject();
+				ArkUser arkUser = iArkCommonService.getArkUser(currentUser.getPrincipal().toString());
+				ArkUserVO arkUserVo = new ArkUserVO();
+				arkUserVo.setArkUserEntity(arkUser);
+				List<Study> studies = new ArrayList<Study>();
+				studies = iArkCommonService.getArkAuthorisationDao().getStudiesWithRoleForUser(arkUserVo, iArkCommonService.getArkAuthorisationDao().getArkRoleByName("LIMS Administrator"));
+				criteria.add(Restrictions.in("study", studies));
+			} catch (EntityNotFoundException e) {
+				log.error(e.getMessage());
+			}
+		}
+			
+		/*if(barcodeLabel.getBarcodePrinter() != null) {
+			criteria.add(Restrictions.eq("barcodePrinter", barcodeLabel.getBarcodePrinter()));
+		}*/
+
+		if (bioShipmentLabel.getName() != null) {
+			criteria.add(Restrictions.eq("name", bioShipmentLabel.getName()));
+		}
+
+		if (bioShipmentLabel.getDescription() != null) {
+			criteria.add(Restrictions.ilike("description", bioShipmentLabel.getDescription(), MatchMode.ANYWHERE));
 		}
 		
 		return criteria;
@@ -297,6 +435,17 @@ public class LimsAdminDao extends HibernateSessionDao implements ILimsAdminDao {
 		}
 		return list;
 	}
+	
+	public List<BioShipmentLabelData> getBioShipmentLabelDataByBioShipmentLabel(BioShipmentLabel bioShipmentLabel) {
+		List<BioShipmentLabelData> list = new ArrayList<BioShipmentLabelData>(0);
+		
+		if(bioShipmentLabel != null && bioShipmentLabel.getId() != null) {
+			Criteria criteria = getSession().createCriteria(BarcodeLabelData.class);
+			criteria.add(Restrictions.eq("bioshipmentLabel", bioShipmentLabel));
+			list = criteria.list();
+		}
+		return list;
+	}
 
 	public List<BarcodeLabel> getBarcodeLabelsByStudy(Study study) {
 		List<BarcodeLabel> list = new ArrayList<BarcodeLabel>(0);
@@ -321,6 +470,18 @@ public class LimsAdminDao extends HibernateSessionDao implements ILimsAdminDao {
 		return list;
 	}
 	
+	public List<BioShipmentLabel> getBioShipmentLabelTemplates() {
+		List<BioShipmentLabel> list = new ArrayList<BioShipmentLabel>(0);
+		
+		Criteria criteria = getSession().createCriteria(BioShipmentLabel.class);
+		criteria.add(Restrictions.isNull("study"));
+		criteria.addOrder(Order.asc("name"));
+		criteria.addOrder(Order.asc("version"));
+		list = criteria.list();
+		
+		return list;
+	}
+	
 	public Long getMaxBarcodeVersion(BarcodeLabel barcodeLabel) {
 		Long maxVersion = new Long(1);
 		Criteria criteria = buildBarcodeLabelCriteria(barcodeLabel);
@@ -337,6 +498,14 @@ public class LimsAdminDao extends HibernateSessionDao implements ILimsAdminDao {
 		Long totalCount = (Long) criteria.uniqueResult();
 		return totalCount;
 	}
+	
+	public Long getBioShipmentLabelCount(BioShipmentLabel object, List<Study> studyListForUser) {
+		Criteria criteria = buildBioShipmentLabelCriteria(object);
+		criteria.add(Restrictions.in("study", studyListForUser));
+		criteria.setProjection(Projections.rowCount());
+		Long totalCount = (Long) criteria.uniqueResult();
+		return totalCount;
+	}
 
 	public List<BarcodeLabel> searchPageableBarcodeLabels(BarcodeLabel object, int first, int count, List<Study> studyListForUser) {
 		Criteria criteria = buildBarcodeLabelCriteria(object);
@@ -344,6 +513,15 @@ public class LimsAdminDao extends HibernateSessionDao implements ILimsAdminDao {
 		criteria.setMaxResults(count);
 		criteria.add(Restrictions.in("study", studyListForUser));
 		List<BarcodeLabel> list = criteria.list();
+		return list;
+	}
+	
+	public List<BioShipmentLabel> searchPageableBioShipmentLabels(BioShipmentLabel object, int first, int count, List<Study> studyListForUser) {
+		Criteria criteria = buildBioShipmentLabelCriteria(object);
+		criteria.setFirstResult(first);
+		criteria.setMaxResults(count);
+		criteria.add(Restrictions.in("study", studyListForUser));
+		List<BioShipmentLabel> list = criteria.list();
 		return list;
 	}
 

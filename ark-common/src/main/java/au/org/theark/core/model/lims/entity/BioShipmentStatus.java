@@ -37,8 +37,8 @@ import au.org.theark.core.model.Constants;
  * 
  */
 @Entity
-@Table(name = "barcode_label_data", schema = Constants.LIMS_TABLE_SCHEMA)
-public class BioshipmentData implements java.io.Serializable {
+@Table(name = "bio_shipment_status", schema = Constants.LIMS_TABLE_SCHEMA)
+public class BioShipmentStatus implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Long			id;
@@ -59,10 +59,10 @@ public class BioshipmentData implements java.io.Serializable {
 	private String			quoteRight;
 	private String			lineFeed;
 
-	public BioshipmentData() {
+	public BioShipmentStatus() {
 	}
 
-	public BioshipmentData(Long id, Bioshipment bioshipment, String command, Integer xCoord, Integer yCoord, String p1, String p2, String p3, String p4, String p5, String p6, String p7, String p8,
+	public BioShipmentStatus(Long id, Bioshipment bioshipment, String command, Integer xCoord, Integer yCoord, String p1, String p2, String p3, String p4, String p5, String p6, String p7, String p8,
 			String quoteLeft, String data, String quoteRight, String lineFeed) {
 		this.id = id;
 		this.barcodeLabel = barcodeLabel;

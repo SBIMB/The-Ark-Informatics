@@ -19,6 +19,8 @@ import au.org.theark.core.model.lims.entity.BarcodeLabel;
 import au.org.theark.core.model.lims.entity.BarcodeLabelData;
 import au.org.theark.core.model.lims.entity.BioCollection;
 import au.org.theark.core.model.lims.entity.BioCollectionCustomFieldData;
+import au.org.theark.core.model.lims.entity.BioShipmentLabel;
+import au.org.theark.core.model.lims.entity.BioShipmentLabelData;
 import au.org.theark.core.model.lims.entity.Biospecimen;
 import au.org.theark.core.model.lims.entity.BiospecimenUidPadChar;
 import au.org.theark.core.model.lims.entity.BiospecimenUidTemplate;
@@ -42,7 +44,7 @@ import au.org.theark.lims.model.dao.ILimsAdminDao;
 public class LimsAdminServiceImpl implements ILimsAdminService {
 	private static final Logger	log					= LoggerFactory.getLogger(LimsAdminServiceImpl.class);
 	@SuppressWarnings("unchecked")
-	private IArkCommonService		iArkCommonService;
+	private IArkCommonService<?>		iArkCommonService;
 	private ILimsAdminDao			iLimsAdminDao;
 	private IBiospecimenDao			iBiospecimenDao;
 	private IBioCollectionDao		iBioCollectionDao;
@@ -96,7 +98,6 @@ public class LimsAdminServiceImpl implements ILimsAdminService {
 		this.velocityEngine = velocityEngine;
 	}
 
-
 	public void createBarcodeLabel(BarcodeLabel barcodeLabel) {
 		iLimsAdminDao.createBarcodeLabel(barcodeLabel);
 
@@ -142,6 +143,54 @@ public class LimsAdminServiceImpl implements ILimsAdminService {
 	public BarcodeLabelData searchBarcodeLabelData(BarcodeLabelData barcodeLabelData) {
 		return iLimsAdminDao.searchBarcodeLabelData(barcodeLabelData);
 	}
+	
+	//----
+	public void createBioShipmentLabel(BioShipmentLabel bioShipmentLabel) {
+		iLimsAdminDao.createBioShipmentLabel(bioShipmentLabel);
+
+		// Create child data
+		for (Iterator<BioShipmentLabelData> iterator = bioShipmentLabel.getBioShipmentLabelData().iterator(); iterator.hasNext();) {
+			BioShipmentLabelData bioShipmentLabelData = (BioShipmentLabelData) iterator.next();
+			bioShipmentLabelData.setBioShipmentLabel(bioShipmentLabel);
+			createBioShipmentLabelData(bioShipmentLabelData);
+		}
+	}
+
+	public void createBioShipmentLabelData(BioShipmentLabelData bioShipmentLabelData) {
+		iLimsAdminDao.createBioShipmentLabelData(bioShipmentLabelData);
+	}
+
+	public void deleteBioShipmentLabel(BioShipmentLabel bioShipmentLabel) {
+		iLimsAdminDao.deleteBioShipmentLabel(bioShipmentLabel);
+	}
+
+	public void deleteBioShipmentLabelData(BioShipmentLabelData bioShipmentLabelData) {
+		iLimsAdminDao.deleteBioShipmentLabelData(bioShipmentLabelData);
+	}
+
+	public void updateBioShipmentLabel(BioShipmentLabel bioShipmentLabel) {
+		iLimsAdminDao.updateBioShipmentLabel(bioShipmentLabel);
+
+		// Update child data
+		for (Iterator<BioShipmentLabelData> iterator = bioShipmentLabel.getBioShipmentLabelData().iterator(); iterator.hasNext();) {
+			BioShipmentLabelData bioShipmentLabelData = (BioShipmentLabelData) iterator.next();
+			bioShipmentLabelData.setBioShipmentLabel(bioShipmentLabel);
+			updateBioShipmentLabelData(bioShipmentLabelData);
+		}
+	}
+
+	public void updateBioShipmentLabelData(BioShipmentLabelData bioShipmentLabelData) {
+		iLimsAdminDao.updateBioShipmentLabelData(bioShipmentLabelData);
+	}
+
+	public BioShipmentLabel searchBioShipmentLabel(BioShipmentLabel bioShipmentLabel) {
+		return iLimsAdminDao.searchBioShipmentLabel(bioShipmentLabel);
+	}
+
+	public BioShipmentLabelData searchBioShipmentLabelData(BioShipmentLabelData bioShipmentLabelData) {
+		return iLimsAdminDao.searchBioShipmentLabelData(bioShipmentLabelData);
+	}
+
 
 	public String createBioCollectionLabelTemplate(BioCollection bioCollection, BarcodeLabel barcodeLabel) {
 		/* lets make a Context and put data into it */
@@ -411,9 +460,99 @@ public class LimsAdminServiceImpl implements ILimsAdminService {
 
 		return sb.toString();
 	}
+	
+	/**
+	 * Build the barcode label commands into a template string for merging via Velocity
+	 * 
+	 * @param barcodeLabel
+	 * @return
+	 */
+	public String getBioShipmentLabelTemplate(BioShipmentLabel bioShipmentLabel) {
+		StringBuffer sb = new StringBuffer();
+		bioShipmentLabel.setBioShipmentLabelData(getBioShipmentLabelDataByBioShipmentLabel(bioShipmentLabel));
+
+		if (bioShipmentLabel != null && bioShipmentLabel.getLabelPrefix() != null) {
+			sb.append(bioShipmentLabel.getLabelPrefix());
+			sb.append("\n");
+
+			List<BioShipmentLabelData> data = bioShipmentLabel.getBioShipmentLabelData();
+			for (Iterator<BioShipmentLabelData> iterator = data.iterator(); iterator.hasNext();) {
+				BioShipmentLabelData bioShipmentLabelData = (BioShipmentLabelData) iterator.next();
+
+				sb.append(bioShipmentLabelData.getCommand());
+				sb.append(bioShipmentLabelData.getXCoord());
+				sb.append(",");
+				sb.append(bioShipmentLabelData.getYCoord());
+				sb.append(",");
+
+				if (bioShipmentLabelData.getP1() != null) {
+					sb.append(bioShipmentLabelData.getP1());
+					sb.append(",");
+				}
+
+				if (bioShipmentLabelData.getP2() != null) {
+					sb.append(bioShipmentLabelData.getP2());
+					sb.append(",");
+				}
+
+				if (bioShipmentLabelData.getP3() != null) {
+					sb.append(bioShipmentLabelData.getP3());
+					sb.append(",");
+				}
+
+				if (bioShipmentLabelData.getP4() != null) {
+					sb.append(bioShipmentLabelData.getP4());
+					sb.append(",");
+				}
+
+				if (bioShipmentLabelData.getP5() != null) {
+					sb.append(bioShipmentLabelData.getP5());
+					sb.append(",");
+				}
+
+				if (bioShipmentLabelData.getP6() != null) {
+					sb.append(bioShipmentLabelData.getP6());
+					sb.append(",");
+				}
+
+				if (bioShipmentLabelData.getP7() != null) {
+					sb.append(bioShipmentLabelData.getP7());
+					sb.append(",");
+				}
+
+				if (bioShipmentLabelData.getP8() != null) {
+					sb.append(bioShipmentLabelData.getP7());
+					sb.append(",");
+				}
+
+				// Quote the data
+				sb.append(bioShipmentLabelData.getQuoteLeft()==null?"":bioShipmentLabelData.getQuoteLeft());
+
+				// Add the data/text
+				sb.append(bioShipmentLabelData.getData()==null?"":bioShipmentLabelData.getData());
+
+				// End quote the data
+				sb.append(bioShipmentLabelData.getQuoteRight()==null?"":bioShipmentLabelData.getQuoteRight());
+
+				// Add a line feed
+				// sb.append(barcodeLabelData.getLineFeed());
+				sb.append("\n");
+			}
+
+			// add label suffix
+			sb.append(bioShipmentLabel.getLabelSuffix());
+			sb.append("\n");
+		}
+
+		return sb.toString();
+	}
 
 	public long getBarcodeLabelCount(BarcodeLabel object) {
 		return iLimsAdminDao.getBarcodeLabelCount(object);
+	}
+
+	public long getBioShipmentLabelCount(BioShipmentLabel object) {
+		return iLimsAdminDao.getBioShipmentLabelCount(object);
 	}
 
 	public List<BarcodeLabel> searchPageableBarcodeLabels(BarcodeLabel object, int first, int count) {
@@ -471,6 +610,10 @@ public class LimsAdminServiceImpl implements ILimsAdminService {
 	public List<BarcodeLabelData> getBarcodeLabelDataByBarcodeLabel(BarcodeLabel barcodeLabel) {
 		return iLimsAdminDao.getBarcodeLabelDataByBarcodeLabel(barcodeLabel);
 	}
+	
+	public List<BioShipmentLabelData> getBioShipmentLabelDataByBioShipmentLabel(BioShipmentLabel bioShipmentLabel) {
+		return iLimsAdminDao.getBioShipmentLabelDataByBioShipmentLabel(bioShipmentLabel);
+	}
 
 	public List<BarcodeLabel> getBarcodeLabelsByStudy(Study study) {
 		return iLimsAdminDao.getBarcodeLabelsByStudy(study);
@@ -479,12 +622,24 @@ public class LimsAdminServiceImpl implements ILimsAdminService {
 	public List<BarcodeLabel> getBarcodeLabelTemplates() {
 		return iLimsAdminDao.getBarcodeLabelTemplates();
 	}
+	
+	public List<BioShipmentLabel> getBioShipmentLabelTemplates() {
+		return iLimsAdminDao.getBioShipmentLabelTemplates();
+	}
 
 	public Long getBarcodeLabelCount(BarcodeLabel object, List<Study> studyListForUser) {
 		return iLimsAdminDao.getBarcodeLabelCount(object, studyListForUser);
 	}
+	
+	public Long getBioShipmentLabelCount(BioShipmentLabel object, List<Study> studyListForUser) {
+		return iLimsAdminDao.getBioShipmentLabelCount(object, studyListForUser);
+	}
 
 	public List<BarcodeLabel> searchPageableBarcodeLabels(BarcodeLabel object, int first, int count, List<Study> studyListForUser) {
 		return iLimsAdminDao.searchPageableBarcodeLabels(object, first, count, studyListForUser);
-	}
+	}	
+	
+	public List<BioShipmentLabel> searchPageableBioShipmentLabels(BioShipmentLabel object, int first, int count, List<Study> studyListForUser) {
+		return iLimsAdminDao.searchPageableBioShipmentLabels(object, first, count, studyListForUser);
+	}	
 }

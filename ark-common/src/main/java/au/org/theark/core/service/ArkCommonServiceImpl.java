@@ -1328,10 +1328,6 @@ public class ArkCommonServiceImpl<T> implements IArkCommonService {
 		return studyDao.getUploadType(id);
 	}
 	
-	public Collection<UploadType> getUploadTypesForSubject() {
-		return studyDao.getUploadTypesForSubject();
-	}
-
 	public Collection<UploadType> getUploadTypesForLims() {
 		return studyDao.getUploadTypesForLims();
 	}

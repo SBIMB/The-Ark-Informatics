@@ -346,7 +346,7 @@ public interface IInventoryDao {
 	
 	public String fillOutAllBoxesWithEmptyInvCellsToCapacity(Study study);
 	
-	public InvSite getInvSiteByname(String siteName);
+	public InvSite getInvSiteByName(String siteName);
 	
 	public InvFreezer getFreezerByNameForSite(InvSite invSite,String freezerName);
 	

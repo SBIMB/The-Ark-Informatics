@@ -272,8 +272,8 @@ public class BioCollectionListForm extends Form<LimsVO> {
 					new Label("bioCollection.surgeryDate", "");
 				}
 				
-				if (bioCollection.getPatientAge() != null) {
-					patientAgeLblFld = new Label("bioCollection.patientAge", bioCollection.getPatientAge().toString());
+				if (bioCollection.getPatientage() != null) {
+					patientAgeLblFld = new Label("bioCollection.patientAge", bioCollection.getPatientage().toString());
 				}
 				else {
 					patientAgeLblFld = new Label("bioCollection.patientAge", "");

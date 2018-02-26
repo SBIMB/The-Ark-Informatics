@@ -42,7 +42,8 @@ public class AdminVO implements ArkVo, Serializable {
 	private static final long					serialVersionUID	= -3939245546324873647L;
 
 	private ArkRole								arkRole;
-	private ArkModule								arkModule;
+	private ArkModule							arkModule;
+	private ArkRedcap							arkRedcap;
 	private ArkFunction							arkFunction;
 	private ArkModuleFunction					arkModuleFunction;
 	private ArkModuleRole						arkModuleRole;

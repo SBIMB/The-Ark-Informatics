@@ -57,7 +57,7 @@ public class ShelfDetailPanel extends Panel {
 	}
 
 	public void initialisePanel() {
-		detailForm = new ShelfDetailForm("detailForm", feedbackPanel, detailContainer, containerForm, tree, node);
+		detailForm = new ShelfDetailForm("detailForm", feedbackPanel, detailContainer, containerForm, tree, node, this);
 		detailForm.initialiseDetailForm();
 		
 		addRack = new ArkBusyAjaxButton("addRack") {

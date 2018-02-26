@@ -274,7 +274,7 @@ public class BiospecimenUploader {
 							//AGEATCOLLECTION
 							if(csvReader.getIndex("AGEATCOLLECTION") > 0){
 								String ageAtCollection = csvReader.get("AGEATCOLLECTION");
-								bioCollection.setPatientAge(Integer.parseInt(ageAtCollection));					
+								bioCollection.setPatientage(Integer.parseInt(ageAtCollection));					
 							}	
 						
 							//BIOCOLLECTIONCOMMENTS
@@ -630,7 +630,7 @@ public class BiospecimenUploader {
 		uploadReport.append("\n");
 
 		// Batch insert/update
-		iLimsService.batchInsertBiospecimens(insertBiospecimens);
+		iLimsService.batchInsertBiospecimensAndUpdateInventoryCell(insertBiospecimens);
 		//iLimsService.batchUpdateBiospecimens(updateBiospecimens);
 		//iLimsService.batchUpdateInvCells(updateInvCells);
 		

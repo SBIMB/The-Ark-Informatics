@@ -857,7 +857,7 @@ public class InventoryDao extends HibernateSessionDao implements IInventoryDao {
 	 * @param siteName
 	 * @return
 	 */
-	public InvSite getInvSiteByname(String siteName) {
+	public InvSite getInvSiteByName(String siteName) {
 		Criteria criteria = getSession().createCriteria(InvSite.class);
 		if (siteName != null && !siteName.isEmpty()) {
 			criteria.add(Restrictions.eq("name", siteName));
@@ -876,10 +876,24 @@ public class InventoryDao extends HibernateSessionDao implements IInventoryDao {
 		return (InvFreezer) criteria.uniqueResult();
 	}
 	
-	public InvRack getRackByNameForFreezer(InvFreezer invFreezer,String rackName){
-		Criteria criteria = getSession().createCriteria(InvRack.class);
+	public InvShelf getShelfByNameForFreezer(InvFreezer invFreezer,String shelfName){
+		Criteria criteria = getSession().createCriteria(InvShelf.class);
 		if(invFreezer!=null){
 			criteria.add(Restrictions.eq("invFreezer", invFreezer));
+		}
+		if (shelfName != null && !shelfName.isEmpty()) {
+			criteria.add(Restrictions.eq("name", shelfName));
+		}
+		return (InvShelf) criteria.uniqueResult();
+	}
+	
+	/**
+	 * 
+	 */
+	public InvRack getRackByNameForShelf(InvShelf invShelf,String rackName){
+		Criteria criteria = getSession().createCriteria(InvRack.class);
+		if(invShelf!=null){
+			criteria.add(Restrictions.eq("invShelf", invShelf));
 		}
 		if (rackName != null && !rackName.isEmpty()) {
 			criteria.add(Restrictions.eq("name", rackName));

@@ -28,8 +28,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import au.org.theark.core.model.lims.entity.BarcodeLabel;
-import au.org.theark.core.model.lims.entity.BarcodeLabelData;
+import au.org.theark.core.model.lims.entity.BioShipmentLabel;
+import au.org.theark.core.model.lims.entity.BioShipmentLabelData;
 import au.org.theark.core.web.component.listeditor.AbstractListEditor;
 import au.org.theark.core.web.component.listeditor.ListItem;
 import au.org.theark.lims.service.ILimsAdminService;
@@ -38,28 +38,28 @@ import au.org.theark.lims.service.ILimsAdminService;
  * @author cellis
  * 
  */
-public class BarcodeLabelDataPanel extends Panel {
+public class BioShipmentLabelDataPanel extends Panel {
 
 
 	private static final long	serialVersionUID	= 1L;
 	protected FeedbackPanel			feedBackPanel;
-	private BarcodeLabel barcodeLabel= new BarcodeLabel();
+	private BioShipmentLabel bioShipmentLabel= new BioShipmentLabel();
 	private TextArea<String>					labelPrefixTxtFld;
 	private TextArea<String>					labelSuffixTxtFld;
 	
 	@SpringBean(name = au.org.theark.lims.web.Constants.LIMS_ADMIN_SERVICE)
 	private ILimsAdminService					iLimsAdminService;
 	
-	public BarcodeLabelDataPanel(String id, final BarcodeLabel barcodeLabel, FeedbackPanel feedBackPanel) {
+	public BioShipmentLabelDataPanel(String id, final BioShipmentLabel bioShipmentLabel, FeedbackPanel feedBackPanel) {
 		super(id);
-		this.barcodeLabel = barcodeLabel;
+		this.bioShipmentLabel = bioShipmentLabel;
 		this.feedBackPanel = feedBackPanel;
 		setOutputMarkupPlaceholderTag(true);
 	}
 	
 	@Override
 	protected void onBeforeRender() {
-		barcodeLabel.setBarcodeLabelData(iLimsAdminService.getBarcodeLabelDataByBarcodeLabel(barcodeLabel));
+		bioShipmentLabel.setBioShipmentLabelData(iLimsAdminService.getBioShipmentLabelDataByBioShipmentLabel(bioShipmentLabel));
 		initialisePanel();
 		super.onBeforeRender();
 	}
@@ -72,14 +72,14 @@ public class BarcodeLabelDataPanel extends Panel {
 		labelPrefixTxtFld.setRequired(true).setLabel(new StringResourceModel("error.labelPrefix.required", this, new Model<String>("Prefix")));
 		labelSuffixTxtFld.setRequired(true).setLabel(new StringResourceModel("error.labelSuffix.required", this, new Model<String>("Suffix")));
 		
-		final AbstractListEditor<BarcodeLabelData> listEditor = new AbstractListEditor<BarcodeLabelData>("barcodeLabelData", new PropertyModel(this, "barcodeLabel.barcodeLabelData")) {
+		final AbstractListEditor<BioShipmentLabelData> listEditor = new AbstractListEditor<BioShipmentLabelData>("bioShipmentLabelData", new PropertyModel(this, "bioShipmentLabel.bioShipmentLabelData")) {
 			
 
 			private static final long	serialVersionUID	= 1L;
 
 			@Override
-			protected void onPopulateItem(ListItem<BarcodeLabelData> item) {
-				item.setModel(new CompoundPropertyModel<BarcodeLabelData>(item.getModel()));
+			protected void onPopulateItem(ListItem<BioShipmentLabelData> item) {
+				item.setModel(new CompoundPropertyModel<BioShipmentLabelData>(item.getModel()));
             item.add(new TextField<String>("id").setEnabled(false));
             item.add(new TextField<String>("command"));
             item.add(new TextField<String>("xCoord"));
@@ -102,16 +102,16 @@ public class BarcodeLabelDataPanel extends Panel {
 	}
 	
 	/**
-	 * @param barcodeLabel the barcodeLabel to set
+	 * @param bioShipmentLabel the bioShipmentLabel to set
 	 */
-	public void setBarcodeLabel(BarcodeLabel barcodeLabel) {
-		this.barcodeLabel = barcodeLabel;
+	public void setBioShipmentLabel(BioShipmentLabel bioShipmentLabel) {
+		this.bioShipmentLabel = bioShipmentLabel;
 	}
 
 	/**
-	 * @return the barcodeLabel
+	 * @return the bioShipmentLabel
 	 */
-	public BarcodeLabel getBarcodeLabel() {
-		return barcodeLabel;
+	public BioShipmentLabel getBioShipmentLabel() {
+		return bioShipmentLabel;
 	}
 }

@@ -3,8 +3,8 @@ package au.org.theark.geno.model.vo;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import au.org.theark.core.vo.BaseVO;
 import au.org.theark.core.vo.ArkVo;
+import au.org.theark.core.vo.BaseVO;
 
 public class RowListVO extends BaseVO implements ArkVo{
 
@@ -35,7 +35,6 @@ public class RowListVO extends BaseVO implements ArkVo{
 		return "RowListVO [rows=" + rows + "]";
 	}
 	
-	@Override
 	public String getArkVoName(){
 		return "Row";
 	}

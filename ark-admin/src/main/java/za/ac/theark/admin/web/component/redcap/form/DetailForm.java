@@ -153,11 +153,11 @@ public class DetailForm extends AbstractDetailForm<AdminVO> {
 		
 		enabled = new CheckBox("arkRedcap.enabled");
 		
-		testButton = new AjaxButton(Constants.TEST, new StringResourceModel("page.test", this, null)) {
+	/*	testButton = new AjaxButton(Constants.TEST, new StringResourceModel("page.test", this, null)) {
 
-		/***
+		*//***
 		 * 
-		 **/
+		 **//*
 		private static final long serialVersionUID = -8144643942788032868L;
 
 		@Override
@@ -175,7 +175,7 @@ public class DetailForm extends AbstractDetailForm<AdminVO> {
 		protected void onError(AjaxRequestTarget target, Form<?> arg1) {
 			testOnErrorProcess(target);	
 		}	
-	};
+	};*/
 	
 		attachValidators();
 		

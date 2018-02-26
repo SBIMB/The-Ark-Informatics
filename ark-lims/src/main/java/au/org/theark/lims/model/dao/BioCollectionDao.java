@@ -18,12 +18,13 @@
  ******************************************************************************/
 package au.org.theark.lims.model.dao;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import au.org.theark.core.dao.IStudyDao;
 import au.org.theark.core.service.IArkCommonService;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -47,9 +48,7 @@ import au.org.theark.core.model.lims.entity.BioCollection;
 import au.org.theark.core.model.lims.entity.BioCollectionCustomFieldData;
 import au.org.theark.core.model.lims.entity.BioCollectionUidTemplate;
 import au.org.theark.core.model.lims.entity.BioSampletype;
-import au.org.theark.core.model.lims.entity.BioTransaction;
 import au.org.theark.core.model.lims.entity.Biospecimen;
-import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.model.study.entity.ArkFunction;
 import au.org.theark.core.model.study.entity.CustomField;
 import au.org.theark.core.model.study.entity.CustomFieldCategory;
@@ -65,7 +64,7 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 	private static Logger		log	= LoggerFactory.getLogger(BioCollection.class);
 
 	private BioCollectionUidGenerator bioCollectionUidGenerator;
-	private IArkCommonService arkCommonService;
+	private IArkCommonService<?> arkCommonService;
 
 	@Autowired
 	public void setBioCollectionUidGenerator(BioCollectionUidGenerator bioCollectionUidGenerator) {
@@ -73,7 +72,7 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 	}
 
 	@Autowired
-	public void setArkCommonService(IArkCommonService arkCommonService) {
+	public void setArkCommonService(IArkCommonService<?> arkCommonService) {
 		this.arkCommonService = arkCommonService;
 	}
 
@@ -107,8 +106,8 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 		if (bioCollection.getStudy() != null)
 			criteria.add(Restrictions.eq("study", bioCollection.getStudy()));
 		
-		if (bioCollection.getPatientAge() != null)
-			criteria.add(Restrictions.eq("patientAge", bioCollection.getPatientAge()));
+		if (bioCollection.getPatientage() != null)
+			criteria.add(Restrictions.eq("patientAge", bioCollection.getPatientage()));
 
 		if (bioCollection.getCollectionDate() != null)
 			criteria.add(Restrictions.eq("collectionDate", bioCollection.getCollectionDate()));
@@ -327,9 +326,9 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 			criteria.add(Restrictions.eq("collectionDate", bioCollectionCriteria.getCollectionDate()));
 		}
 
-		if (bioCollectionCriteria.getPatientAge() != null) {
-			criteria.add(Restrictions.eq("patientAge", bioCollectionCriteria.getPatientAge()));
-			log.info(bioCollectionCriteria.getPatientAge().toString());
+		if (bioCollectionCriteria.getPatientage() != null) {
+			criteria.add(Restrictions.eq("patientAge", bioCollectionCriteria.getPatientage()));
+			log.info(bioCollectionCriteria.getPatientage().toString());
 		}
 
 		if (bioCollectionCriteria.getSurgeryDate() != null) {
@@ -345,7 +344,7 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 	public long getBioCollectionCustomFieldDataCount(BioCollection bioCollectionCriteria, ArkFunction arkFunction) {
 		
 		// Added to allow child studies to inherit parent defined custom fields
-		List studyList = new ArrayList();
+		List<Study> studyList = new ArrayList<Study>();
 		studyList.add(bioCollectionCriteria.getStudy());
 		if(bioCollectionCriteria.getStudy().getParentStudy() != null && bioCollectionCriteria.getStudy().getParentStudy() != bioCollectionCriteria.getStudy()) {
 			studyList.add(bioCollectionCriteria.getStudy().getParentStudy());
@@ -385,7 +384,7 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 		query.setParameter("bioCollectionId", bioCollectionCriteria.getId());
 		
 		// Allow child studies to inherit parent defined custom fields
-		List studyList = new ArrayList();
+		List<Serializable> studyList = new ArrayList<Serializable>();
 		studyList.add(bioCollectionCriteria.getStudy().getId());
 		if(bioCollectionCriteria.getStudy().getParentStudy() != null && bioCollectionCriteria.getStudy().getParentStudy() != bioCollectionCriteria.getStudy()) {
 			studyList.add(bioCollectionCriteria.getStudy().getParentStudy().getId());
@@ -496,7 +495,7 @@ public class BioCollectionDao extends HibernateSessionDao implements IBioCollect
 			
 			Query query = getSession().createQuery(theHQLQuery);
 			//query.setParameter("studyId", subjectStudy.getId());
-			List studyList = new ArrayList();
+			List<Study> studyList = new ArrayList<Study>();
 			studyList.add(bioCollection.getStudy());
 			if(bioCollection.getStudy().getParentStudy() != null && bioCollection.getStudy().getParentStudy() != bioCollection.getStudy()) {
 				studyList.add(bioCollection.getStudy().getParentStudy());

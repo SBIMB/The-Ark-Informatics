@@ -12,6 +12,7 @@ import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.model.lims.entity.InvColRowType;
 import au.org.theark.core.model.lims.entity.InvFreezer;
 import au.org.theark.core.model.lims.entity.InvRack;
+import au.org.theark.core.model.lims.entity.InvShelf;
 import au.org.theark.core.model.lims.entity.InvSite;
 import au.org.theark.core.model.study.entity.Study;
 import au.org.theark.core.vo.BiospecimenLocationVO;
@@ -320,7 +321,9 @@ public interface IInventoryService {
 	
 	public InvFreezer getInvFreezerByNameForSite(InvSite invSite,String freezerName);
 	
-	public InvRack getInvRackByNameForFreezer(InvFreezer invFreezer,String rackName);
+	public InvShelf getInvShelfByNameForFreezer(InvFreezer invFreezer,String shelfName);
+	
+	public InvRack getInvRackByNameForShelf(InvShelf invShelf,String rackName);
 	
 	public InvBox getInvBoxByNameForRack(InvRack invRack,String boxName);
 

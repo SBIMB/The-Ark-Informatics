@@ -5,6 +5,8 @@ import java.util.List;
 import au.org.theark.core.model.lims.entity.BarcodeLabel;
 import au.org.theark.core.model.lims.entity.BarcodeLabelData;
 import au.org.theark.core.model.lims.entity.BioCollection;
+import au.org.theark.core.model.lims.entity.BioShipmentLabel;
+import au.org.theark.core.model.lims.entity.BioShipmentLabelData;
 import au.org.theark.core.model.lims.entity.Biospecimen;
 import au.org.theark.core.model.lims.entity.BiospecimenUidPadChar;
 import au.org.theark.core.model.lims.entity.BiospecimenUidTemplate;
@@ -76,6 +78,67 @@ public interface ILimsAdminService {
 	public void deleteBarcodeLabelData(BarcodeLabelData barcodeLabelData);
 	
 	/**
+	 * Gets the barcodeLabel from the database
+	 * @param barcodeLabel
+	 * @return
+	 */
+	public BioShipmentLabel searchBioShipmentLabel(BioShipmentLabel bioShipmentLabel);
+	
+	/**
+	 * Gets the barcodeLabelData from the database
+	 * @param barcodeLabelData
+	 * @return
+	 */
+	public BioShipmentLabelData searchBioShipmentLabelData(BioShipmentLabelData bioShipmentLabelData);
+	
+	/**
+	 * Create a barcode Label based on the supplied barcodeLabel
+	 * 
+	 * @param barcodeLabel
+	 *           the BarcodeLabel object
+	 */
+	public void createBioShipmentLabel(BioShipmentLabel bioShipmentLabel);
+	
+	/**
+	 * Update a barcode label based on the supplied BarcodeLabel
+	 * 
+	 * @param BarcodeLabel
+	 *           the BarcodeLabel object
+	 */
+	public void updateBioShipmentLabel(BioShipmentLabel bioShipmentLabel);
+	
+	/**
+	 * Delete a barcode label based on the supplied BarcodeLabel
+	 * 
+	 * @param barcodeLabel
+	 *           the BarcodeLabel object
+	 */
+	public void deleteBioShipmentLabel(BioShipmentLabel bioShipmentLabel);
+	
+	/**
+	 * Create a barcode label data based on the supplied BarcodeLabelData
+	 * 
+	 * @param barcodeLabelData
+	 *           the BarcodeLabelData object
+	 */
+	public void createBioShipmentLabelData(BioShipmentLabelData bioShipmentLabelData);
+	
+	/**
+	 * Update a barcode label data based on the supplied BarcodeLabelData
+	 * 
+	 * @param barcodeLabelData
+	 *           the BarcodeLabelData object
+	 */
+	public void updateBioShipmentLabelData(BioShipmentLabelData bioShipmentLabelData);
+	
+	/**
+	 * Delete a barcode label data based on the supplied BarcodeLabelData
+	 * 
+	 * @param barcodeLabelData
+	 *           the BarcodeLabelData object
+	 */
+	public void deleteBioShipmentLabelData(BioShipmentLabelData barcodeLabelData);
+	/**
 	 * Create the template string to send to the barcode printer for the specified bioCollection and barcodeLabel
 	 * @param bioCollection
 	 * @param barcodeLabel
@@ -98,6 +161,13 @@ public interface ILimsAdminService {
 	 */
 	public long getBarcodeLabelCount(BarcodeLabel object);
 
+	/**
+	 * Get the total count of the entities
+	 * @param object
+	 * @return
+	 */
+	public long getBioShipmentLabelCount(BioShipmentLabel object);
+	
 	/**
 	 * Search the entities, restricted by a pageable count
 	 * @param object
@@ -168,6 +238,13 @@ public interface ILimsAdminService {
 	 * @return
 	 */
 	public List<BarcodeLabelData> getBarcodeLabelDataByBarcodeLabel(BarcodeLabel barcodeLabel);
+	
+	/**
+	 * Gets the list of barcodeLabelData for the specified barcodeLabel
+	 * @param barcodeLabel
+	 * @return
+	 */
+	public List<BioShipmentLabelData> getBioShipmentLabelDataByBioShipmentLabel(BioShipmentLabel bioShipmentLabel);
 
 	/**
 	 * Get the barcode label template for the specified barcodeLabel
@@ -175,6 +252,13 @@ public interface ILimsAdminService {
 	 * @return
 	 */
 	public String getBarcodeLabelTemplate(BarcodeLabel barcodeLabel);
+	
+	/**
+	 * Get the barcode label template for the specified barcodeLabel
+	 * @param barcodeLabel
+	 * @return
+	 */
+	public String getBioShipmentLabelTemplate(BioShipmentLabel bioShipmentLabel);
 
 	/**
 	 * Get the barcode labels for the specified study
@@ -188,8 +272,18 @@ public interface ILimsAdminService {
 	 * @return
 	 */
 	public List<BarcodeLabel> getBarcodeLabelTemplates();
+	
+	/**
+	 * Get a list of BarcodeLabel templates
+	 * @return
+	 */
+	public List<BioShipmentLabel> getBioShipmentLabelTemplates();
 
 	public Long getBarcodeLabelCount(BarcodeLabel object, List<Study> studyListForUser);
+	
+	public Long getBioShipmentLabelCount(BioShipmentLabel object, List<Study> studyListForUser);
 
 	public List<BarcodeLabel> searchPageableBarcodeLabels(BarcodeLabel object, int first, int count, List<Study> studyListForUser);
+
+	public List<BioShipmentLabel> searchPageableBioShipmentLabels(BioShipmentLabel object, int first, int count, List<Study> studyListForUser);
 }

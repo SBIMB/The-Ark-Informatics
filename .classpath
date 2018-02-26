@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="ark-admin/src/main/java"/>
+	<classpathentry kind="src" path="ark-admin/src/test/java"/>
+	<classpathentry kind="src" path="ark-calendar/src/main/java"/>
+	<classpathentry kind="src" path="ark-calendar/src/test/java"/>
+	<classpathentry kind="src" path="ark-common/src/main/java"/>
+	<classpathentry kind="src" path="ark-common/src/test/java"/>
+	<classpathentry kind="src" path="ark-container/src/main/java"/>
+	<classpathentry kind="src" path="ark-container/src/test/java"/>
+	<classpathentry kind="src" path="ark-disease/src/main/java"/>
+	<classpathentry kind="src" path="ark-disease/src/test/java"/>
+	<classpathentry kind="src" path="ark-geno/src/main/java"/>
+	<classpathentry kind="src" path="ark-genomics/src/main/java"/>
+	<classpathentry excluding="au/org/theark/lims/web/component/biospecimencustomdata/" kind="src" path="ark-lims/src/main/java"/>
+	<classpathentry kind="src" path="ark-lims/src/main/java/au/org/theark/lims/web/component/biospecimencustomdata"/>
+	<classpathentry kind="src" path="ark-phenotypic/src/main/java"/>
+	<classpathentry kind="src" path="ark-phenotypic/src/test/java"/>
+	<classpathentry kind="src" path="ark-registry/src/main/java"/>
+	<classpathentry kind="src" path="ark-registry/src/test/java"/>
+	<classpathentry kind="src" path="ark-report/src/main/java"/>
+	<classpathentry kind="src" path="ark-report/src/test/java"/>
+	<classpathentry kind="src" path="ark-study/src/main/java"/>
+	<classpathentry kind="src" path="ark-study/src/test/java"/>
+	<classpathentry kind="src" path="ark-user-account/src/main/java"/>
+	<classpathentry kind="src" path="ark-user-account/src/test/java"/>
+	<classpathentry kind="src" path="ark-work-tracking/src/main/java"/>
+	<classpathentry kind="src" path="ark-work-tracking/src/test/java"/>
+	<classpathentry kind="src" path="recaptcha4j/src/main/java"/>
+	<classpathentry kind="src" path="recaptcha4j/src/test/java"/>
+	<classpathentry kind="src" path="REDCapAPI/src"/>
+	<classpathentry kind="src" path="spark-bluegene/src/main/java"/>
+	<classpathentry kind="src" path="spark-bluegene/src/test/java"/>
+	<classpathentry kind="src" path="spark-hpc/src/main/java"/>
+	<classpathentry kind="src" path="spark-hpc/src/test/java"/>
+	<classpathentry kind="src" path="spark-local/src/main/java"/>
+	<classpathentry kind="src" path="spark-local/src/test/java"/>
+	<classpathentry kind="src" path="spark-spartan/src/main/java"/>
+	<classpathentry kind="src" path="spark-spartan/src/test/java"/>
+	<classpathentry kind="src" path="spark/src/main/java"/>
+	<classpathentry kind="src" path="spark/src/test/java"/>
+	<classpathentry kind="src" path="tools/casper/src/main/java"/>
+	<classpathentry kind="src" path="tools/casper/src/test/java"/>
+	<classpathentry kind="src" path="tools/lifepool/src/java"/>
+	<classpathentry kind="lib" path="3rdParty/wicket-tree-0.5.0.jar"/>
+	<classpathentry kind="lib" path="ark-admin/target/ark-admin-1.2b.3-tests.jar"/>
+	<classpathentry kind="lib" path="ark-admin/target/ark-admin-1.2b.3.jar"/>
+	<classpathentry kind="lib" path="ark-common/target/ark-common-1.2b.3-tests.jar"/>
+	<classpathentry kind="lib" path="ark-common/target/ark-common-1.2b.3.jar"/>
+	<classpathentry kind="lib" path="ark-container/src/main/webapp/WEB-INF/lib/ojdbc14.jar"/>
+	<classpathentry kind="lib" path="ark-geno/src/test/lib/ojdbc14.jar"/>
+	<classpathentry kind="lib" path="ark-genomics/target/ark-genomics-1.2b.3-tests.jar"/>
+	<classpathentry kind="lib" path="ark-genomics/target/ark-genomics-1.2b.3.jar"/>
+	<classpathentry kind="lib" path="ark-lims/bin/au/org/theark/lims/web/component/panel/applet/jzebra.jar"/>
+	<classpathentry kind="lib" path="ark-lims/target/classes/au/org/theark/lims/web/component/panel/applet/jzebra.jar"/>
+	<classpathentry kind="lib" path="ark-phenotypic/target/ark-phenotypic-1.2b.3-tests.jar"/>
+	<classpathentry kind="lib" path="ark-phenotypic/target/ark-phenotypic-1.2b.3.jar"/>
+	<classpathentry kind="lib" path="ark-registry/target/ark-registry-1.2b.3-tests.jar"/>
+	<classpathentry kind="lib" path="ark-registry/target/ark-registry-1.2b.3.jar"/>
+	<classpathentry kind="lib" path="ark-report/target/ark-report-1.2b.3-tests.jar"/>
+	<classpathentry kind="lib" path="ark-report/target/ark-report-1.2b.3.jar"/>
+	<classpathentry kind="lib" path="ark-user-account/ark-user-account-1.0.0.jar"/>
+	<classpathentry kind="lib" path="recaptcha4j/target/recaptcha4j-0.0.8.jar"/>
+	<classpathentry kind="lib" path="REDCapAPI/target/REDCapAPI-1.0.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-admin"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-calendar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-common"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-container"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-disease"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-geno"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-genomics"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-lims"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-phenotypic"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-registry"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-report"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-rest-demo-client"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-study"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ark-work-tracking"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/REDCapAPI"/>
+	<classpathentry kind="output" path="recaptcha4j/target/test-classes"/>
+</classpath>

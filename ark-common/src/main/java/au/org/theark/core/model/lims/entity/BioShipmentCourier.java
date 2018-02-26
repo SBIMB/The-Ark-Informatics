@@ -54,11 +54,7 @@ public class BioShipmentCourier implements java.io.Serializable {
 	private String							description;
 	private String							labelPrefix;
 	private String							labelSuffix;
-	private List<BarcodeLabelData>	barcodeLabelData	= new ArrayList<BarcodeLabelData>(0);
-	private BioshipmentCourier					barcodeLabelTemplate;
-	private Long							version;
-	private String							nameAndVersion;
-	private String							barcodePrinterName;
+	private List<BarcodeLabelData>			barcodeLabelData	= new ArrayList<BarcodeLabelData>(0);
 
 	public BioShipmentCourier() {
 	}
@@ -71,7 +67,6 @@ public class BioShipmentCourier implements java.io.Serializable {
 		super();
 		this.id = id;
 		this.study = study;
-		//this.barcodePrinter = barcodePrinter;
 		this.name = name;
 		this.description = description;
 		this.labelPrefix = labelPrefix;
@@ -154,73 +149,5 @@ public class BioShipmentCourier implements java.io.Serializable {
 
 	public void setBarcodeLabelData(List<BarcodeLabelData> barcodeLabelData) {
 		this.barcodeLabelData = barcodeLabelData;
-	}
-
-	/**
-	 * @param barcodeLabelTemplate
-	 *           the barcodeLabelTemplate to set
-	 */
-	public void setBarcodeLabelTemplate(BioshipmentLabel barcodeLabelTemplate) {
-		this.barcodeLabelTemplate = barcodeLabelTemplate;
-	}
-
-	/**
-	 * @return the cloneBarcodeLabel
-	 */
-	@Transient
-	public BioshipmentLabel getBarcodeLabelTemplate() {
-		return barcodeLabelTemplate;
-	}
-
-	/**
-	 * @return the version
-	 */
-	@Column(name = "VERSION")
-	public Long getVersion() {
-		return version;
-	}
-
-	/**
-	 * @param version the version to set
-	 */
-	public void setVersion(Long version) {
-		this.version = version;
-	}
-
-	/**
-	 * @return the nameAndVersion
-	 */
-	@Transient
-	public String getNameAndVersion() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName());
-		sb.append(" (");
-		sb.append("v");
-		sb.append(getVersion().toString());
-		sb.append(")");
-		nameAndVersion = sb.toString();
-		return nameAndVersion;
-	}
-
-	/**
-	 * @param nameAndVersion the nameAndVersion to set
-	 */
-	public void setNameAndVersion(String nameAndVersion) {
-		this.nameAndVersion = nameAndVersion;
-	}
-
-	/**
-	 * @param barcodePrinterName the barcodePrinterName to set
-	 */
-	public void setBarcodePrinterName(String barcodePrinterName) {
-		this.barcodePrinterName = barcodePrinterName;
-	}
-
-	/**
-	 * @return the barcodePrinterName
-	 */
-	@Column(name = "BARCODE_PRINTER_NAME")
-	public String getBarcodePrinterName() {
-		return barcodePrinterName;
 	}
 }

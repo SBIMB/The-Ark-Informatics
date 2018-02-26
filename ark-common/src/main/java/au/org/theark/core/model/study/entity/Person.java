@@ -64,6 +64,7 @@ public class Person implements java.io.Serializable {
 	private String middleName;
 	private String lastName;
 	private String preferredName;
+	private EthnicityType ethnicityType;
 	private GenderType genderType;
 	private VitalStatus vitalStatus;
 	private TitleType titleType;
@@ -140,6 +141,17 @@ public class Person implements java.io.Serializable {
 	public void setPreferredName(String preferredName) {
 		this.preferredName = preferredName;
 	}
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "ETHNICITY_TYPE_ID ")
+	public EthnicityType getEthnicityType() {
+		return ethnicityType;
+	}
+
+	public void setEthnicityType(EthnicityType ethnicityType) {
+		this.ethnicityType = ethnicityType;
+	}
+
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "GENDER_TYPE_ID")

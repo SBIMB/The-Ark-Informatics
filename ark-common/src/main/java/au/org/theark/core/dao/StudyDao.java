@@ -67,6 +67,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.DigestUtils;
+import java.util.Hashtable;
 
 import za.ac.theark.core.model.study.entity.UploadMethod;
 import au.org.theark.core.Constants;
@@ -668,6 +669,16 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 
 	public void createAuditHistory(AuditHistory auditHistory) {
 		createAuditHistory(auditHistory, null, null);
+	}
+	
+	public void createAuditHistory(AuditHistory auditHistory, String userId, StudyStatus studyStatus, String s) {
+		Date date = new Date(System.currentTimeMillis());
+
+		auditHistory.setArkUserId(userId);
+		auditHistory.setStudyStatus(studyStatus);
+		auditHistory.setDateTime(date);
+		getSession().save(auditHistory);
+		// getSession().flush();
 	}
 
 	public List<PersonContactMethod> getPersonContactMethodList() {
@@ -1279,6 +1290,9 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 	}
 
 	public void createUpload(Upload studyUpload) throws Exception {
+		String userId = null;
+		Subject currentUser;
+		
 		if (studyUpload.getUploadStatus() == null) {
 			//studyUpload.setUploadStatus(getUploadStatusForUndefined());
 			studyUpload.setUploadStatus(getUploadStatusFor(Constants.UPLOAD_STATUS_STATUS_NOT_DEFINED));

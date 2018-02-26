@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.model.lims.entity.InvFreezer;
 import au.org.theark.core.model.lims.entity.InvRack;
+import au.org.theark.core.model.lims.entity.InvShelf;
 import au.org.theark.core.model.study.entity.Study;
 import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.core.vo.LimsVO;
@@ -78,7 +79,7 @@ public class RackDetailForm extends AbstractInventoryDetailForm<LimsVO> {
 	private TextField<Integer>			capacityTxtFld;
 	private TextField<Integer>			availableTxtFld;
 	private TextArea<String>			descriptionTxtAreaFld;
-	private DropDownChoice<InvFreezer>	invShelfDdc;
+	private DropDownChoice<InvShelf>	invShelfDdc;
 
 	/**
 	 * 
@@ -176,13 +177,13 @@ public class RackDetailForm extends AbstractInventoryDetailForm<LimsVO> {
 			log.error(e.getMessage());
 		}
 		ChoiceRenderer<InvShelf> choiceRenderer = new ChoiceRenderer<InvShelf>("FreezerShelf", Constants.ID);
-		invTankDdc = new DropDownChoice<InvFreezer>("invRack.invShelf", (List<InvShelf>) invShelfList, choiceRenderer);
-		invTankDdc.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+		invShelfDdc = new DropDownChoice<InvShelf>("invRack.invShelf", (List<InvShelf>) invShelfList, choiceRenderer);
+		invShelfDdc.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 			private static final long	serialVersionUID	= 1L;
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
 				String rackName = (nameTxtFld.getModelObject().toString() != null ? nameTxtFld.getModelObject().toString() : new String());
-				InvRack invRack=iInventoryService.getInvRackByNameForShelf(invTankDdc.getModelObject(), rackName);
+				InvRack invRack=iInventoryService.getInvRackByNameForShelf(invShelfDdc.getModelObject(), rackName);
 				if (invRack != null && invRack.getId() != null) {
 					error("Rack name must be unique for a freezer. Please try again.");
 					target.focusComponent(getComponent());
@@ -209,7 +210,7 @@ public class RackDetailForm extends AbstractInventoryDetailForm<LimsVO> {
 		detailFormContainer.add(capacityTxtFld);
 		detailFormContainer.add(availableTxtFld);
 		detailFormContainer.add(descriptionTxtAreaFld);
-		detailFormContainer.add(invTankDdc);
+		detailFormContainer.add(invShelfDdc);
 		add(detailFormContainer);
 	}
 

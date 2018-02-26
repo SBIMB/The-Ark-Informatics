@@ -30,13 +30,13 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.theark.core.model.lims.entity.BarcodeLabel;
+import au.org.theark.core.model.lims.entity.BioShipmentLabel;
 import au.org.theark.core.vo.ArkCrudContainerVO;
 import au.org.theark.core.web.component.ArkCRUDHelper;
 import au.org.theark.core.web.component.ArkDataProvider;
 import au.org.theark.core.web.component.link.ArkBusyAjaxLink;
 import au.org.theark.lims.service.ILimsAdminService;
-import au.org.theark.lims.web.component.barcodelabel.form.ContainerForm;
+import au.org.theark.lims.web.component.bioshipmentlabel.form.ContainerForm;
 
 public class SearchResultsPanel extends Panel {
 
@@ -56,51 +56,44 @@ public class SearchResultsPanel extends Panel {
 		this.arkCrudContainerVo = arkCrudContainerVo;
 	}
 
-	public DataView<BarcodeLabel> buildDataView(ArkDataProvider<BarcodeLabel, ILimsAdminService> dataProvider) {
-		DataView<BarcodeLabel> dataView = new DataView<BarcodeLabel>("resultList", dataProvider) {
+	public DataView<BioShipmentLabel> buildDataView(ArkDataProvider<BioShipmentLabel, ILimsAdminService> dataProvider) {
+		DataView<BioShipmentLabel> dataView = new DataView<BioShipmentLabel>("resultList", dataProvider) {
 
 			private static final long	serialVersionUID	= 2981419595326128410L;
 
 			@Override
-			protected void populateItem(final Item<BarcodeLabel> item) {
-				BarcodeLabel barcodeLabel = item.getModelObject();
+			protected void populateItem(final Item<BioShipmentLabel> item) {
+				BioShipmentLabel bioShipmentLabel = item.getModelObject();
 
-				item.add(buildLink(barcodeLabel));
+				item.add(buildLink(bioShipmentLabel));
 
-				if (barcodeLabel.getStudy() != null) {
+				if (bioShipmentLabel.getStudy() != null) {
 					// the ID here must match the ones in mark-up
-					item.add(new Label("study", barcodeLabel.getStudy().getName()));
+					item.add(new Label("study", bioShipmentLabel.getStudy().getName()));
 				}
 				else {
 					item.add(new Label("study", ""));
 				}
 				
-				if (barcodeLabel.getName() != null) {
+				if (bioShipmentLabel.getName() != null) {
 					// the ID here must match the ones in mark-up
-					item.add(new Label("name", barcodeLabel.getName()));
+					item.add(new Label("name", bioShipmentLabel.getName()));
 				}
 				else {
 					item.add(new Label("name", ""));
 				}
-				
-				if (barcodeLabel.getBarcodePrinterName() != null) {
-					// the ID here must match the ones in mark-up
-					item.add(new Label("barcodePrinter", barcodeLabel.getBarcodePrinterName()));
-				}
-				else {
-					item.add(new Label("barcodePrinter", ""));
-				}
+						
 
-				if (barcodeLabel.getDescription() != null) {
+				if (bioShipmentLabel.getDescription() != null) {
 					// the ID here must match the ones in mark-up
-					item.add(new Label("description", barcodeLabel.getDescription()));
+					item.add(new Label("description", bioShipmentLabel.getDescription()));
 				}
 				else {
 					item.add(new Label("description", ""));
 				}
 				
-				if (barcodeLabel.getVersion() != null) {
-					item.add(new Label("version", barcodeLabel.getVersion().toString()));
+				if (bioShipmentLabel.getVersion() != null) {
+					item.add(new Label("version", bioShipmentLabel.getVersion().toString()));
 				}
 				else {
 					item.add(new Label("version", ""));
@@ -120,16 +113,16 @@ public class SearchResultsPanel extends Panel {
 	}
 
 	@SuppressWarnings( { "unchecked" })
-	private AjaxLink buildLink(final BarcodeLabel barcodeLabel) {
+	private AjaxLink buildLink(final BioShipmentLabel bioShipmentLabel) {
 		ArkBusyAjaxLink link = new ArkBusyAjaxLink("link") {
 
 			private static final long	serialVersionUID	= 1L;
 
 			@Override
 			public void onClick(AjaxRequestTarget target) {
-				BarcodeLabel barcodeLabelFromDb = iLimsAdminService.searchBarcodeLabel(barcodeLabel);
-				barcodeLabelFromDb.setBarcodeLabelData(iLimsAdminService.getBarcodeLabelDataByBarcodeLabel(barcodeLabelFromDb));
-				containerForm.setModelObject(barcodeLabelFromDb);
+				BioShipmentLabel bioShipmentLabelFromDb = iLimsAdminService.searchBioShipmentLabel(bioShipmentLabel);
+				bioShipmentLabelFromDb.setBioShipmentLabelData(iLimsAdminService.getBioShipmentLabelDataByBioShipmentLabel(bioShipmentLabelFromDb));
+				containerForm.setModelObject(bioShipmentLabelFromDb);
 				
 				ArkCRUDHelper.preProcessDetailPanelOnSearchResults(target, arkCrudContainerVo);
 				// Refresh base container form to remove any feedBack messages
@@ -138,7 +131,7 @@ public class SearchResultsPanel extends Panel {
 		};
 
 		// Add the label for the link
-		Label linkLabel = new Label("id", barcodeLabel.getId().toString());
+		Label linkLabel = new Label("id", bioShipmentLabel.getId().toString());
 		link.add(linkLabel);
 		return link;
 	}

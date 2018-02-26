@@ -442,7 +442,7 @@ public class BiospecimenUploadValidator {
 			String[] headerColumnArray = csvReader.getHeaders();
 
 			Collection<String> biospecimenColumns = new ArrayList<String>();
-			String[] biospecimenHeaderColumnArray = Constants.LOCATION_UPLOAD_TEMPLATE_HEADER;
+			String[] biospecimenHeaderColumnArray = Constants.BIOSPECIMEN_INVENTORY_TEMPLATE_HEADER;
 			boolean headerError = false;
 			for (int i = 0; i < biospecimenHeaderColumnArray.length; i++) {
 				String colName = biospecimenHeaderColumnArray[i];
@@ -466,7 +466,7 @@ public class BiospecimenUploadValidator {
 				stringBuffer.append("The default format should be as follows:\n");
 
 				// Column headers
-				for (String column : Constants.LOCATION_UPLOAD_TEMPLATE_HEADER) {
+				for (String column : Constants.BIOSPECIMEN_INVENTORY_TEMPLATE_HEADER) {
 					stringBuffer.append(column);
 					stringBuffer.append(delimiterCharacter);
 				}
@@ -837,7 +837,7 @@ public class BiospecimenUploadValidator {
 								}
 							}
 							biocollection = parentBiospecimen.getBioCollection();
-							ageAtCollection = String.valueOf(biocollection.getPatientAge());
+							ageAtCollection = String.valueOf(biocollection.getPatientage());
 						}
 					}				
 				} else {

@@ -121,4 +121,6 @@ protected transient Logger		log					= LoggerFactory.getLogger(SearchForm.class);
 	public CompoundPropertyModel<AdminVO> getCpmModel() {
 		return cpmModel;
 	}
+	
+	
 }

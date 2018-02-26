@@ -26,10 +26,12 @@ import java.util.List;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.datetime.PatternDateConverter;
 import org.apache.wicket.datetime.markup.html.form.DateTextField;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -37,11 +39,13 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.theark.core.exception.EntityNotFoundException;
+import au.org.theark.core.model.lims.entity.Biospecimen;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkUser;
 import au.org.theark.core.model.study.entity.ConsentStatus;
@@ -62,6 +66,7 @@ import au.org.theark.core.vo.LimsVO;
 import au.org.theark.core.web.behavior.ArkDefaultFormFocusBehavior;
 import au.org.theark.core.web.component.ArkDatePicker;
 import au.org.theark.core.web.form.AbstractDetailForm;
+import au.org.theark.lims.service.ILimsService;
 import au.org.theark.lims.web.Constants;
 
 /**
@@ -88,9 +93,7 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 	protected TextField<String>							preferredNameTxtFld;
 
 	protected DateTextField								dateOfBirthTxtFld;
-	protected DateTextField								dateOfDeathTxtFld;
 	protected TextField<Integer>						ageAtEnrollmentTxtFld;
-	protected DateTextField								dateOfBirthTxtFld;
 	protected DateTextField								dateOfEnrollmentTxtFld;
 	protected DateTextField								dateOfDeathTxtFld;
 	protected TextField<String>							causeOfDeathTxtFld;
@@ -182,7 +185,7 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 		subjectUIDTxtFld = new TextField<String>(Constants.SUBJECT_UID);
 		subjectUIDTxtFld.setOutputMarkupId(true);
 		
-		dateOfEnrollmentTxtFld = new DateTextField(Constants.SUBJECT_DATE_OF_ENROLLMENT, au.org.theark.core.Constants.DD_MM_YYYY);
+		dateOfEnrollmentTxtFld = new DateTextField(Constants.SUBJECT_DATE_OF_ENROLLMENT, new PatternDateConverter(au.org.theark.core.Constants.DD_MM_YYYY, false));
 		ArkDatePicker doeDatePicker = new ArkDatePicker();
 		doeDatePicker.bind(dateOfEnrollmentTxtFld);
 		dateOfEnrollmentTxtFld.add(doeDatePicker);

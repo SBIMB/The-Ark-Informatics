@@ -22,10 +22,10 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 
-import au.org.theark.core.model.lims.entity.BarcodeLabel;
+import au.org.theark.core.model.lims.entity.BioShipmentLabel;
 import au.org.theark.core.vo.ArkCrudContainerVO;
-import au.org.theark.lims.web.component.barcodelabel.form.ContainerForm;
-import au.org.theark.lims.web.component.barcodelabel.form.SearchForm;
+import au.org.theark.lims.web.component.bioshipmentlabel.form.ContainerForm;
+import au.org.theark.lims.web.component.bioshipmentlabel.form.SearchForm;
 
 /**
  * @author cellis
@@ -55,7 +55,7 @@ public class SearchPanel extends Panel {
 	}
 
 	public void initialisePanel() {
-		SearchForm searchForm = new SearchForm(au.org.theark.core.Constants.SEARCH_FORM, (CompoundPropertyModel<BarcodeLabel>) containerForm.getModel(), arkCrudContainerVO, feedbackPanel);
+		SearchForm searchForm = new SearchForm(au.org.theark.core.Constants.SEARCH_FORM, (CompoundPropertyModel<BioShipmentLabel>) containerForm.getModel(), arkCrudContainerVO, feedbackPanel);
 		add(searchForm);
 	}
 }

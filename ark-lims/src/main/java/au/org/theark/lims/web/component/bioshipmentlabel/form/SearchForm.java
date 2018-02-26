@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.theark.core.exception.EntityNotFoundException;
 import au.org.theark.core.model.lims.entity.BarcodeLabel;
+import au.org.theark.core.model.lims.entity.BioShipmentLabel;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkUser;
 import au.org.theark.core.model.study.entity.Study;
@@ -54,7 +55,7 @@ import au.org.theark.lims.web.Constants;
  * @author cellis
  * 
  */
-public class SearchForm extends AbstractSearchForm<BarcodeLabel> {
+public class SearchForm extends AbstractSearchForm<BioShipmentLabel> {
 
 	private static final long					serialVersionUID	= -109811767116701473L;
 	protected static final Logger				log					= LoggerFactory.getLogger(SearchForm.class);
@@ -69,7 +70,7 @@ public class SearchForm extends AbstractSearchForm<BarcodeLabel> {
 	private TextField<String>					nameTxtFld;
 	private TextArea<String>					descriptionTxtArea;
 
-	public SearchForm(String id, CompoundPropertyModel<BarcodeLabel> cpmModel, final ArkCrudContainerVO arkCrudContainerVO, FeedbackPanel feedBackPanel) {
+	public SearchForm(String id, CompoundPropertyModel<BioShipmentLabel> cpmModel, final ArkCrudContainerVO arkCrudContainerVO, FeedbackPanel feedBackPanel) {
 		super(id, cpmModel, feedBackPanel, arkCrudContainerVO);
 		this.feedbackPanel = feedBackPanel;
 		initialiseSearchForm();
@@ -146,7 +147,7 @@ public class SearchForm extends AbstractSearchForm<BarcodeLabel> {
 	@Override
 	protected void onSearch(AjaxRequestTarget target) {
 		target.add(feedbackPanel);
-		long count = iLimsAdminService.getBarcodeLabelCount(getModelObject());
+		long count = iLimsAdminService.getBioShipmentLabelCount(getModelObject());
 		if (count == 0L) {
 			this.info("There are no records that matched your query. Please modify your filter");
 			target.add(feedbackPanel);

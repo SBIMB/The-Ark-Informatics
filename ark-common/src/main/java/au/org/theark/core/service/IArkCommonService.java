@@ -309,7 +309,7 @@ public interface IArkCommonService<T> {
 	 * @param name
 	 * @return
 	 */
-	public TitleType getTitleTypes(String name);
+	public TitleType getTitleType(String name);
 
 	/**
 	 * Returns an instance of Marital Status for a given String that represents

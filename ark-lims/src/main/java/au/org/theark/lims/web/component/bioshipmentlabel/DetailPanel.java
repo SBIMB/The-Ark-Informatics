@@ -22,8 +22,8 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import au.org.theark.core.vo.ArkCrudContainerVO;
-import au.org.theark.lims.web.component.barcodelabel.form.ContainerForm;
-import au.org.theark.lims.web.component.barcodelabel.form.DetailForm;
+import au.org.theark.lims.web.component.bioshipmentlabel.form.ContainerForm;
+import au.org.theark.lims.web.component.bioshipmentlabel.form.DetailForm;
 
 /**
  * @author cellis

@@ -53,13 +53,13 @@ public class Bioshipment implements java.io.Serializable {
 	private Study							study;
 	private String							name;
 	private String							description;
-	private BioShipmentCourier				bioshipmentCourier;
+	private BioShipmentCourier				bioShipmentCourier;
 	private String							trackingNumber;
-	private List<BarcodeLabelData>			barcodeLabelData	= new ArrayList<BarcodeLabelData>(0);
 	private BioSenderReceiver				bioSenderReceiver;
-	private BioshipmentStatus				status;
+	private BioShipmentStatus				bioShipmentStatus;
 	private Calendar						shippedDate;
-	private BioshipmentMethod				bioshipmentMethod;
+	private BioShipmentMethod				bioShipmentMethod;
+	private List<BarcodeLabelData>			barcodeLabelData	= new ArrayList<BarcodeLabelData>(0);
 	private String							labelPrefix;	
 	private String							labelSuffix;
 
@@ -103,7 +103,9 @@ public class Bioshipment implements java.io.Serializable {
 	public void setStudy(Study study) {
 		this.study = study;
 	}
-/*
+
+	/*
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BARCODE_PRINTER_ID", nullable = false)
 	public BarcodePrinter getBarcodePrinter() {
@@ -114,6 +116,7 @@ public class Bioshipment implements java.io.Serializable {
 		this.barcodePrinter = printer;
 	}
 */
+	
 	@Column(name = "NAME", length = 50, nullable = false)
 	public String getName() {
 		return this.name;
@@ -132,6 +135,67 @@ public class Bioshipment implements java.io.Serializable {
 		this.description = description;
 	}
 
+	public BioShipmentCourier getBioshipmentCourier() {
+		return bioShipmentCourier;
+	}
+	
+	public void setBioshipmentCourier(BioShipmentCourier bioshipmentCourier) {
+		this.bioShipmentCourier = bioshipmentCourier;
+	}
+	
+	public String getTrackingNumber() {
+		return trackingNumber;
+	}
+	 
+	public void setTrackingNumber(String trackingNumber) {
+		this.trackingNumber = trackingNumber;
+	} 
+	
+	public BioSenderReceiver getBioSenderReceiver() {
+		return bioSenderReceiver;
+	}
+	
+	public void setBioSenderReceiver(BioSenderReceiver bioSenderReceiver) {
+		this.bioSenderReceiver = bioSenderReceiver;
+	}
+	
+	public BioShipmentStatus getBioshipmentStatus(){
+		return bioShipmentStatus;
+	}
+	
+	public void setBioshipmentStatus(BioShipmentStatus bioShipmentStatus) {
+		this.bioShipmentStatus = bioShipmentStatus;
+	}
+
+	public Calendar getShippedDate() {
+		return shippedDate;
+	}
+	
+	public void setShippedDate(Calendar shippedDate) {
+		this.shippedDate = shippedDate;
+	}
+	
+	public BioShipmentMethod getBioshipmentMethod() {
+		return bioShipmentMethod;
+	}
+	
+	public void setBioshipmentMethod(BioShipmentMethod bioshipmentMethod) {
+		this.bioShipmentMethod = bioshipmentMethod;
+	}
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "barcodeLabel")
+	public List<BarcodeLabelData> getBarcodeLabelData() {
+		return this.barcodeLabelData;
+	}
+
+	/**
+	 * @param barcodeLabelData
+	 *           the barcodeLabelData to set
+	 */
+	public void setBarcodeLabelData(List<BarcodeLabelData> barcodeLabelData) {
+		this.barcodeLabelData = barcodeLabelData;
+	}
+		
 	@Column(name = "LABEL_PREFIX", length = 50, nullable = false)
 	public String getLabelPrefix() {
 		return this.labelPrefix;
@@ -148,82 +212,5 @@ public class Bioshipment implements java.io.Serializable {
 
 	public void setLabelSuffix(String labelSuffix) {
 		this.labelSuffix = labelSuffix;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "barcodeLabel")
-	public List<BarcodeLabelData> getBarcodeLabelData() {
-		return this.barcodeLabelData;
-	}
-
-	public void setBarcodeLabelData(List<BarcodeLabelData> barcodeLabelData) {
-		this.barcodeLabelData = barcodeLabelData;
-	}
-
-	/**
-	 * @param barcodeLabelTemplate
-	 *           the barcodeLabelTemplate to set
-	 */
-	public void setBarcodeLabelTemplate(BarcodeLabelData barcodeLabelTemplate) {
-		this.barcodeLabelTemplate = barcodeLabelTemplate;
-	}
-
-	/**
-	 * @return the cloneBarcodeLabel
-	 */
-	@Transient
-	public BioshipmentLabel getBarcodeLabelTemplate() {
-		return barcodeLabelTemplate;
-	}
-
-	/**
-	 * @return the version
-	 */
-	@Column(name = "VERSION")
-	public Long getVersion() {
-		return version;
-	}
-
-	/**
-	 * @param version the version to set
-	 */
-	public void setVersion(Long version) {
-		this.version = version;
-	}
-
-	/**
-	 * @return the nameAndVersion
-	 */
-	@Transient
-	public String getNameAndVersion() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getName());
-		sb.append(" (");
-		sb.append("v");
-		sb.append(getVersion().toString());
-		sb.append(")");
-		nameAndVersion = sb.toString();
-		return nameAndVersion;
-	}
-
-	/**
-	 * @param nameAndVersion the nameAndVersion to set
-	 */
-	public void setNameAndVersion(String nameAndVersion) {
-		this.nameAndVersion = nameAndVersion;
-	}
-
-	/**
-	 * @param barcodePrinterName the barcodePrinterName to set
-	 */
-	public void setBarcodePrinterName(String barcodePrinterName) {
-		this.barcodePrinterName = barcodePrinterName;
-	}
-
-	/**
-	 * @return the barcodePrinterName
-	 */
-	@Column(name = "BARCODE_PRINTER_NAME")
-	public String getBarcodePrinterName() {
-		return barcodePrinterName;
 	}
 }

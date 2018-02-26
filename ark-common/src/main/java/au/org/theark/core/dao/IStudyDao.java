@@ -20,6 +20,7 @@ package au.org.theark.core.dao;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Hashtable;
 
 import au.org.theark.core.model.pheno.entity.PhenoDataSetFieldDisplay;
 import au.org.theark.core.model.study.entity.*;
