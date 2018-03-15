@@ -3437,7 +3437,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), "");
 					}
 				}
-				//valid From	
+				/*//valid From	
 				else if (field.getFieldName().equalsIgnoreCase("validFrom")) {
 
 					if(a.getValidFrom() != null) {
@@ -3456,7 +3456,7 @@ public class StudyDao<T> extends HibernateSessionDao implements IStudyDao {
 					else{
 						map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), "");
 					}
-				}
+				}*/
 				else if (field.getFieldName().equalsIgnoreCase("comments")) {
 					map.put((field.getPublicFieldName() + ((count > 1) ? ("_" + count) : "")), a.getComments());
 				}
