@@ -27,16 +27,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import au.org.theark.core.model.Constants;
-import au.org.theark.core.model.study.entity.BusinessPhone;
+import au.org.theark.core.model.study.entity.BusinessContact;
 import au.org.theark.core.model.study.entity.Study;
+import au.org.theark.core.vo.PersonVO;
 
 /**
  * 
@@ -50,14 +48,11 @@ public class BioSenderReceiver implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Long							id;
-	private String							name;
-	private String							description;
-	private String							physicalAddress;
-	private String 							postalAddress;
-	private List<BusinessPhone>				businessPhones = new ArrayList<BusinessPhone>(0);
-	private Long							version;
-	private String							nameAndVersion;
-	private String							barcodePrinterName;
+	private PersonVO						person;
+	private String							position;
+	private List<Address>					addresses = new ArrayList<Address>();
+	private List<BusinessContact>			businessPhones = new ArrayList<BusinessContact>(0);
+	
 
 	public BioSenderReceiver() {
 	}
@@ -66,13 +61,12 @@ public class BioSenderReceiver implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public BioSenderReceiver(Long id, Study study, String name, String description, String physicalAddress, String postalAddress, List<BusinessPhone> businessPhones) {
+	public BioSenderReceiver(Long id, Study study, PersonVO person, String position, List<Address> addresses, List<BusinessContact> businessPhones) {
 		super();
 		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.physicalAddress = physicalAddress;
-		this.postalAddress = postalAddress;
+		this.person = person;
+		this.position = position;
+		this.addresses = addresses;
 		this.businessPhones = businessPhones;
 	}
 
@@ -88,63 +82,39 @@ public class BioSenderReceiver implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@Column(name = "NAME", length = 50, nullable = false)
-	public String getName() {
-		return this.name;
+	@OneToOne(fetch = FetchType.LAZY, mappedBy="bioSenderReceiver")
+	public PersonVO getPerson() {
+		return this.person;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setPerson(PersonVO person) {
+		this.person = person;
 	}
 
-	@Column(name = "DESCRIPTION", length = 255)
-	public String getDescription() {
-		return this.description;
+	@Column(name = "POSITION", length = 255)
+	public String getPosition() {
+		return this.position;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setDescription(String position) {
+		this.position = position;
 	}
 
-	public String getPhysicalAddress() {
-		return physicalAddress;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "bioSenderReceiver")
+	public List<Address> getPhysicalAddress() {
+		return addresses;
 	}
 
-	public void setPhysicalAddress(String physicalAddress) {
-		this.physicalAddress = physicalAddress;
+	public void setPhysicalAddress(List<Address> addresses) {
+		this.addresses = addresses;
 	}
-
-	public String getPostalAddress() {
-		return postalAddress;
-	}
-
-	public void setPostalAddress(String postalAddress) {
-		this.postalAddress = postalAddress;
-	}
-
-	public List<BusinessPhone> getBusinessPhones() {
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "bioSenderReceiver")
+	public List<BusinessContact> getBusinessPhones() {
 		return businessPhones;
 	}
 
-	public void setBusinessPhones(List<BusinessPhone> businessPhones) {
+	public void setBusinessPhones(List<BusinessContact> businessPhones) {
 		this.businessPhones = businessPhones;
 	}
-
-	public String getNameAndVersion() {
-		return nameAndVersion;
-	}
-
-	public void setNameAndVersion(String nameAndVersion) {
-		this.nameAndVersion = nameAndVersion;
-	}
-
-	public String getBarcodePrinterName() {
-		return barcodePrinterName;
-	}
-
-	public void setBarcodePrinterName(String barcodePrinterName) {
-		this.barcodePrinterName = barcodePrinterName;
-	}
-
-	
 }

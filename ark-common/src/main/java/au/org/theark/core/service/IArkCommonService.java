@@ -33,8 +33,6 @@ import au.org.theark.core.model.study.entity.*;
 import org.apache.velocity.exception.VelocityException;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 
@@ -65,7 +63,6 @@ import au.org.theark.core.model.lims.entity.BiospecimenUidTemplate;
 import au.org.theark.core.model.lims.entity.BiospecimenUidToken;
 import au.org.theark.core.model.lims.entity.TreatmentType;
 import au.org.theark.core.model.lims.entity.Unit;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetField;
 import au.org.theark.core.model.pheno.entity.PhenoDataSetFieldDisplay;
 import au.org.theark.core.model.report.entity.BiocollectionField;
 import au.org.theark.core.model.report.entity.BiospecimenField;

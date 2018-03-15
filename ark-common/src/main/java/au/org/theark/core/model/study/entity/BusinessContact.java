@@ -40,9 +40,9 @@ import au.org.theark.core.Constants;
  * Phone entity. @author MyEclipse Persistence Tools
  */
 @Entity
-@Table(name = "BUSINESS_PHONE", schema = Constants.STUDY_SCHEMA, uniqueConstraints = { @UniqueConstraint(columnNames = {
+@Table(name = "BUSINESS_CONTACT", schema = Constants.STUDY_SCHEMA, uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"AREA_CODE", "PHONE_NUMBER"}) })
-public class BusinessPhone implements java.io.Serializable {
+public class BusinessContact implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -58,14 +58,14 @@ public class BusinessPhone implements java.io.Serializable {
 
 
 	/** default constructor */
-	public BusinessPhone() {
+	public BusinessContact() {
 	}
 
-	public BusinessPhone(Long id) {
+	public BusinessContact(Long id) {
 		this.id = id;
 	}
 
-	public BusinessPhone(Long id, PhoneType phoneType, Person person,
+	public BusinessContact(Long id, PhoneType phoneType, Person person,
 			String phoneNumber, String areaCode) {
 		this.id = id;
 		this.phoneType = phoneType;
