@@ -41,6 +41,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement> -->
+    
 	<dependencies>
 		
 		<dependency>
@@ -219,15 +220,17 @@
 			<version>2.1.4</version>
 		</dependency> -->
 		<dependency>
-    		<groupId>org.quartz-scheduler</groupId>
-    		<artifactId>quartz</artifactId>
-    		<version>2.2.1</version>
+    		        <groupId>org.quartz-scheduler</groupId>
+    		        <artifactId>quartz</artifactId>
+    		        <version>2.2.1</version>
   		</dependency>
-  		<dependency>
-    		<groupId>org.quartz-scheduler</groupId>
-    		<artifactId>quartz-jobs</artifactId>
-    		<version>2.2.1</version>
-  		</dependency>   
+  		
+                <dependency>
+    		        <groupId>org.quartz-scheduler</groupId>
+    		        <artifactId>quartz-jobs</artifactId>
+    		        <version>2.2.1</version>
+  		</dependency>
+   
 		<dependency>
 			<groupId>net.tanesha.recaptcha4j</groupId>
 			<artifactId>recaptcha4j</artifactId>
@@ -269,10 +272,10 @@
 			<version>1.5.7</version>
 		</dependency>
 		
-		 <dependency>
-	     	<groupId>net.ftlines.wicket-source</groupId>
-	     	<artifactId>wicket-source</artifactId>
-	     	<version>1.5.0.7</version>
+		<dependency>
+	     	        <groupId>net.ftlines.wicket-source</groupId>
+	     	        <artifactId>wicket-source</artifactId>
+	     	        <version>1.5.0.7</version>
 	 	</dependency>
 	 	
 		<dependency>
@@ -310,11 +313,13 @@
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.googlecode.wicket-jquery-ui</groupId>
 			<artifactId>wicket-jquery-ui</artifactId>
 			<version>1.5.11</version> 
 		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -330,26 +335,35 @@
 		</dependency>
 
 		<dependency>
-    		<groupId>org.wicketstuff</groupId>
-    		<artifactId>wicketstuff-progressbar</artifactId>
-    		<version>7.4.0</version>
+    		        <groupId>org.wicketstuff</groupId>
+    		        <artifactId>wicketstuff-progressbar</artifactId>
+    		        <version>7.4.0</version>
 		</dependency>
+
+		<dependency>
+                        <groupId>org.wicketstuff</groupId>
+                        <artifactId>wicketstuff-progressbar</artifactId>
+                        <version>7.4.0</version>
+                </dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.wicketstuff/progressbar-spring -->
 		<dependency>
-    		<groupId>org.wicketstuff</groupId>
+    		         <groupId>org.wicketstuff</groupId>
    			 <artifactId>progressbar-spring</artifactId>
    			 <version>1.5-RC5.1</version>
 		</dependency>
+
 		<!-- Added the following rest services details --> 
 		<!-- <dependency>
 		    <groupId>org.wicketstuff</groupId>
 		    <artifactId>wicketstuff-restannotations</artifactId>
 		    <version>8.0.0-M6</version>
 		</dependency>
+
 		<dependency>
-	    	<groupId>org.wicketstuff</groupId>
-	    	<artifactId>wicketstuff-restannotations-json</artifactId>
-	    	<version>8.0.0-M6</version>
+	    	    <groupId>org.wicketstuff</groupId>
+	    	    <artifactId>wicketstuff-restannotations-json</artifactId>
+	    	    <version>8.0.0-M6</version>
 		</dependency> -->
 		<!-- This is for the rest ful web service part -->
 		<dependency>
@@ -380,7 +394,7 @@
             <artifactId>jersey-media-moxy</artifactId>
         </dependency> -->
 	</dependencies>
-	
+    
 	<build>
 		<resources>
 			<resource>
@@ -449,28 +463,27 @@
 						<downloadSources>true</downloadSources>
 					</configuration>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-install-plugin</artifactId>
-					<version>2.4</version>
-					<configuration>
-					<pluginExecutions>
-						<pluginExecution>
-							<phase>initialize</phase>
-							<goals>
-								<goal>install-file</goal>
-							</goals>
-							<configuration>
-								<groupId>wicket-tree</groupId>
-								<artifactId>wicket-tree</artifactId>
-								<version>0.5.0</version>
-								<packaging>jar</packaging>
-								<file>${basedir}/../3rdParty/wicket-tree-0.5.0.jar</file>
-							</configuration>
-						</pluginExecution>
-					</pluginExecutions>
-					</configuration>
-				</plugin>
+
+ 				<plugin>
+                                	<groupId>org.apache.maven.plugins</groupId>
+                                	<artifactId>maven-install-plugin</artifactId>
+                                	<version>2.4</version>
+                                	<executions>
+                                        	<execution>
+                                                	<phase>initialize</phase>
+                                                	<goals>
+                                                        	<goal>install-file</goal>
+                                                	</goals>
+                                                	<configuration>
+                                                        	<groupId>wicket-tree</groupId>
+                                                        	<artifactId>wicket-tree</artifactId>
+                                                        	<version>0.5.0</version>
+                                                        	<packaging>jar</packaging>
+                                                        	<file>../3rdParty/wicket-tree-0.5.0.jar</file>
+                                                	</configuration>
+                                        </execution>
+                                </executions>
+                        </plugin>
 			</plugins>
 		</pluginManagement>
 	</build>

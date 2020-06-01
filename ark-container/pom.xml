@@ -24,11 +24,12 @@
 		</license>
 	</licenses>
 	<parent>
-        <groupId>au.org.theark</groupId>
-        <artifactId>ark</artifactId>
-        <version>1.2b.3</version>
-		<relativePath>../pom.xml</relativePath>
-    </parent>
+                <groupId>au.org.theark</groupId>
+                <artifactId>ark</artifactId>
+                <version>1.2b.3</version>
+		     <relativePath>../pom.xml</relativePath>
+       </parent>
+  
 	<dependencies>
 
 		
@@ -46,6 +47,13 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
+
+                <!-- REDCap API -->
+                <dependency>
+                        <groupId>org.projectredcap.main</groupId>
+                        <artifactId>REDCapAPI</artifactId>
+                        <version>${redcap-api.version}</version>
+                </dependency>
 
 		<!-- Ark Study Module -->
 		<dependency>
@@ -156,6 +164,7 @@
 		</dependency>
 
 	</dependencies>
+
 	<build>
 	 	<finalName>ark</finalName>
 		<resources>
@@ -207,5 +216,6 @@
 		<ark-work-tracking.version>1.2b.3</ark-work-tracking.version>
 		<ark-disease.version>1.2b.3</ark-disease.version>
 		<ark-genomics.version>1.2b.3</ark-genomics.version>
+        <redcap-api.version>1.0.0</redcap-api.version>
 	</properties>
 </project>

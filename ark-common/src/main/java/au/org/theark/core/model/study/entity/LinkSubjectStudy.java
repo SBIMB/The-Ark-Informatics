@@ -182,7 +182,7 @@ public class LinkSubjectStudy implements java.io.Serializable {
 		this.subjectUID = subjectUID;
 	}
 	
-	@Column(name = "FAMILY_ID", length = 50)
+	@Column(name = "FAMILY_UID", length = 50)
 	public String getFamilyId() {
 		return familyId;
 	}

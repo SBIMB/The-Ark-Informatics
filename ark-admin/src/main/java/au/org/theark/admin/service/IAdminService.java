@@ -143,4 +143,5 @@ public interface IAdminService<T> {
 	public void updateArkModuleRole(AdminVO modelObject);
 
 	public List<ArkModule> getArkModuleListByArkRole(ArkRole arkRole);
+
 }

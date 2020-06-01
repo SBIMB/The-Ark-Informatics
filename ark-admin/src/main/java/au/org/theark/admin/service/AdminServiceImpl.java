@@ -48,7 +48,7 @@ import au.org.theark.core.model.study.entity.ArkRolePolicyTemplate;
 @Service(au.org.theark.admin.service.Constants.ARK_ADMIN_SERVICE)
 public class AdminServiceImpl<T> implements IAdminService<T> {
 	private IAdminDao	iAdminDao;
-	private IRedcapDao iRedcapDao;
+    private IRedcapDao iRedcapDao;
 
 	public IAdminDao getAdminDao() {
 		return iAdminDao;
@@ -59,13 +59,13 @@ public class AdminServiceImpl<T> implements IAdminService<T> {
 		this.iAdminDao = adminDao;
 	}
 	
-	public IRedcapDao getiRedcapDao() {
+	public IRedcapDao getRedcapDao() {
 		return iRedcapDao;
 	}
 
 	@Autowired
-	public void setiRedcapDao(IRedcapDao iRedcapDao) {
-		this.iRedcapDao = iRedcapDao;
+	public void setRedcapDao(IRedcapDao RedcapDao) {
+		this.iRedcapDao = RedcapDao;
 	}
 
 	public void createArkRolePolicyTemplate(AdminVO adminVo) {
@@ -256,5 +256,5 @@ public class AdminServiceImpl<T> implements IAdminService<T> {
 	@Override
 	public void deleteArkRedcap(AdminVO adminVO) {
 		iRedcapDao.deleteArkRedcap(adminVO.getArkRedcap());			
-	}
+	} 
 }

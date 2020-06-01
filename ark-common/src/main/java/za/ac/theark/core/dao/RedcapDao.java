@@ -44,7 +44,7 @@ import za.ac.theark.core.model.study.entity.RedcapSyncRecurrence;
  */
 
 @SuppressWarnings("unchecked")
-@Repository(za.ac.theark.core.dao.Constants.ARK_ADMIN_SERVICE)
+@Repository("redcapDao")
 public class RedcapDao extends HibernateSessionDao implements IRedcapDao {
 	static Logger	log	= LoggerFactory.getLogger(RedcapDao.class);
 

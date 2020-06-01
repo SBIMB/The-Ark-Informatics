@@ -85,10 +85,9 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 		this.arkFunction = arkFunction;
 	}
 
-	@Id
 	@SequenceGenerator(name = "SubjectUpload_PK_Seq", sequenceName = "STUDY.UPLOAD_PK_SEQ")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "SubjectUpload_PK_Seq")
-	@Column(name = "ID", unique = true, nullable = false, precision = 22, scale = 0)
+	@Column(name = "ID", insertable = false, updatable = false, unique = true, nullable = false, precision = 22, scale = 0)
 	public Long getId() {
 		return this.id;
 	}
@@ -101,7 +100,7 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 	 * @return the study
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "STUDY_ID")
+	@JoinColumn(name = "STUDY_ID", insertable = false, updatable = false)
 	public Study getStudy() {
 		return study;
 	}
@@ -115,7 +114,7 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "FILE_FORMAT_ID", nullable = false)
+	@JoinColumn(name = "FILE_FORMAT_ID", insertable = false, updatable = false, nullable = false)
 	public FileFormat getFileFormat() {
 		return this.fileFormat;
 	}
@@ -125,7 +124,7 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "PAYLOAD_ID", nullable = true)
+	@JoinColumn(name = "PAYLOAD_ID", insertable = false, updatable = false, nullable = true)
 	public Payload getPayload() {
 		return payload;
 	}
@@ -146,7 +145,7 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 	 * @return the delimiterType
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "DELIMITER_TYPE_ID", nullable = false)
+	@JoinColumn(name = "DELIMITER_TYPE_ID", insertable = false, updatable = false, nullable = false)
 	public DelimiterType getDelimiterType() {
 		return delimiterType;
 	}
@@ -154,7 +153,7 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 	/**
 	 * @return the filename
 	 */
-	@Column(name = "FILENAME", length = 260)
+	@Column(name = "FILENAME", insertable = false, updatable = false, length = 260)
 	public String getFilename() {
 		return this.filename;
 	}
@@ -170,7 +169,7 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 	/**
 	 * @return the checksum
 	 */
-	@Column(name = "CHECKSUM", nullable = false, length = 50)
+	@Column(name = "CHECKSUM", insertable = false, updatable = false, nullable = false, length = 50)
 	public String getChecksum() {
 		return checksum;
 	}
@@ -187,7 +186,7 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 	 * @return the startTime
 	 */
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "START_TIME", nullable = false)
+	@Column(name = "START_TIME", insertable = false, updatable = false, nullable = false)
 	public Date getStartTime() {
 		return startTime;
 	}
@@ -204,7 +203,7 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 	 * @return the finishTime
 	 */
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "FINISH_TIME")
+	@Column(name = "FINISH_TIME", insertable = false, updatable = false)
 	public Date getFinishTime() {
 		return finishTime;
 	}
@@ -229,12 +228,12 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 	 * @return the uploadReport
 	 */
 	@Lob
-	@Column(name = "UPLOAD_REPORT")
+	@Column(name = "UPLOAD_REPORT", insertable = false, updatable = false)
 	public byte[] getUploadReport() {
 		return uploadReport;
 	}
 
-	@Column(name = "USER_ID", nullable = false, length = 100)
+	@Column(name = "USER_ID", insertable = false, updatable = false, nullable = false, length = 100)
 	public String getUserId() {
 		return this.userId;
 	}
@@ -244,7 +243,7 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "ARK_FUNCTION_ID", nullable = false)
+	@JoinColumn(name = "ARK_FUNCTION_ID", insertable = false, updatable = false, nullable = false)
 	public ArkFunction getArkFunction() {
 		return arkFunction;
 	}
@@ -254,7 +253,7 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "UPLOAD_TYPE_ID", nullable = false)
+	@JoinColumn(name = "UPLOAD_TYPE_ID", insertable = false, updatable = false, nullable = false)
 	public UploadType getUploadType() {
 		return uploadType;
 	}
@@ -264,7 +263,7 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 	}
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "UPLOAD_METHOD_ID", nullable = false)
+	@JoinColumn(name = "UPLOAD_METHOD_ID", insertable = false, updatable = false, nullable = false)
 	public UploadMethod getUploadMethod() {
 		return uploadMethod;
 	}
@@ -275,7 +274,7 @@ public class UploadREDCap extends Upload implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	// or eager?
-	@JoinColumn(name = "STATUS_ID", nullable = false)
+	@JoinColumn(name = "STATUS_ID", insertable = false, updatable = false, nullable = false)
 	public UploadStatus getUploadStatus() {
 		return uploadStatus;
 	}

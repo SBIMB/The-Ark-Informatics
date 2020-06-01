@@ -7,7 +7,7 @@ text-align: center;
 width: 100%;
 }
 #login,#resetPassword {
-background-color: #EEEEEE;
+background-color: #DAECFF;
 border: 1px solid #000000;
 margin: auto;
 padding: 15px;
@@ -20,7 +20,7 @@ text-align: center;
 width: 100%;
 }
 .loginForm, .resetPassword {
-background-color: #EEEEEE;
+background-color: #DAECFF;
 border: 1px solid #000000;
 margin: auto;
 padding: 15px;

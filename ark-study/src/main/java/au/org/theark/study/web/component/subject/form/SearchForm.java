@@ -82,13 +82,13 @@ public class SearchForm extends AbstractSearchForm<SubjectVO> {
 	private DropDownChoice<Study>					studyDdc;
 	private TextField<String>						subjectUIDTxtFld;
 	protected TextField<String>						familyIdTxtFld;
-	private TextField<String>						firstNameTxtFld;
-	private TextField<String>						middleNameTxtFld;
-	private TextField<String>						lastNameTxtFld;
+	//private TextField<String>						firstNameTxtFld;
+	//private TextField<String>						middleNameTxtFld;
+	//private TextField<String>						lastNameTxtFld;
 	private DropDownChoice<VitalStatus>			vitalStatusDdc;
 	private DropDownChoice<GenderType>			genderTypeDdc;
 	private DropDownChoice<SubjectStatus>		subjectStatusDdc;
-	private DateTextField							dateOfBirthTxtFld;
+	//private DateTextField							dateOfBirthTxtFld;
 	private TextField<String> otherIDTxtFld;
 
 	// TODO get explanation never accessed, yet we can set it - maybe wicket can access?
@@ -122,13 +122,13 @@ public class SearchForm extends AbstractSearchForm<SubjectVO> {
 		add(studyDdc);
 		add(subjectUIDTxtFld);
 		add(familyIdTxtFld);
-		add(firstNameTxtFld);
-		add(middleNameTxtFld);
-		add(lastNameTxtFld);
+		//add(firstNameTxtFld);
+		//add(middleNameTxtFld);
+		//add(lastNameTxtFld);
 		add(vitalStatusDdc);
 		add(subjectStatusDdc);
 		add(genderTypeDdc);
-		add(dateOfBirthTxtFld);
+		//add(dateOfBirthTxtFld);
 		add(otherIDTxtFld);
 	}
 
@@ -136,18 +136,18 @@ public class SearchForm extends AbstractSearchForm<SubjectVO> {
 		initStudyDdc();
 		subjectUIDTxtFld = new TextField<String>(Constants.SUBJECT_UID);
 		familyIdTxtFld = new TextField<String>(Constants.FAMILY_ID);
-		firstNameTxtFld = new TextField<String>(Constants.PERSON_FIRST_NAME);
-		middleNameTxtFld = new TextField<String>(Constants.PERSON_MIDDLE_NAME);
-		lastNameTxtFld = new TextField<String>(Constants.PERSON_LAST_NAME);
+		//firstNameTxtFld = new TextField<String>(Constants.PERSON_FIRST_NAME);
+		//middleNameTxtFld = new TextField<String>(Constants.PERSON_MIDDLE_NAME);
+		//lastNameTxtFld = new TextField<String>(Constants.PERSON_LAST_NAME);
 		otherIDTxtFld = new TextField<String>("linkSubjectStudy.person.otherIDs", new Model<String>(""));
 		initVitalStatusDdc();
 		initSubjectStatusDdc();
 		initGenderTypeDdc();
 
-		dateOfBirthTxtFld = new DateTextField(Constants.PERSON_DOB, new PatternDateConverter(au.org.theark.core.Constants.DD_MM_YYYY,false));
-		ArkDatePicker dobDatePicker = new ArkDatePicker();
-		dobDatePicker.bind(dateOfBirthTxtFld);
-		dateOfBirthTxtFld.add(dobDatePicker);
+		//dateOfBirthTxtFld = new DateTextField(Constants.PERSON_DOB, new PatternDateConverter(au.org.theark.core.Constants.DD_MM_YYYY,false));
+		//ArkDatePicker dobDatePicker = new ArkDatePicker();
+		//dobDatePicker.bind(dateOfBirthTxtFld);
+		//dateOfBirthTxtFld.add(dobDatePicker);
 	}
 	
 	@SuppressWarnings("unchecked")

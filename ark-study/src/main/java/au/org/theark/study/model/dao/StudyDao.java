@@ -2019,7 +2019,7 @@ public class StudyDao extends HibernateSessionDao implements IStudyDao {
 	@Override
 	public String getSubjectFamilyId(Long studyId, String subjectUID) {
 		String result=null;		
-		StringBuffer sb= new StringBuffer("select lss.FAMILY_ID from study.link_subject_study lss where lss.STUDY_ID = :studyId and lss.SUBJECT_UID = :subjectUID ");
+		StringBuffer sb= new StringBuffer("select lss.FAMILY_UID from study.link_subject_study lss where lss.STUDY_ID = :studyId and lss.SUBJECT_UID = :subjectUID ");
 		Query query = getSession().createSQLQuery(sb.toString());
 	    query.setParameter("studyId", studyId);
 	    query.setParameter("subjectUID", subjectUID);
