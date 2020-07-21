@@ -68,6 +68,7 @@ import au.org.theark.core.model.lims.entity.Biospecimen;
 import au.org.theark.core.model.study.entity.ConsentOption;
 import au.org.theark.core.model.study.entity.ConsentStatus;
 import au.org.theark.core.model.study.entity.ConsentType;
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.GenderType;
 import au.org.theark.core.model.study.entity.MaritalStatus;
 import au.org.theark.core.model.study.entity.OtherID;
@@ -121,6 +122,7 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 
 	protected TextField<String>							subjectUIDTxtFld;
 	protected TextField<String>							familyIdTxtFld;
+	protected DropDownChoice<EthnicityType>				ethnicityTypeDdc;
 	//protected TextField<String>							firstNameTxtFld;
 	//protected TextField<String>							middleNameTxtFld;
 	//protected TextField<String>							lastNameTxtFld;
@@ -128,9 +130,9 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 	//protected TextField<String>							preferredNameTxtFld;
 
 	//protected DateTextField								dateOfBirthTxtFld;
-    protected TextField                                 ageAtEnrollmentTxtFld;
+    protected TextField<Integer>                            ageAtEnrollmentTxtFld;
 	//protected DateTextField								dateOfDeathTxtFld;
-    protected TextField                                 ageAtDeathTxtFld;
+    protected TextField<Integer>                            ageAtDeathTxtFld;
 	//protected DateTextField								dateLastKnownAliveTxtFld;
 	protected TextField<String>							causeOfDeathTxtFld;
 	protected TextArea<String>							commentTxtAreaFld;
@@ -141,6 +143,9 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 	protected DropDownChoice<ConsentOption>				consentToActiveContactDdc;
 	protected DropDownChoice<ConsentOption>				consentToUseDataDdc;
 	protected DropDownChoice<ConsentOption>				consentToPassDataGatheringDdc;
+	protected DropDownChoice<ConsentOption>				consentToShareDataDdc;
+	protected DropDownChoice<ConsentOption>				consentToUseBiospecimenDdc;
+	protected DropDownChoice<ConsentOption>				consentToShareBiospecimenDdc;
 
 	// Reference Data
 	protected DropDownChoice<TitleType>					titleTypeDdc;
@@ -314,6 +319,8 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 				target.add(currentOrDeathageLable);
 			}
 		});*/
+		
+		ageAtEnrollmentTxtFld = new TextField<Integer>(Constants.SUBJECT_AGE_AT_ENROLLMENT);
 
 		//dateLastKnownAliveTxtFld = new DateTextField("linkSubjectStudy.person.dateLastKnownAlive", new PatternDateConverter(au.org.theark.core.Constants.DD_MM_YYYY,false));
 		//ArkDatePicker dateLastKnownAlivePicker = new ArkDatePicker();
@@ -321,7 +328,8 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 		//dateLastKnownAliveTxtFld.add(dateLastKnownAlivePicker);
 
 		//dateOfDeathTxtFld = new DateTextField(Constants.PERSON_DOD, new PatternDateConverter(au.org.theark.core.Constants.DD_MM_YYYY,false));
-		/causeOfDeathTxtFld = new TextField<String>(Constants.PERSON_CAUSE_OF_DEATH);
+		ageAtDeathTxtFld = new TextField<Integer>(Constants.SUBJECT_AGE_AT_DEATH);
+		causeOfDeathTxtFld = new TextField<String>(Constants.PERSON_CAUSE_OF_DEATH);
 		//ArkDatePicker dodDatePicker = new ArkDatePicker();
 		//dodDatePicker.bind(dateOfDeathTxtFld);
 		//dateOfDeathTxtFld.add(dodDatePicker);
@@ -337,7 +345,7 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 				target.add(wmcDeathDetailsContainer);
 				target.add(currentOrDeathageLable);
 			}
-		});*/h
+		});*/
 		
 		
 
@@ -359,7 +367,13 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 		titleTypeDdc = new DropDownChoice<TitleType>(Constants.PERSON_TYTPE_TYPE, (List) titleTypeList, defaultChoiceRenderer);
 		titleTypeDdc.add(new ArkDefaultFormFocusBehavior());
 		
-			// Vital Status
+		// Ethnicity Type
+		Collection<EthnicityType> ethnicityTypeList = iArkCommonService.getEthnicityTypes();
+		ChoiceRenderer<EthnicityType> defaultChoiceRender = new ChoiceRenderer<EthnicityType>(Constants.NAME, Constants.ID);
+		ethnicityTypeDdc = new DropDownChoice<EthnicityType>(Constants.PERSON_ETHNICITY_TYPE, (List) ethnicityTypeList, defaultChoiceRender);
+		ethnicityTypeDdc.add(new ArkDefaultFormFocusBehavior());
+		
+		// Vital Status
 		Collection<VitalStatus> vitalStatusList = iArkCommonService.getVitalStatus();
 		ChoiceRenderer<VitalStatus> vitalStatusRenderer = new ChoiceRenderer<VitalStatus>(Constants.NAME, Constants.ID);
 		vitalStatusDdc = new DropDownChoice<VitalStatus>(Constants.PERSON_VITAL_STATUS, (List<VitalStatus>) vitalStatusList, vitalStatusRenderer);
@@ -490,8 +504,11 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 
 		consentToActiveContactDdc = new DropDownChoice<ConsentOption>(Constants.SUBJECT_CONSENT_TO_ACTIVE_CONTACT, (List) consentOptionList, consentOptionRenderer);
 		consentToUseDataDdc = new DropDownChoice<ConsentOption>(Constants.SUBJECT_CONSENT_TO_USEDATA, (List) consentOptionList, consentOptionRenderer);
+		consentToShareDataDdc = new DropDownChoice<ConsentOption>(Constants.SUBJECT_CONSENT_SHAREDATA, (List) consentOptionList, consentOptionRenderer);
 		consentToPassDataGatheringDdc = new DropDownChoice<ConsentOption>(Constants.SUBJECT_CONSENT_PASSIVE_DATA_GATHER, (List) consentOptionList, consentOptionRenderer);
-
+		consentToUseBiospecimenDdc = new DropDownChoice<ConsentOption>(Constants.SUBJECT_CONSENT_TO_USEBIOSPECIMEN, (List) consentOptionList, consentOptionRenderer);
+		consentToShareBiospecimenDdc = new DropDownChoice<ConsentOption>(Constants.SUBJECT_CONSENT_TO_SHAREBIOSPECIMEN, (List) consentOptionList, consentOptionRenderer);
+		
 		initialiseConsentStatusChoice();
 		initialiseConsentTypeChoice();
 
@@ -512,6 +529,7 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 
 		arkCrudContainerVO.getDetailPanelFormContainer().add(subjectUIDTxtFld);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(familyIdTxtFld);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(ethnicityTypeDdc);
 		//arkCrudContainerVO.getDetailPanelFormContainer().add(titleTypeDdc);
 		//arkCrudContainerVO.getDetailPanelFormContainer().add(firstNameTxtFld);
 		//arkCrudContainerVO.getDetailPanelFormContainer().add(middleNameTxtFld);
@@ -519,27 +537,33 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 		//arkCrudContainerVO.getDetailPanelFormContainer().add(previousLastNameTxtFld);
 		//arkCrudContainerVO.getDetailPanelFormContainer().add(preferredNameTxtFld);
 		//arkCrudContainerVO.getDetailPanelFormContainer().add(dateOfBirthTxtFld);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(ageAtEnrollmentTxtFld);
+		//arkCrudContainerVO.getDetailPanelFormContainer().add(ageAtDeathTxtFld);
 		//arkCrudContainerVO.getDetailPanelFormContainer().add(currentOrDeathageLable);
 		//arkCrudContainerVO.getDetailPanelFormContainer().add(dateLastKnownAliveTxtFld);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(commentTxtAreaFld);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(heardAboutStudyTxtFld);
+		//arkCrudContainerVO.getDetailPanelFormContainer().add(heardAboutStudyTxtFld);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(vitalStatusDdc);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(otherIdWebMarkupContainer);
 
 		// Death details only be edited when vital status set to deceased
 		//wmcDeathDetailsContainer.add(dateOfDeathTxtFld);
-		//wmcDeathDetailsContainer.add(causeOfDeathTxtFld);
+		wmcDeathDetailsContainer.add(ageAtDeathTxtFld);
+		wmcDeathDetailsContainer.add(causeOfDeathTxtFld);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(wmcDeathDetailsContainer);
 
 		arkCrudContainerVO.getDetailPanelFormContainer().add(genderTypeDdc);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(subjectStatusDdc);
 		//arkCrudContainerVO.getDetailPanelFormContainer().add(maritalStatusDdc);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(personContactMethodDdc);
+		//arkCrudContainerVO.getDetailPanelFormContainer().add(personContactMethodDdc);
 
 		// Add consent fields into the form container.
 		arkCrudContainerVO.getDetailPanelFormContainer().add(consentToActiveContactDdc);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(consentToUseDataDdc);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(consentToShareDataDdc);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(consentToPassDataGatheringDdc);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(consentToUseBiospecimenDdc);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(consentToShareBiospecimenDdc);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(consentStatusChoice);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(consentTypeChoice);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(consentDateTxtFld);
@@ -604,6 +628,7 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 		//previousLastNameTxtFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_NAME_MAX_LENGTH_50));
 		//preferredNameTxtFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_NAME_MAX_LENGTH_50));
 		causeOfDeathTxtFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_DESCRIPTIVE_MAX_LENGTH_255));   
+		ageAtEnrollmentTxtFld.setRequired(true).setLabel(new StringResourceModel("ageAtEnrollment.required", this, null));
 		commentTxtAreaFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_COMMENTS_MAX_LENGTH_500));    
 		//heardAboutStudyTxtFld.add(StringValidator.maximumLength(au.org.theark.core.Constants.GENERAL_FIELD_COMMENTS_MAX_LENGTH_500));
 		//Add Form validators...
@@ -616,7 +641,7 @@ public class DetailForm extends AbstractDetailForm<SubjectVO> {
 		//Date of birth and consent date range
 		//this.add(new DateFromToValidator(dateOfBirthTxtFld, consentDateTxtFld,"Date of birth","Consent date"));
 		//Consent date and date of death
-		this.add(new DateFromToValidator(consentDateTxtFld,dateOfDeathTxtFld,"Consent date","Date of death"));
+		//this.add(new DateFromToValidator(consentDateTxtFld,dateOfDeathTxtFld,"Consent date","Date of death"));
 		
 	}
 

@@ -16,43 +16,70 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package au.org.theark.lims.service;
+package za.ac.theark.shipment.service;
 
-import java.io.InputStream;
-import java.util.Collection;
 import java.util.List;
 
-import au.org.theark.core.exception.ArkSystemException;
-import au.org.theark.core.exception.EntityNotFoundException;
-import au.org.theark.core.model.lims.entity.AccessRequest;
-import au.org.theark.core.model.lims.entity.BioCollection;
-import au.org.theark.core.model.lims.entity.BioCollectionCustomFieldData;
-import au.org.theark.core.model.lims.entity.BioSampletype;
-import au.org.theark.core.model.lims.entity.BioTransaction;
-import au.org.theark.core.model.lims.entity.BioTransactionStatus;
-import au.org.theark.core.model.lims.entity.Biospecimen;
-import au.org.theark.core.model.lims.entity.BiospecimenAnticoagulant;
-import au.org.theark.core.model.lims.entity.BiospecimenCustomFieldData;
-import au.org.theark.core.model.lims.entity.BiospecimenGrade;
-import au.org.theark.core.model.lims.entity.BiospecimenProtocol;
-import au.org.theark.core.model.lims.entity.BiospecimenQuality;
-import au.org.theark.core.model.lims.entity.BiospecimenStatus;
-import au.org.theark.core.model.lims.entity.BiospecimenStorage;
-import au.org.theark.core.model.lims.entity.InvCell;
-import au.org.theark.core.model.lims.entity.TreatmentType;
-import au.org.theark.core.model.lims.entity.Unit;
-import au.org.theark.core.model.study.entity.ArkFunction;
-import au.org.theark.core.model.study.entity.CustomFieldCategory;
-import au.org.theark.core.model.study.entity.CustomFieldType;
-import au.org.theark.core.model.study.entity.LinkSubjectStudy;
-import au.org.theark.core.model.study.entity.Person;
+import au.org.theark.core.model.shipment.entity.OrganisationType;
+import au.org.theark.core.model.shipment.entity.ShipmentMethod;
+import au.org.theark.core.model.shipment.entity.Staff;
+import au.org.theark.core.model.shipment.entity.StaffPhone;
 import au.org.theark.core.model.study.entity.Study;
-import au.org.theark.core.vo.LimsVO;
+import za.ac.theark.shipment.model.vo.ShipmentVO;
+import au.org.theark.core.model.shipment.entity.Organisation;
+import au.org.theark.core.model.shipment.entity.ShipmentStatus;
+import au.org.theark.core.model.shipment.entity.ShipmentType;
+
+public interface IShipmentService {
+	
+	//Shipment related methods
+	
+	public void createShipment(ShipmentVO shipmentVO);
+	
+	public void updateShipment(ShipmentVO shipmentVO);
+	
+	public void deleteShipment(ShipmentVO shipmentVO);
+	
+	public void deleteShipment(Long Id);
+	
+	public int getStudyShipmentCount(Study study);
+	
+	
+	//Shipment list related methods
+
+	public List<Organisation> getOrganisationsByTypeList(OrganisationType OrganisationType);
+	
+	public List<Organisation> getOrganisationsByTypeList(String string);
+	
+	public List<ShipmentMethod> getShipmentMethodList();
+	
+	public List<ShipmentType> getShipmentTypeList();
+	
+	public List<ShipmentStatus> getShipmentStatusList();
+	
+	
+	//Staff related methods
+	
+	public List<Staff> searchStaffList(Organisation organisation);
+	
+	public List<Staff> searchStaffList(Long organisationID);
+
+	public List<Staff> getStaffList();
+	
+	public Staff getStaff(Staff staff);
+	
+	public Staff getStaffById(Long Id);
+	
+	public Staff getStaffByStaffId(String staffID);
+	
+	public StaffPhone getPreferredStaffContactNumber(Staff staff);
+	
+	public StaffPhone getPreferredStaffContactNumber(String staffID);
 
 
-public interface ILimsService {
 	/**
-	 * Look up a Person based on the supplied Long ID that represents a Person primary key. This id is the primary key of the Person table that can
+	 * Look up a Person based on the supplied Long ID that represents a Person
+	 * primary key. This id is the primary key of the Person table that can
 	 * represent a subject or contact.
 	 * 
 	 * @param personId
@@ -60,353 +87,447 @@ public interface ILimsService {
 	 * @throws EntityNotFoundException
 	 * @throws ArkSystemException
 	 */
-	public Person getPerson(Long personId) throws EntityNotFoundException, ArkSystemException;
-
-	/**
-	 * Delete a LIMS collection based on the supplied LimsVO
+	/*
+	 * public Person getPerson(Long personId) throws EntityNotFoundException,
+	 * ArkSystemException;
 	 * 
-	 * @param modelObject
-	 *           the LimsVO object
-	 */
-	public void deleteBioCollection(LimsVO modelObject);
-
-	/**
-	 * Update a LIMS collection based on the supplied LimsVO
+	 *//**
+		 * Delete a LIMS collection based on the supplied LimsVO
+		 * 
+		 * @param modelObject the LimsVO object
+		 */
+	/*
+	 * public void deleteBioCollection(LimsVO modelObject);
 	 * 
-	 * @param modelObject
-	 *           the LimsVO object
-	 * @throws ArkSystemException 
-	 */
-	public void updateBioCollection(LimsVO modelObject) throws ArkSystemException;
-
-	/**
-	 * Create a LIMS collection based on the supplied LimsVO
+	 *//**
+		 * Update a LIMS collection based on the supplied LimsVO
+		 * 
+		 * @param modelObject the LimsVO object
+		 * @throws ArkSystemException
+		 */
+	/*
+	 * public void updateBioCollection(LimsVO modelObject) throws
+	 * ArkSystemException;
 	 * 
-	 * @param modelObject
-	 *           the LimsVO object
-	 */
-	public void createBioCollection(LimsVO modelObject) throws ArkSystemException;
-
-
-	public BioCollection createBioCollection(BioCollection modelObject) throws ArkSystemException;
-	
-	/**
-	 * Search the database for a list of BioCollections based on the supplied BioCollection
+	 *//**
+		 * Create a LIMS collection based on the supplied LimsVO
+		 * 
+		 * @param modelObject the LimsVO object
+		 */
+	/*
+	 * public void createBioCollection(LimsVO modelObject) throws
+	 * ArkSystemException;
 	 * 
-	 * @param bioCollection
-	 *           the bioCollection object to be matched against
-	 * @return List of BioCollections
-	 * @throws ArkSystemException
-	 */
-	public List<BioCollection> searchBioCollection(BioCollection bioCollection) throws ArkSystemException;
-
-	/**
-	 * Search the database for a BioCollection based on the supplied id
 	 * 
-	 * @param id
-	 *           the unique id of the BioCollection
-	 * @return BioCollection
-	 * @throws EntityNotFoundException
-	 */
-	public au.org.theark.core.model.lims.entity.BioCollection getBioCollection(Long id) throws EntityNotFoundException;
-
-	/**
-	 * Look up a LIMS biospecimen based on the supplied Long id that represents the primary key
+	 * public BioCollection createBioCollection(BioCollection modelObject) throws
+	 * ArkSystemException;
 	 * 
-	 * @param id
-	 * @return Biospecimen
-	 * @throws EntityNotFoundException
-	 */
-	public Biospecimen getBiospecimen(Long id) throws EntityNotFoundException;
-
-	/**
-	 * Create a LIMS biospecimen based on the supplied LimsVO
+	 *//**
+		 * Search the database for a list of BioCollections based on the supplied
+		 * BioCollection
+		 * 
+		 * @param bioCollection the bioCollection object to be matched against
+		 * @return List of BioCollections
+		 * @throws ArkSystemException
+		 */
+	/*
+	 * public List<BioCollection> searchBioCollection(BioCollection bioCollection)
+	 * throws ArkSystemException;
 	 * 
-	 * @param modelObject
-	 *           the LimsVO object
-	 */
-	public void createBiospecimen(LimsVO modelObject) throws ArkSystemException;
-
-	/**
-	 * Update a LIMS biospecimen based on the supplied LimsVO
+	 *//**
+		 * Search the database for a BioCollection based on the supplied id
+		 * 
+		 * @param id the unique id of the BioCollection
+		 * @return BioCollection
+		 * @throws EntityNotFoundException
+		 */
+	/*
+	 * public au.org.theark.core.model.lims.entity.BioCollection
+	 * getBioCollection(Long id) throws EntityNotFoundException;
 	 * 
-	 * @param modelObject
-	 *           the LimsVO object
-	 * @throws ArkSystemException 
-	 */
-	public void updateBiospecimen(LimsVO modelObject) throws ArkSystemException;
-
-	/**
-	 * Delete a LIMS biospecimen based on the supplied LimsVO
+	 *//**
+		 * Look up a LIMS biospecimen based on the supplied Long id that represents the
+		 * primary key
+		 * 
+		 * @param id
+		 * @return Biospecimen
+		 * @throws EntityNotFoundException
+		 */
+	/*
+	 * public Biospecimen getBiospecimen(Long id) throws EntityNotFoundException;
 	 * 
-	 * @param modelObject
-	 *           the LimsVO object
-	 */
-	public void deleteBiospecimen(LimsVO modelObject);
-
-	/**
-	 * Look up a LIMS bioTransaction based on the supplied Long id that represents the primary key
+	 *//**
+		 * Create a LIMS biospecimen based on the supplied LimsVO
+		 * 
+		 * @param modelObject the LimsVO object
+		 */
+	/*
+	 * public void createBiospecimen(LimsVO modelObject) throws ArkSystemException;
 	 * 
-	 * @param id
-	 * @return BioTransaction
-	 * @throws EntityNotFoundException
-	 * @throws ArkSystemException
-	 */
-	public BioTransaction getBioTransaction(Long id) throws EntityNotFoundException, ArkSystemException;
-
-	/**
-	 * Get count of the BioTransaction given the criteria
+	 *//**
+		 * Update a LIMS biospecimen based on the supplied LimsVO
+		 * 
+		 * @param modelObject the LimsVO object
+		 * @throws ArkSystemException
+		 */
+	/*
+	 * public void updateBiospecimen(LimsVO modelObject) throws ArkSystemException;
 	 * 
-	 * @param BioTransaction
-	 *           criteria
-	 * @return counts
-	 */
-	public long getBioTransactionCount(BioTransaction bioTransactionCriteria);
-
-	/**
-	 * Look up a List of LIMS BioTransaction(s) based on the supplied bioTransaction criteria
+	 *//**
+		 * Delete a LIMS biospecimen based on the supplied LimsVO
+		 * 
+		 * @param modelObject the LimsVO object
+		 */
+	/*
+	 * public void deleteBiospecimen(LimsVO modelObject);
 	 * 
-	 * @param bioTransactionCriteria
-	 * @return List<au.org.theark.core.model.lims.entity.BioTransaction>
-	 */
-	public List<BioTransaction> searchPageableBioTransactions(BioTransaction bioTransactionCriteria, int first, int count);
-
-	/**
-	 * Create a LIMS bioTransaction based on the supplied LimsVO
+	 *//**
+		 * Look up a LIMS bioTransaction based on the supplied Long id that represents
+		 * the primary key
+		 * 
+		 * @param id
+		 * @return BioTransaction
+		 * @throws EntityNotFoundException
+		 * @throws ArkSystemException
+		 */
+	/*
+	 * public BioTransaction getBioTransaction(Long id) throws
+	 * EntityNotFoundException, ArkSystemException;
 	 * 
-	 * @param modelObject
-	 *           the LimsVO object
-	 */
-	public void createBioTransaction(LimsVO modelObject);
-
-	/**
-	 * Update a LIMS bioTransaction based on the supplied LimsVO
+	 *//**
+		 * Get count of the BioTransaction given the criteria
+		 * 
+		 * @param BioTransaction criteria
+		 * @return counts
+		 */
+	/*
+	 * public long getBioTransactionCount(BioTransaction bioTransactionCriteria);
 	 * 
-	 * @param modelObject
-	 *           the LimsVO object
-	 */
-	public void updateBioTransaction(LimsVO modelObject);
-
-	/**
-	 * Delete a LIMS bioTransaction based on the supplied LimsVO
+	 *//**
+		 * Look up a List of LIMS BioTransaction(s) based on the supplied bioTransaction
+		 * criteria
+		 * 
+		 * @param bioTransactionCriteria
+		 * @return List<au.org.theark.core.model.lims.entity.BioTransaction>
+		 */
+	/*
+	 * public List<BioTransaction> searchPageableBioTransactions(BioTransaction
+	 * bioTransactionCriteria, int first, int count);
 	 * 
-	 * @param bioTransaction
-	 *           the LimsVO object
-	 */
-	public void deleteBioTransaction(BioTransaction bioTransaction);
-
-	/**
-	 * Get a list of all sampleTypes
+	 *//**
+		 * Create a LIMS bioTransaction based on the supplied LimsVO
+		 * 
+		 * @param modelObject the LimsVO object
+		 */
+	/*
+	 * public void createBioTransaction(LimsVO modelObject);
 	 * 
-	 * @return List
-	 */
-	public List<BioSampletype> getBioSampleTypes();
-
-	/**
-	 * Determine if provided linkSubjectStudy has any BioCollections associated
+	 *//**
+		 * Update a LIMS bioTransaction based on the supplied LimsVO
+		 * 
+		 * @param modelObject the LimsVO object
+		 */
+	/*
+	 * public void updateBioTransaction(LimsVO modelObject);
 	 * 
-	 * @return true if provided linkSubjectStudy has one or more BioCollections
-	 */
-	public Boolean hasBioCollections(LinkSubjectStudy linkSubjectStudy);
-
-	/**
-	 * Determine if provided bioCollection has any biospecimens associated
+	 *//**
+		 * Delete a LIMS bioTransaction based on the supplied LimsVO
+		 * 
+		 * @param bioTransaction the LimsVO object
+		 */
+	/*
+	 * public void deleteBioTransaction(BioTransaction bioTransaction);
 	 * 
-	 * @return true if provided bioCollection has one or more Biospecimens
-	 */
-	public Boolean hasBiospecimens(BioCollection bioCollection);
-
-	/**
-	 * Get count of the BioCollections given the criteria
+	 *//**
+		 * Get a list of all sampleTypes
+		 * 
+		 * @return List
+		 */
+	/*
+	 * public List<BioSampletype> getBioSampleTypes();
 	 * 
-	 * @param BioCollection
-	 *           criteria
-	 * @return counts
-	 */
-	public long getBioCollectionCount(BioCollection bioCollection);
-
-	/**
-	 * A generic interface that will return a list BioCollections specified by a particular criteria, and a paginated reference point
+	 *//**
+		 * Determine if provided linkSubjectStudy has any BioCollections associated
+		 * 
+		 * @return true if provided linkSubjectStudy has one or more BioCollections
+		 */
+	/*
+	 * public Boolean hasBioCollections(LinkSubjectStudy linkSubjectStudy);
 	 * 
-	 * @param BioCollection
-	 *           criteria
-	 * @return Collection of BioCollection
-	 */
-	public List<BioCollection> searchPageableBioCollections(BioCollection bioCollection, int first, int count);
-
-	/**
-	 * Get count of the Biospecimens given the criteria
+	 *//**
+		 * Determine if provided bioCollection has any biospecimens associated
+		 * 
+		 * @return true if provided bioCollection has one or more Biospecimens
+		 */
+	/*
+	 * public Boolean hasBiospecimens(BioCollection bioCollection);
 	 * 
-	 * @param Biospecimens
-	 *           criteria
-	 * @return counts
-	 */
-	public long getBiospecimenCount(Biospecimen biospecimenCriteria);
-
-	/**
-	 * A generic interface that will return a list Biospecimens specified by a particular criteria, and a paginated reference point
+	 *//**
+		 * Get count of the BioCollections given the criteria
+		 * 
+		 * @param BioCollection criteria
+		 * @return counts
+		 */
+	/*
+	 * public long getBioCollectionCount(BioCollection bioCollection);
 	 * 
-	 * @param Biospecimens
-	 *           criteria
-	 * @return Collection of Biospecimen
-	 */
-	public List<Biospecimen> searchPageableBiospecimens(Biospecimen biospecimenCriteria, int first, int count);
-
-	/**
-	 * Get a Biospecimen entity based on a specified BiospecimenUid
-	 * @param biospecimenUid
-	 * @param study
-	 * @return
-	 */
-	public Biospecimen getBiospecimenByUid(String biospecimenUid, Study study);
-
-	public long getBioCollectionCustomFieldDataCount(BioCollection criteria, ArkFunction arkFunction);
-	
-	public List<BioCollectionCustomFieldData> getBioCollectionCustomFieldDataList(BioCollection bioCollectionCriteria, ArkFunction arkFunction,CustomFieldCategory customFieldCategory,CustomFieldType customFieldType, int first, int count);
-	
-	/**
-	 * Allows to Save(Insert) or Update  BioCollectionCustomFieldData. If there are BioCollectionCustomFieldData
-	 * with no data value then it will discard it from the save/update process.
-	 * @param bioCollectionCFDataList - List of BioCollectionCustomFieldData to commit to database.
-	 * @return a List of BioCollectionCustomFieldData that failed to save (Hibernate caught some exception).
-	 */
-	public List<BioCollectionCustomFieldData> createOrUpdateBioCollectionCustomFieldData(List<BioCollectionCustomFieldData> bioCollectionCFDataList);
-
-	/**
-	 * Get the count of biospecimen(s) based on a LimsVO criteria
-	 * @param limsVo
-	 * @return
-	 */
-	public long getBiospecimenCount(LimsVO limsVo);
-
-	/**
-	 * Get a list of Biospecimen(s) based on a LimsVO criteria
-	 * @param limsVo
-	 * @param first
-	 * @param count
-	 * @return
-	 */
-	public List<Biospecimen> searchPageableBiospecimens(LimsVO limsVo, int first, int count);
-
-	public long getBiospecimenCustomFieldDataCount(Biospecimen biospecimenCriteria, ArkFunction arkFunction);
-
-	public List<BiospecimenCustomFieldData> getBiospecimenCustomFieldDataList(Biospecimen biospecimenCriteria, ArkFunction arkFunction,CustomFieldCategory customFieldCategory,CustomFieldType customFieldType, int first, int count);
-	
-	/**
-	 * Allows to Save(Insert) or Update  BiospecimenCustomFieldData. If there are BiospecimenCustomFieldData
-	 * with no data value then it will discard it from the save/update process.
-	 * @param biospecimenCFDataList - List of BiospecimenCustomFieldData to commit to database.
-	 * @return a List of BiospecimenCustomFieldData that failed to save (Hibernate caught some exception).
-	 */
-	public List<BiospecimenCustomFieldData> createOrUpdateBiospecimenCustomFieldData(List<BiospecimenCustomFieldData> biospecimenCFDataList);
-
-	/**
-	 * Gets a list of units
-	 * @return
-	 */
-	public List<Unit> getUnits();
-
-	/**
-	 * Get a List of treatment types
-	 * @return
-	 */
-	public List<TreatmentType> getTreatmentTypes();
-	
-	/**
-	 * Get a List of BioTransaction Status that can be used for a dropdown choice (i.e. no Initial status)
-	 * @return
-	 */
-	public List<BioTransactionStatus> getBioTransactionStatusChoices();
-	
-	/**
-	 * Get a specific BioTransaction Status by name
-	 * @return
-	 */
-	public BioTransactionStatus getBioTransactionStatusByName(String statusName);
-	
-	/**
-	 * Get the sum of all transactions for a Biospecimens
-	 * @param biospecimen
-	 * @return
-	 */
-	public Double getQuantityAvailable(Biospecimen biospecimen);
-	
-	public BiospecimenGrade getBiospecimenGradeByName(String name);
-	
-	public List<BiospecimenGrade> getBiospecimenGradeList();
-	
-	public BiospecimenStorage getBiospecimenStorageByName(String name);
-
-	public List<BiospecimenStorage> getBiospecimenStorageList();
-
-	public BiospecimenAnticoagulant getBiospecimenAnticoagulantByName(String name);
-	
-	public List<BiospecimenAnticoagulant> getBiospecimenAnticoagulantList();
-
-	public BiospecimenStatus getBiospecimenStatusByName(String name);
-	
-	public List<BiospecimenStatus> getBiospecimenStatusList();
-
-	public BiospecimenQuality getBiospecimenQualityByName(String name);
-	
-	public List<BiospecimenQuality> getBiospecimenQualityList();
-	
-	public String getNextGeneratedBiospecimenUID(Study study);
-	
-	public BioCollectionCustomFieldData getBioCollectionCustomFieldData(BioCollection bioCollectionCriteria, ArkFunction arkFunction, String customFieldName);
-
-	public StringBuffer uploadAndReportMatrixBiospecimenFile(Study study, InputStream inputStream, long size, String fileFormat, char delimiterChar);
-
-	public StringBuffer uploadAndReportMatrixBiospecimenInventoryFile(Study study, InputStream inputStream, long size, String fileFormat, char delimiterChar);
-	
-	public StringBuffer uploadAndReportMatrixBiocollectionFile(Study study, InputStream inputStream, long size, String fileFormat, char delimiterChar);
-
-	public void batchInsertBiospecimensAndUpdateInventoryCell(Collection<Biospecimen> Biospecimens);
-
-	public void batchUpdateBiospecimens(Collection<Biospecimen> updateSubjects);
-
-	public BioSampletype getBioSampleTypeByName(String name);
-
-	public TreatmentType getTreatmentTypeByName(String name);
-
-	public void batchUpdateInvCells(List<InvCell> updateInvCells);
-
-	public BioCollection getBioCollectionByUID(String biocollectionUid,Long studyId, String subjectUID);
-
-	public Unit getUnitByName(String name);
-
-	public List<Biospecimen> getBiospecimenByBioCollection(BioCollection bioCollection);
-
-	public List<String> getAllBiospecimenUIDs(Study study);
-	
-	public List<String> getAllBiocollectionUIDs(Study study);
-
-	public List<AccessRequest> getAccessRequests();
-	
-	public void batchAliquotBiospecimens(List<Biospecimen> biospecimenList);
-
-	public BiospecimenProtocol getBiospecimenProtocolByName(String name);
-	
-	public List<BiospecimenProtocol> getBiospecimenProtocolList();
-
-	public List<Biospecimen> getRootBiospecimensForBiocollection(BioCollection bc);
-	
-	public BioCollection getBioCollectionForStudySubjectByUID(final String biocollectionUid, final Study study, final LinkSubjectStudy linkSubjectStudy);
-	
-	public void batchInsertBiocollections(Collection<BioCollection> insertBioCollections);
-
-	public void batchUpdateBiocollections(Collection<BioCollection> updateBioCollections);
-	
-	public boolean hasBiocllectionGotCustomFieldData(BioCollection bioCollection);
-	
-	public List<BioTransaction> getAllBiotransactionForBiospecimen(Biospecimen biospecimen);
-	
-	public void updateBioCollection(BioCollection bioCollection) throws ArkSystemException;
-	
-	public void deleteBioCollection(BioCollection bioCollection);
-	
-	public List<BiospecimenCustomFieldData> getBiospecimenHasFieldDataForBiospecimen(Biospecimen biospecimen);
-		
-	public void deleteBiospecimenCustomFieldDataForBiospecimen(Biospecimen biospecimen);
+	 *//**
+		 * A generic interface that will return a list BioCollections specified by a
+		 * particular criteria, and a paginated reference point
+		 * 
+		 * @param BioCollection criteria
+		 * @return Collection of BioCollection
+		 */
+	/*
+	 * public List<BioCollection> searchPageableBioCollections(BioCollection
+	 * bioCollection, int first, int count);
+	 * 
+	 *//**
+		 * Get count of the Biospecimens given the criteria
+		 * 
+		 * @param Biospecimens criteria
+		 * @return counts
+		 */
+	/*
+	 * public long getBiospecimenCount(Biospecimen biospecimenCriteria);
+	 * 
+	 *//**
+		 * A generic interface that will return a list Biospecimens specified by a
+		 * particular criteria, and a paginated reference point
+		 * 
+		 * @param Biospecimens criteria
+		 * @return Collection of Biospecimen
+		 */
+	/*
+	 * public List<Biospecimen> searchPageableBiospecimens(Biospecimen
+	 * biospecimenCriteria, int first, int count);
+	 * 
+	 *//**
+		 * Get a Biospecimen entity based on a specified BiospecimenUid
+		 * 
+		 * @param biospecimenUid
+		 * @param study
+		 * @return
+		 */
+	/*
+	 * public Biospecimen getBiospecimenByUid(String biospecimenUid, Study study);
+	 * 
+	 * public long getBioCollectionCustomFieldDataCount(BioCollection criteria,
+	 * ArkFunction arkFunction);
+	 * 
+	 * public List<BioCollectionCustomFieldData>
+	 * getBioCollectionCustomFieldDataList(BioCollection bioCollectionCriteria,
+	 * ArkFunction arkFunction,CustomFieldCategory
+	 * customFieldCategory,CustomFieldType customFieldType, int first, int count);
+	 * 
+	 *//**
+		 * Allows to Save(Insert) or Update BioCollectionCustomFieldData. If there are
+		 * BioCollectionCustomFieldData with no data value then it will discard it from
+		 * the save/update process.
+		 * 
+		 * @param bioCollectionCFDataList - List of BioCollectionCustomFieldData to
+		 *                                commit to database.
+		 * @return a List of BioCollectionCustomFieldData that failed to save (Hibernate
+		 *         caught some exception).
+		 */
+	/*
+	 * public List<BioCollectionCustomFieldData>
+	 * createOrUpdateBioCollectionCustomFieldData(List<BioCollectionCustomFieldData>
+	 * bioCollectionCFDataList);
+	 * 
+	 *//**
+		 * Get the count of biospecimen(s) based on a LimsVO criteria
+		 * 
+		 * @param limsVo
+		 * @return
+		 */
+	/*
+	 * public long getBiospecimenCount(LimsVO limsVo);
+	 * 
+	 *//**
+		 * Get a list of Biospecimen(s) based on a LimsVO criteria
+		 * 
+		 * @param limsVo
+		 * @param first
+		 * @param count
+		 * @return
+		 */
+	/*
+	 * public List<Biospecimen> searchPageableBiospecimens(LimsVO limsVo, int first,
+	 * int count);
+	 * 
+	 * public long getBiospecimenCustomFieldDataCount(Biospecimen
+	 * biospecimenCriteria, ArkFunction arkFunction);
+	 * 
+	 * public List<BiospecimenCustomFieldData>
+	 * getBiospecimenCustomFieldDataList(Biospecimen biospecimenCriteria,
+	 * ArkFunction arkFunction,CustomFieldCategory
+	 * customFieldCategory,CustomFieldType customFieldType, int first, int count);
+	 * 
+	 *//**
+		 * Allows to Save(Insert) or Update BiospecimenCustomFieldData. If there are
+		 * BiospecimenCustomFieldData with no data value then it will discard it from
+		 * the save/update process.
+		 * 
+		 * @param biospecimenCFDataList - List of BiospecimenCustomFieldData to commit
+		 *                              to database.
+		 * @return a List of BiospecimenCustomFieldData that failed to save (Hibernate
+		 *         caught some exception).
+		 */
+	/*
+	 * public List<BiospecimenCustomFieldData>
+	 * createOrUpdateBiospecimenCustomFieldData(List<BiospecimenCustomFieldData>
+	 * biospecimenCFDataList);
+	 * 
+	 *//**
+		 * Gets a list of units
+		 * 
+		 * @return
+		 */
+	/*
+	 * public List<Unit> getUnits();
+	 * 
+	 *//**
+		 * Get a List of treatment types
+		 * 
+		 * @return
+		 */
+	/*
+	 * public List<TreatmentType> getTreatmentTypes();
+	 * 
+	 *//**
+		 * Get a List of BioTransaction Status that can be used for a dropdown choice
+		 * (i.e. no Initial status)
+		 * 
+		 * @return
+		 */
+	/*
+	 * public List<BioTransactionStatus> getBioTransactionStatusChoices();
+	 * 
+	 *//**
+		 * Get a specific BioTransaction Status by name
+		 * 
+		 * @return
+		 */
+	/*
+	 * public BioTransactionStatus getBioTransactionStatusByName(String statusName);
+	 * 
+	 *//**
+		 * Gets the list of child studies for the specifed parent Study
+		 * 
+		 * @param study the parent study
+		 * @return
+		 */
+	/*
+	 * public List<Study> getChildStudyListOfParent(Study study);
+	 * 
+	 * 
+	 *//**
+		 * Get the sum of all transactions for a Biospecimens
+		 * 
+		 * @param biospecimen
+		 * @return
+		 *//*
+			 * public Double getQuantityAvailable(Biospecimen biospecimen);
+			 * 
+			 * public BiospecimenGrade getBiospecimenGradeByName(String name);
+			 * 
+			 * public List<BiospecimenGrade> getBiospecimenGradeList();
+			 * 
+			 * public BiospecimenStorage getBiospecimenStorageByName(String name);
+			 * 
+			 * public List<BiospecimenStorage> getBiospecimenStorageList();
+			 * 
+			 * public BiospecimenAnticoagulant getBiospecimenAnticoagulantByName(String
+			 * name);
+			 * 
+			 * public List<BiospecimenAnticoagulant> getBiospecimenAnticoagulantList();
+			 * 
+			 * public BiospecimenStatus getBiospecimenStatusByName(String name);
+			 * 
+			 * public List<BiospecimenStatus> getBiospecimenStatusList();
+			 * 
+			 * public BiospecimenQuality getBiospecimenQualityByName(String name);
+			 * 
+			 * public List<BiospecimenQuality> getBiospecimenQualityList();
+			 * 
+			 * public String getNextGeneratedBiospecimenUID(Study study);
+			 * 
+			 * public BioCollectionCustomFieldData
+			 * getBioCollectionCustomFieldData(BioCollection bioCollectionCriteria,
+			 * ArkFunction arkFunction, String customFieldName);
+			 * 
+			 * public StringBuffer uploadAndReportMatrixBiospecimenFile(Study study,
+			 * InputStream inputStream, long size, String fileFormat, char delimiterChar);
+			 * 
+			 * public StringBuffer uploadAndReportMatrixBiospecimenInventoryFile(Study
+			 * study, InputStream inputStream, long size, String fileFormat, char
+			 * delimiterChar);
+			 * 
+			 * public StringBuffer uploadAndReportMatrixBiocollectionFile(Study study,
+			 * InputStream inputStream, long size, String fileFormat, char delimiterChar);
+			 * 
+			 * public void
+			 * batchInsertBiospecimensAndUpdateInventoryCell(Collection<Biospecimen>
+			 * Biospecimens);
+			 * 
+			 * public void batchUpdateBiospecimens(Collection<Biospecimen> updateSubjects);
+			 * 
+			 * public BioSampletype getBioSampleTypeByName(String name);
+			 * 
+			 * public TreatmentType getTreatmentTypeByName(String name);
+			 * 
+			 * public void batchUpdateInvCells(List<InvCell> updateInvCells);
+			 * 
+			 * public BioCollection getBioCollectionByUID(String biocollectionUid,Long
+			 * studyId, String subjectUID);
+			 * 
+			 * public Unit getUnitByName(String name);
+			 * 
+			 * public List<Biospecimen> getBiospecimenByBioCollection(BioCollection
+			 * bioCollection);
+			 * 
+			 * public List<String> getAllBiospecimenUIDs(Study study);
+			 * 
+			 * public List<String> getAllBiocollectionUIDs(Study study);
+			 * 
+			 * public List<AccessRequest> getAccessRequests();
+			 * 
+			 * public void batchAliquotBiospecimens(List<Biospecimen> biospecimenList);
+			 * 
+			 * public BiospecimenProtocol getBiospecimenProtocolByName(String name);
+			 * 
+			 * public List<BiospecimenProtocol> getBiospecimenProtocolList();
+			 * 
+			 * public List<Biospecimen> getRootBiospecimensForBiocollection(BioCollection
+			 * bc);
+			 * 
+			 * public BioCollection getBioCollectionForStudySubjectByUID(final String
+			 * biocollectionUid, final Study study, final LinkSubjectStudy
+			 * linkSubjectStudy);
+			 * 
+			 * public void batchInsertBiocollections(Collection<BioCollection>
+			 * insertBioCollections);
+			 * 
+			 * public void batchUpdateBiocollections(Collection<BioCollection>
+			 * updateBioCollections);
+			 * 
+			 * public boolean hasBiocllectionGotCustomFieldData(BioCollection
+			 * bioCollection);
+			 * 
+			 * public List<BioTransaction> getAllBiotransactionForBiospecimen(Biospecimen
+			 * biospecimen);
+			 * 
+			 * public void updateBioCollection(BioCollection bioCollection) throws
+			 * ArkSystemException;
+			 * 
+			 * public void deleteBioCollection(BioCollection bioCollection);
+			 * 
+			 * public List<BiospecimenCustomFieldData>
+			 * getBiospecimenHasFieldDataForBiospecimen(Biospecimen biospecimen);
+			 * 
+			 * public void deleteBiospecimenCustomFieldDataForBiospecimen(Biospecimen
+			 * biospecimen);
+			 */
 
 }

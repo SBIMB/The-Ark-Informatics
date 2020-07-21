@@ -113,6 +113,7 @@ public class Constants {
 	public static final String	PERSON_CONTACT_METHOD						= "linkSubjectStudy.person.personContactMethod";
 	public static final String	PERSON_DOB									= "linkSubjectStudy.person.dateOfBirth";
 	public static final String	PERSON_DOD									= "linkSubjectStudy.person.dateOfDeath";
+	public static final String	PERSON_AGE_AT_DEATH							= "linkSubjectStudy.person.ageAtDeath";	
 	public static final String	PERSON_CONSENT_DATE							= "linkSubjectStudy.consentDate";
 	public static final String	SUBJECT_CONSENT_STATUS						= "linkSubjectStudy.consentStatus";
 	public static final String	SUBJECT_CONSENT_TYPE						= "linkSubjectStudy.consentType";

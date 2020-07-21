@@ -57,7 +57,7 @@ public class StaffPhone implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private PhoneType phoneType;
-	private ShipmentStaff shipmentStaff;
+	private Staff staff;
 	private String phoneNumber;
 	private String areaCode;
 	private PhoneStatus phoneStatus;
@@ -78,11 +78,11 @@ public class StaffPhone implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public StaffPhone(Long id, PhoneType phoneType, ShipmentStaff shipmentStaff,
+	public StaffPhone(Long id, PhoneType phoneType, Staff staff,
 			String phoneNumber, String areaCode) {
 		this.id = id;
 		this.phoneType = phoneType;
-		this.shipmentStaff = shipmentStaff;
+		this.staff = staff;
 		this.phoneNumber = phoneNumber;
 		this.areaCode = areaCode;
 	}
@@ -111,12 +111,12 @@ public class StaffPhone implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SHIPMENT_STAFF_ID")
-	public ShipmentStaff getStaff() {
-		return this.shipmentStaff;
+	public Staff getStaff() {
+		return this.staff;
 	}
 
-	public void setShipmentStaff(ShipmentStaff shipmentStaff) {
-		this.shipmentStaff = shipmentStaff;
+	public void setShipmentStaff(Staff staff) {
+		this.staff = staff;
 	}
 
 	@Column(name = "PHONE_NUMBER", length = 10)

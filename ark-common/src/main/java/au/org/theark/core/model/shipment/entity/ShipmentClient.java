@@ -44,7 +44,7 @@ public class ShipmentClient implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
     private Long                            id;
-    private ShipOrganisation                shipOrganisation;
+    private Organisation                organisation;
 
     public ShipmentClient() {
     }
@@ -53,10 +53,10 @@ public class ShipmentClient implements java.io.Serializable {
         this.id = id;
     }
 
-    public ShipmentClient(Long id, ShipOrganisation shipOrganisation) {
+    public ShipmentClient(Long id, Organisation organisation) {
         super();
         this.id = id;
-        this.shipOrganisation = shipOrganisation;
+        this.organisation = organisation;
     }
 
     @Id
@@ -72,11 +72,11 @@ public class ShipmentClient implements java.io.Serializable {
     }
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy="shipmentClient")
-    public ShipOrganisation getShipOrganisation() {
-        return this.shipOrganisation;
+    public Organisation getShipOrganisation() {
+        return this.organisation;
     }
 
-    public void setPerson(ShipOrganisation shipOrganisation) {
-        this.shipOrganisation = shipOrganisation;
+    public void setPerson(Organisation organisation) {
+        this.organisation = organisation;
     }
 }

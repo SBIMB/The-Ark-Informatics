@@ -1,19 +1,19 @@
-package au.org.theark.lims.service;
+package za.ac.theark.shipment.service;
 
 import java.util.List;
 
 import au.org.theark.core.model.lims.entity.BarcodeLabel;
 import au.org.theark.core.model.lims.entity.BarcodeLabelData;
 import au.org.theark.core.model.lims.entity.BioCollection;
-import au.org.theark.core.model.lims.entity.BioShipmentLabel;
-import au.org.theark.core.model.lims.entity.BioShipmentLabelData;
+import au.org.theark.core.model.shipment.entity.ShipmentLabel;
+import au.org.theark.core.model.shipment.entity.ShipmentLabelData;
 import au.org.theark.core.model.lims.entity.Biospecimen;
 import au.org.theark.core.model.lims.entity.BiospecimenUidPadChar;
 import au.org.theark.core.model.lims.entity.BiospecimenUidTemplate;
 import au.org.theark.core.model.lims.entity.BiospecimenUidToken;
 import au.org.theark.core.model.study.entity.Study;
 
-public interface ILimsAdminService {
+public interface IShipmentAdminService {
 	
 	/**
 	 * Gets the barcodeLabel from the database

@@ -72,6 +72,7 @@ public class Person implements java.io.Serializable {
 	private Date dateOfBirth;
 	private Date dateOfDeath;
 	private String causeOfDeath;
+	private Integer ageAtDeath;
 	private PersonContactMethod personContactMethod;
 	private Date dateLastKnownAlive;
 	private String currentOrDeathAge;
@@ -311,6 +312,21 @@ public class Person implements java.io.Serializable {
 	
 	public void setOtherIDs(List<OtherID> otherIDs) {
 		this.otherIDs = otherIDs;
+	}
+	
+	/**
+	 * @return the ageAtDeath
+	 */
+	@Column(name = "AGE_AT_DEATH")
+	public Integer getAgeAtDeath() {
+		return ageAtDeath;
+	}
+
+	/**
+	 * @param ageAtDeath the ageAtDeath to set
+	 */
+	public void setAgeAtDeath(Integer ageAtDeath) {
+		this.ageAtDeath = ageAtDeath;
 	}
 
 	/**

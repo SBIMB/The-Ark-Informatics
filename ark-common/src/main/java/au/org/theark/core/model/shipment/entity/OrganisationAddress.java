@@ -42,12 +42,12 @@ import au.org.theark.core.model.study.entity.State;
  */
 @Entity
 @Table(name = "ORGANISATION_ADDRESS", schema = Constants.STUDY_SCHEMA)
-public class ShipOrganisationAddress implements java.io.Serializable {
+public class OrganisationAddress implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private ShipOrganisation shipOrganisation;
+    private Organisation organisation;
     private String addressLineOne;
     private String streetAddress;
     private String postCode;
@@ -60,10 +60,10 @@ public class ShipOrganisationAddress implements java.io.Serializable {
     private Boolean preferredMailingAddress;
     private String source;
 
-    public ShipOrganisationAddress() {
+    public OrganisationAddress() {
     }
 
-    public ShipOrganisationAddress(Long id) {
+    public OrganisationAddress(Long id) {
         this.id = id;
     }
 
@@ -81,12 +81,12 @@ public class ShipOrganisationAddress implements java.io.Serializable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ORGANISATION_ID")
-    public ShipOrganisation getShipOrganisation() {
-        return shipOrganisation;
+    public Organisation getShipOrganisation() {
+        return organisation;
     }
 
-    public void setShipOrganisation(ShipOrganisation shipOrganisation) {
-        this.shipOrganisation = shipOrganisation;
+    public void setShipOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 
     // TODO Lets keep naming consistant

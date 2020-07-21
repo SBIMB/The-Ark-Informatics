@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package au.org.theark.lims.web.component.bioshipmentlabel;
+package za.ac.theark.shipment.web.component.shipmentlabel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.theark.core.exception.EntityNotFoundException;
-import au.org.theark.core.model.lims.entity.BioShipmentLabel;
+import au.org.theark.core.model.shipment.entity.ShipmentLabel;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkUser;
 import au.org.theark.core.model.study.entity.Study;
@@ -45,21 +45,21 @@ import au.org.theark.core.vo.ArkCrudContainerVO;
 import au.org.theark.core.vo.ArkUserVO;
 import au.org.theark.core.web.component.AbstractContainerPanel;
 import au.org.theark.core.web.component.ArkDataProvider;
-import au.org.theark.lims.service.ILimsAdminService;
-import au.org.theark.lims.web.component.bioshipmentlabel.form.ContainerForm;
+import za.ac.theark.shipment.service.IShipmentAdminService;
+import za.ac.theark.shipment.web.component.shipmentlabel.form.ContainerForm;
 
 /**
  * 
- * @author cellis
+ * @author Freedom Mukomana
  * 
  */
-public class BioshipmentLabelContainerPanel extends AbstractContainerPanel<BioShipmentLabel> {
+public class BioshipmentLabelContainerPanel extends AbstractContainerPanel<ShipmentLabel> {
 
 	private static final long	serialVersionUID	= 2114933695455527870L;
 
 	private static final Logger										log					= LoggerFactory.getLogger(BioshipmentLabelContainerPanel.class);
 
-	protected CompoundPropertyModel<BioShipmentLabel>				cpModel;
+	protected CompoundPropertyModel<ShipmentLabel>				cpModel;
 
 	protected ArkCrudContainerVO										arkCrudContainerVO;
 
@@ -67,25 +67,25 @@ public class BioshipmentLabelContainerPanel extends AbstractContainerPanel<BioSh
 	protected ContainerForm												containerForm;
 	protected Panel														resultsListPanel;
 
-	private ArkDataProvider<BioShipmentLabel, ILimsAdminService>	dataProvider;
-	private DataView<BioShipmentLabel>									dataView;
+	private ArkDataProvider<ShipmentLabel, ILimsAdminService>	dataProvider;
+	private DataView<ShipmentLabel>									dataView;
 	
 	@SpringBean(name = au.org.theark.core.Constants.ARK_COMMON_SERVICE)
 	private IArkCommonService<Void>									iArkCommonService;
 
-	@SpringBean(name = au.org.theark.lims.web.Constants.LIMS_ADMIN_SERVICE)
+	@SpringBean(name = au.org.theark.shipment.web.Constants.LIMS_ADMIN_SERVICE)
 	private ILimsAdminService												iLimsAdminService;
 
 	public BioshipmentLabelContainerPanel(String id, WebMarkupContainer arkContextMarkup) {
 		super(id);
 		this.arkContextMarkup = arkContextMarkup;
-		BioShipmentLabel bioshipmentLabel = new BioShipmentLabel();
+		ShipmentLabel bioshipmentLabel = new ShipmentLabel();
 		Long sessionStudyId = (Long) SecurityUtils.getSubject().getSession().getAttribute(au.org.theark.core.Constants.STUDY_CONTEXT_ID);
 		if(sessionStudyId != null) {
 			Study study = iArkCommonService.getStudy(sessionStudyId);
 			bioshipmentLabel.setStudy(study);
 		}
-		cpModel = new CompoundPropertyModel<BioShipmentLabel>(bioshipmentLabel);
+		cpModel = new CompoundPropertyModel<ShipmentLabel>(shipmentLabel);
 		arkCrudContainerVO = new ArkCrudContainerVO();
 
 		initialisePanel();

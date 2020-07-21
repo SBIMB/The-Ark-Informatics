@@ -104,6 +104,27 @@
 				<div class="fldControl">
 					<input wicket:id="linkSubjectStudy.familyId" maxLength="50"/>
 				</div>
+				
+				<div class="panelMargin">
+					&nbsp;
+				</div>
+
+				<div class="fldLabel">
+					<wicket:message	key="ethnicityType">
+						Ethnicity:
+					</wicket:message>
+				</div>
+
+				<div class="fldControl">
+					<select wicket:id="linkSubjectStudy.person.ethnicityType">
+						<option>
+							Unknown
+						</option>
+						<option>
+							Other
+						</option>
+					</select>
+				</div>
 
 				<div class="detailPanelBreaker">
 					&nbsp;
@@ -226,11 +247,11 @@
 
 				<div class="fldLabel">
 					<wicket:message key="ageAtEnrollment">
-						Age at Enrollment
+						Age at Enrollment: 
 					</wicket:message>
 				</div>
 				<div class="fldControl height:10%">
-					<input wicket:id="linkSubjectStudy.person.ageAtEnrollment" maxLength="10"/><br/>
+					<input wicket:id="linkSubjectStudy.ageAtEnrollment" maxLength="10"/><br/>
 					<!--<div class="labelSubtext">
 						<label wicket:id="linkSubjectStudy.person.currentOrDeathAge"></label>
 					</div> -->
@@ -291,6 +312,8 @@
 					&nbsp;
 				</div> -->
 				<!-- Row 4.1 Ends	-->
+				
+				
 
 				<!-- Row 5 -->
 				<div class="panelContentLeft">
@@ -442,6 +465,10 @@
 				<div class="panelMargin">
 					&nbsp;
 				</div> -->
+				
+				<div class="panelContentLeft">
+					&nbsp;
+				</div>
 
 				<div class="fldLabel">
 					<wicket:message key="comment">
@@ -505,6 +532,8 @@
 					<div class="detailPanelBreaker">
 						&nbsp;
 					</div>
+					
+					<!--
 
 					<div class="customPanelContentLeft">
 						&nbsp;
@@ -555,6 +584,7 @@
 					<div class="detailPanelBreaker">
 						&nbsp;
 					</div>
+					
 
 					<div class="customPanelContentLeft">
 						&nbsp;
@@ -605,6 +635,7 @@
 					<div class="detailPanelBreaker">
 						&nbsp;
 					</div>
+					-->
 
 					<div class="customPanelContentLeft">
 						&nbsp;
@@ -612,7 +643,7 @@
 
 					<div class="fldLabel">
 						<wicket:message key="consentToUseData">
-							Consent To Active Contact:
+							Consent To Use Data:
 						</wicket:message>
 					</div>
 
@@ -632,11 +663,66 @@
 					</div>
 
 					<div class="fldLabel">
-						&nbsp;
+						Consent To Use Biospecimen:
 					</div>
 
 					<div class="fldControl">
+						<select wicket:id="linkSubjectStudy.consentToUseBiospecimen">
+							<option>
+								Yes
+							</option>
+							<option>
+								No
+							</option>
+						</select>
+					</div>
+
+					<div class="customPanelContentRight">
 						&nbsp;
+					</div>
+					
+					<div class="detailPanelBreaker">
+						&nbsp;
+					</div>
+					
+					<div class="customPanelContentLeft">
+						&nbsp;
+					</div>
+
+					<div class="fldLabel">
+						<wicket:message key="consentToShareData">
+							Consent To Share Data:
+						</wicket:message>
+					</div>
+
+					<div class="fldControl">
+						<select wicket:id="linkSubjectStudy.consentToShareData">
+							<option>
+								Yes
+							</option>
+							<option>
+								No
+							</option>
+						</select>
+					</div>
+
+					<div class="customPanelMargin">
+						&nbsp;
+					</div>
+
+					<div class="fldLabel">
+						Consent To Share Biospecimen:
+					</div>
+
+					<div class="fldControl">
+						<select wicket:id="linkSubjectStudy.consentToShareBiospecimen">
+							<option>
+								Yes
+							</option>
+							<option>
+								No
+							</option>
+						</select>
 					</div>
 
 					<div class="customPanelContentRight">

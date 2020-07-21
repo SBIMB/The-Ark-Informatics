@@ -48,12 +48,12 @@ import au.org.theark.core.model.study.entity.YesNo;
 @Entity
 @Table(name = "ORGANISATION_PHONE", schema = Constants.STUDY_SCHEMA, uniqueConstraints = { @UniqueConstraint(columnNames = {
         "AREA_CODE", "PHONE_NUMBER", "PERSON_ID" }) })
-public class ShipOrganisationPhone implements java.io.Serializable {
+public class OrganisationPhone implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
     private Long id;
     private PhoneType phoneType;
-    private ShipOrganisation  shipOrganisation;
+    private Organisation  organisation;
     private String phoneNumber;
     private String areaCode;
     private PhoneStatus phoneStatus;
@@ -63,18 +63,18 @@ public class ShipOrganisationPhone implements java.io.Serializable {
 
 
     /** default constructor */
-    public ShipOrganisationPhone() {
+    public OrganisationPhone() {
     }
 
-    public ShipOrganisationPhone(Long id) {
+    public OrganisationPhone(Long id) {
         this.id = id;
     }
 
-    public ShipOrganisationPhone(Long id, PhoneType phoneType, ShipOrganisation shipOrganisation,
+    public OrganisationPhone(Long id, PhoneType phoneType, Organisation organisation,
             String phoneNumber, String areaCode) {
         this.id = id;
         this.phoneType = phoneType;
-        this.shipOrganisation = shipOrganisation;
+        this.organisation = organisation;
         this.phoneNumber = phoneNumber;
         this.areaCode = areaCode;
     }
@@ -103,12 +103,12 @@ public class ShipOrganisationPhone implements java.io.Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ORGANISATION_ID")
-    public ShipOrganisation getShipOrganisation() {
-        return this.shipOrganisation;
+    public Organisation getShipOrganisation() {
+        return this.organisation;
     }
 
-    public void setOrganisation(ShipOrganisation shipOrganisation) {
-        this.shipOrganisation = shipOrganisation;
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 
     @Column(name = "PHONE_NUMBER", length = 10)

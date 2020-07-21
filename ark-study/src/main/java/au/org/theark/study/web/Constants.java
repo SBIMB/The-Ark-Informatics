@@ -83,6 +83,7 @@ public class Constants {
 	public static final String			SUBJECT_PREVIOUS_LAST_NAME									= "subjectPreviousLastname";
 	public static final String			PERSON														= "person";
 	public static final String			GENDER_TYPE													= "genderType";
+	public static final String			ETHNICITY_TYPE												= "ethnicityType";
 	public static final String			ID															= "id";
 	public static final String			SUBJECT_STATUS												= "linkSubjectStudy.subjectStatus";
 	public static final String			SUBJECT_STATUS_ID											= "id";
@@ -103,6 +104,8 @@ public class Constants {
 	public static final String			PERSON_TYTPE_TYPE												= "linkSubjectStudy.person.titleType";
 	public static final String			PERSON_GENDER_TYPE											= "linkSubjectStudy.person.genderType";
 	public static final String			PERSON_GENDER_TYPE_NAME										= "linkSubjectStudy.person.genderType.name";
+	public static final String			PERSON_ETHNICITY_TYPE										= "linkSubjectStudy.person.ethnicityType";
+	public static final String			PERSON_ETHNICITY_TYPE_NAME									= "linkSubjectStudy.person.ethnicityType.name";
 	public static final String			SUBJECT_FULL_NAME												= "subjectFullName";
 	public static final String			PERSON_VITAL_STATUS_NAME									= "linkSubjectStudy.person.vitalStatus.statusName";
 	public static final String			SUBJECT_STATUS_NAME											= "linkSubjectStudy.person.subjectStatus.name";
@@ -116,8 +119,12 @@ public class Constants {
 	public static final String			CONSENT_LIST													= "consentList";
 	public static final String			CONSENT_COMPONENT_LABEL										= "consentComponentLabel";
 
+	/* SBIMB Related additions */
+	public static final String			SUBJECT_AGE_AT_ENROLLMENT									= "linkSubjectStudy.ageAtEnrollment";
+	public static final String			SUBJECT_AGE_AT_DEATH										= "linkSubjectStudy.person.ageAtDeath";
 	public static final String			ADDRESS_LIST													= "addressList";
 	public static final String			ADDRESS_LABEL													= "addressLabel";
+
 	/* Multiple choice List Controls */
 	public static final String			AVAILABLE_ROLES_MLC											= "availableRolesLMC";
 	public static final String			SELECTED_ROLES_MLC											= "selectedRolesLMC";
@@ -127,6 +134,7 @@ public class Constants {
 	public static final String			ADD_SELECTED													= "addSelectedBtn";
 	public static final String			REMOVE_ALL_BUTTON												= "removeAllBtn";
 	public static final String			REMOVE_SELECTED_BUTTON										= "removeSelectedBtn";
+
 	/* Accordion Constants */
 	public static final String			ACCORDION														= "accordion";
 	public static final String			ACCORDION_SECTION												= "accordionSection";
@@ -295,7 +303,10 @@ public class Constants {
 
 	public static final String			SUBJECT_CONSENT_TO_ACTIVE_CONTACT						= "linkSubjectStudy.consentToActiveContact";
 	public static final String			SUBJECT_CONSENT_TO_USEDATA								= "linkSubjectStudy.consentToUseData";
+	public static final String			SUBJECT_CONSENT_SHAREDATA								= "linkSubjectStudy.consentToShareData";
 	public static final String			SUBJECT_CONSENT_PASSIVE_DATA_GATHER						= "linkSubjectStudy.consentToPassiveDataGathering";
+	public static final String			SUBJECT_CONSENT_TO_USEBIOSPECIMEN						= "linkSubjectStudy.consentToUseBiospecimen";
+	public static final String			SUBJECT_CONSENT_TO_SHAREBIOSPECIMEN						= "linkSubjectStudy.consentToShareBiospecimen";
 	public static final String			SUBJECT_HEARD_ABOUT_STUDY_FROM							= "linkSubjectStudy.heardAboutStudy";
 	public static final String			SUBJECT_AUTO_GENERATED									= "Auto-generated";
 	public static final String			SUBJECTUID_EXAMPLE										= "AAA-000000001";

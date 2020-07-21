@@ -16,17 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package au.org.theark.lims.web.component.bioshipmentlabel;
+package za.ac.theark.shipment.web.component.shipmentlabel;
 
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import au.org.theark.core.vo.ArkCrudContainerVO;
-import au.org.theark.lims.web.component.bioshipmentlabel.form.ContainerForm;
-import au.org.theark.lims.web.component.bioshipmentlabel.form.DetailForm;
+import za.ac.theark.shipment.web.component.shipmentlabel.form.ContainerForm;
+import za.ac.theark.shipment.web.component.shipmentlabel.form.DetailForm;
 
 /**
- * @author cellis
+ * @author Freedom Mukomana
  * 
  */
 public class DetailPanel extends Panel {

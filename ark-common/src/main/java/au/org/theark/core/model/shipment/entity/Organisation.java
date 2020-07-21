@@ -41,25 +41,25 @@ import au.org.theark.core.model.Constants;
  */
 @Entity
 @Table(name = "ship_organisation", schema = Constants.LIMS_TABLE_SCHEMA)
-public class ShipOrganisation implements java.io.Serializable {
+public class Organisation implements java.io.Serializable {
 
 
     private static final long serialVersionUID = 1L;
     private Long                            id;
     private String                            name;
     
-    private Set<ShipOrganisationAddress>        shipOrganisationalAddress    =    new HashSet<ShipOrganisationAddress>(0);
-    private Set<ShipOrganisationPhone>            shipOrganisationPhones        =     new HashSet<ShipOrganisationPhone>(0);
-    private Set<ShipmentStaff>                     shipmentStaffs                =     new HashSet<ShipmentStaff>(0);
+    private Set<OrganisationAddress>        shipOrganisationalAddress    =    new HashSet<OrganisationAddress>(0);
+    private Set<OrganisationPhone>            organisationPhones        =     new HashSet<OrganisationPhone>(0);
+    private Set<Staff>                     staffs                =     new HashSet<Staff>(0);
     
-    public ShipOrganisation() {
+    public Organisation() {
     }
 
-    public ShipOrganisation(Long id) {
+    public Organisation(Long id) {
         this.id = id;
     }
 
-    public ShipOrganisation(Long id, String name, ShipOrganisationAddress shipOrganisationalAddress) {
+    public Organisation(Long id, String name, OrganisationAddress shipOrganisationalAddress) {
         super();
         this.id = id;
         this.name = name;
@@ -87,30 +87,30 @@ public class ShipOrganisation implements java.io.Serializable {
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "organisation")
-    public Set<ShipOrganisationAddress> getShipOrganisationalAddress() {
+    public Set<OrganisationAddress> getShipOrganisationalAddress() {
         return shipOrganisationalAddress;
     }
 
-    public void setShipOrganisationalAddress(Set<ShipOrganisationAddress> shipOrganisationalAddress) {
+    public void setShipOrganisationalAddress(Set<OrganisationAddress> shipOrganisationalAddress) {
         this.shipOrganisationalAddress = shipOrganisationalAddress;
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "shipOrganisation")
-    public Set<ShipOrganisationPhone> getPhones() {
-        return this.shipOrganisationPhones;
+    public Set<OrganisationPhone> getPhones() {
+        return this.organisationPhones;
     }
 
-    public void setShipOrganisationPhones(Set<ShipOrganisationPhone> phones) {
-        this.shipOrganisationPhones = phones;
+    public void setShipOrganisationPhones(Set<OrganisationPhone> phones) {
+        this.organisationPhones = phones;
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "organisation")
-    public Set<ShipmentStaff> getShipmentStaffs() {
-        return this.shipmentStaffs;
+    public Set<Staff> getShipmentStaffs() {
+        return this.staffs;
     }
 
-    public void setShipStaffs(Set<ShipmentStaff> shipmentStaffs) {
-        this.shipmentStaffs = shipmentStaffs;
+    public void setShipStaffs(Set<Staff> staffs) {
+        this.staffs = staffs;
     }
 }
 

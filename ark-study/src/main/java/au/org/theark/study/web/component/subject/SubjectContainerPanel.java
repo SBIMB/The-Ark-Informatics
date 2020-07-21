@@ -285,9 +285,11 @@ public class SubjectContainerPanel extends AbstractContainerPanel<SubjectVO> {
 
 		List<IColumn<SubjectVO>> columns = new ArrayList<IColumn<SubjectVO>>();
 		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("SubjectUID"), "subjectUID"));
-		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Full Name"), "subjectFullName"));
-		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Preferred Name"), "linkSubjectStudy.person.preferredName"));
-		columns.add(new ExportableDateColumn<SubjectVO>(Model.of("Date Of Birth"), "linkSubjectStudy.person.dateOfBirth", au.org.theark.core.Constants.DD_MM_YYYY));
+		//columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Full Name"), "subjectFullName"));
+		//columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Preferred Name"), "linkSubjectStudy.person.preferredName"));
+		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Age at Enrollment"), "linkSubjectStudy.ageAtEnrollment"));
+		//columns.add(new ExportableDateColumn<SubjectVO>(Model.of("Date Of Birth"), "linkSubjectStudy.person.dateOfBirth", au.org.theark.core.Constants.DD_MM_YYYY));
+		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Ethnicity"), "linkSubjectStudy.ethnicityType.name"));
 		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Vital Status"), "linkSubjectStudy.person.vitalStatus.name"));
 		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Gender"), "linkSubjectStudy.person.genderType.name"));
 		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Subject Status"), "linkSubjectStudy.subjectStatus.name"));
@@ -296,9 +298,11 @@ public class SubjectContainerPanel extends AbstractContainerPanel<SubjectVO> {
 		DataTable table = new DataTable("datatable", columns, dataView.getDataProvider(), iArkCommonService.getRowsPerPage());
 		List<String> headers = new ArrayList<String>(0);
 		headers.add("SubjectUID");
-		headers.add("Full Name");
-		headers.add("Preferred Name");
-		headers.add("Date of Birth");
+		//headers.add("Full Name");
+		//headers.add("Preferred Name");
+		//headers.add("Date of Birth");
+		headers.add("Age at Enrollment");
+		headers.add("Ethnicity");
 		headers.add("Vital Status");
 		headers.add("Gender");
 		headers.add("Subject Status");
@@ -404,9 +408,11 @@ public class SubjectContainerPanel extends AbstractContainerPanel<SubjectVO> {
 
 		List<IColumn<SubjectVO>> columns = new ArrayList<IColumn<SubjectVO>>();
 		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("SubjectUID"), "subjectUID"));
-		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Full Name"), "subjectFullName"));
-		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Preferred Name"), "linkSubjectStudy.person.preferredName"));
-		columns.add(new ExportableDateColumn<SubjectVO>(Model.of("Date Of Birth"), "linkSubjectStudy.person.dateOfBirth", au.org.theark.core.Constants.DD_MM_YYYY));
+		//columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Full Name"), "subjectFullName"));
+		//columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Preferred Name"), "linkSubjectStudy.person.preferredName"));
+		//columns.add(new ExportableDateColumn<SubjectVO>(Model.of("Date Of Birth"), "linkSubjectStudy.person.dateOfBirth", au.org.theark.core.Constants.DD_MM_YYYY));
+		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Age at Enrollment"), "linkSubjectStudy.ageAtEnrollment"));
+		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Ethnicity"), "linkSubjectStudy.Ethnicity"));
 		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Vital Status"), "linkSubjectStudy.person.vitalStatus.name"));
 		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Gender"), "linkSubjectStudy.person.genderType.name"));
 		columns.add(new ExportableTextColumn<SubjectVO>(Model.of("Subject Status"), "linkSubjectStudy.subjectStatus.name"));
@@ -415,9 +421,11 @@ public class SubjectContainerPanel extends AbstractContainerPanel<SubjectVO> {
 		DataTable table = new DataTable("datatable", columns, dataView.getDataProvider(), iArkCommonService.getRowsPerPage());
 		List<String> headers = new ArrayList<String>(0);
 		headers.add("SubjectUID");
-		headers.add("Full Name");
-		headers.add("Preferred Name");
-		headers.add("Date of Birth");
+		//headers.add("Full Name");
+		//headers.add("Preferred Name");
+		//headers.add("Date of Birth");
+		headers.add("Age at Enrollment");
+		headers.add("Ethnicity");
 		headers.add("Vital Status");
 		headers.add("Gender");
 		headers.add("Subject Status");

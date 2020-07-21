@@ -1,4 +1,4 @@
-FROM java:openjdk-8-jdk
+FROM openjdk:8
 
 MAINTAINER George Gooden <gecgooden@gmail.com>
 
@@ -16,7 +16,7 @@ WORKDIR /usr/src/app
 
 ADD ark-common/src/main/native/madeline /usr/src/app/ark-common/src/main/native/madeline
 
-RUN apt-get update && apt-get install -y build-essential libxml2 libxml2-dev libcurl3 libcurl4-gnutls-dev zlib1g zlib1g-dev libbz2-1.0 libbz2-dev libssl-dev 
+RUN apt-get update && apt-get install -y build-essential libxml2 libxml2-dev libcurl4 libcurl4-gnutls-dev zlib1g zlib1g-dev libbz2-1.0 libbz2-dev libssl-dev 
 
 RUN cd /usr/src/app/ark-common/src/main/native/madeline && \ 
 	sed -i "s/java-6-openjdk-amd64/java-8-openjdk-amd64/g" Makefile && \

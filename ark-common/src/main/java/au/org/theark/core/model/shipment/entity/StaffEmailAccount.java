@@ -53,7 +53,7 @@ public class StaffEmailAccount implements java.io.Serializable {
     private EmailAccountType emailAccountType;
     private String name;
     private boolean primaryAccount;
-    private ShipmentStaff shipmentStaff;
+    private Staff staff;
     private EmailStatus emailStatus;
 
     public StaffEmailAccount() {
@@ -63,12 +63,12 @@ public class StaffEmailAccount implements java.io.Serializable {
         this.id = id;
     }
 
-    public StaffEmailAccount(Long id, EmailAccountType emailAccountType, String name, boolean primaryAccount, ShipmentStaff shipmentStaff, EmailStatus emailStatus) {
+    public StaffEmailAccount(Long id, EmailAccountType emailAccountType, String name, boolean primaryAccount, Staff staff, EmailStatus emailStatus) {
         this.id = id;
         this.emailAccountType = emailAccountType;
         this.name = name;
         this.primaryAccount = primaryAccount;
-        this.shipmentStaff = shipmentStaff;
+        this.staff = staff;
         this.emailStatus = emailStatus;
     }
 
@@ -114,12 +114,12 @@ public class StaffEmailAccount implements java.io.Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SHIPMENT_STAFF_ID")
-    public ShipmentStaff getShipmentStaff() {
-        return this.shipmentStaff;
+    public Staff getShipmentStaff() {
+        return this.staff;
     }
 
-    public void setShipmentStaff(ShipmentStaff shipmentStaff) {
-        this.shipmentStaff = shipmentStaff;
+    public void setShipmentStaff(Staff staff) {
+        this.staff = staff;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

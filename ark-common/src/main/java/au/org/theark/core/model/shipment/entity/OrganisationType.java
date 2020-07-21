@@ -32,18 +32,18 @@ import au.org.theark.core.model.Constants;
  *
  */
 @Entity
-@Table(name = "ship_organisation_type", schema = Constants.LIMS_TABLE_SCHEMA)
-public class ShipOrganisationType implements java.io.Serializable {
+@Table(name = "organisation_type", schema = Constants.LIMS_TABLE_SCHEMA)
+public class OrganisationType implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
     private Long            id;
     private String            name;
     private String            description;
 
-    public ShipOrganisationType() {
+    public OrganisationType() {
     }
 
-    public ShipOrganisationType(Long id, String name, String description) {
+    public OrganisationType(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -64,7 +64,7 @@ public class ShipOrganisationType implements java.io.Serializable {
         return this.name;
     }
 
-    public void setCommand(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 

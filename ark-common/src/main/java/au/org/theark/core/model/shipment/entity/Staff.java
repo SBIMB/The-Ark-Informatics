@@ -49,7 +49,7 @@ import au.org.theark.core.model.study.entity.TitleType;
 @Entity
 @Table(name = "SHIPMENT_STAFF", schema = Constants.STUDY_SCHEMA)
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-public class ShipmentStaff implements java.io.Serializable {
+public class Staff implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -59,7 +59,7 @@ public class ShipmentStaff implements java.io.Serializable {
 	private String 					lastName;
 	private String 					preferredName;
 	private TitleType 				titleType;
-	private ShipOrganisation		shipOrganisation;
+	private Organisation		organisation;
 	private JobTitle 				jobTitle;
 	private PersonContactMethod 	personContactMethod;
 
@@ -67,15 +67,15 @@ public class ShipmentStaff implements java.io.Serializable {
 	private Set<StaffEmailAccount> 	staffEmailAccounts = new HashSet<StaffEmailAccount>(0);
 
 
-	public ShipmentStaff() {
+	public Staff() {
 	}
 
-	public ShipmentStaff(Long id) {
+	public Staff(Long id) {
 		this.id = id;
 	}
 
-	public ShipmentStaff(Long id, String firstName, String middleName, String lastName, String preferredName,
-			TitleType titleType, ShipOrganisation shipOrganisation, JobTitle jobTitle,
+	public Staff(Long id, String firstName, String middleName, String lastName, String preferredName,
+			TitleType titleType, Organisation organisation, JobTitle jobTitle,
 			PersonContactMethod personContactMethod, Set<StaffPhone> staffPhones,
 			Set<StaffEmailAccount> staffEmailAccounts) {
 		super();
@@ -85,7 +85,7 @@ public class ShipmentStaff implements java.io.Serializable {
 		this.lastName = lastName;
 		this.preferredName = preferredName;
 		this.titleType = titleType;
-		this.shipOrganisation = shipOrganisation;
+		this.organisation = organisation;
 		this.jobTitle = jobTitle;
 		this.personContactMethod = personContactMethod;
 		this.staffPhones = staffPhones;
@@ -163,12 +163,12 @@ public class ShipmentStaff implements java.io.Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "JOB_TITLE_ID")
-	public ShipOrganisation getShipOrganisation() {
-		return this.shipOrganisation;
+	public Organisation getShipOrganisation() {
+		return this.organisation;
 	}
 
-	public void setShipOrganisation(ShipOrganisation shipOrganisation) {
-		this.shipOrganisation = shipOrganisation;
+	public void setShipOrganisation(Organisation organisation) {
+		this.organisation = organisation;
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "person")
@@ -221,7 +221,7 @@ public class ShipmentStaff implements java.io.Serializable {
 		result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());
 		result = prime * result + ((personContactMethod == null) ? 0 : personContactMethod.hashCode());
 		result = prime * result + ((preferredName == null) ? 0 : preferredName.hashCode());
-		result = prime * result + ((shipOrganisation == null) ? 0 : shipOrganisation.hashCode());
+		result = prime * result + ((organisation == null) ? 0 : organisation.hashCode());
 		result = prime * result + ((staffEmailAccounts == null) ? 0 : staffEmailAccounts.hashCode());
 		result = prime * result + ((staffPhones == null) ? 0 : staffPhones.hashCode());
 		result = prime * result + ((titleType == null) ? 0 : titleType.hashCode());
@@ -241,7 +241,7 @@ public class ShipmentStaff implements java.io.Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ShipmentStaff other = (ShipmentStaff) obj;
+		Staff other = (Staff) obj;
 		if (firstName == null) {
 			if (other.firstName != null)
 				return false;
@@ -277,10 +277,10 @@ public class ShipmentStaff implements java.io.Serializable {
 				return false;
 		} else if (!preferredName.equals(other.preferredName))
 			return false;
-		if (shipOrganisation == null) {
-			if (other.shipOrganisation != null)
+		if (organisation == null) {
+			if (other.organisation != null)
 				return false;
-		} else if (!shipOrganisation.equals(other.shipOrganisation))
+		} else if (!organisation.equals(other.organisation))
 			return false;
 		if (staffEmailAccounts == null) {
 			if (other.staffEmailAccounts != null)

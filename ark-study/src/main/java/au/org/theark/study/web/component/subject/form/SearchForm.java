@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.theark.core.exception.EntityNotFoundException;
 import au.org.theark.core.model.study.entity.ArkUser;
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.GenderType;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
 import au.org.theark.core.model.study.entity.OtherID;
@@ -82,6 +83,7 @@ public class SearchForm extends AbstractSearchForm<SubjectVO> {
 	private DropDownChoice<Study>					studyDdc;
 	private TextField<String>						subjectUIDTxtFld;
 	protected TextField<String>						familyIdTxtFld;
+	private DropDownChoice<EthnicityType>			ethnicityTypeDdc;
 	//private TextField<String>						firstNameTxtFld;
 	//private TextField<String>						middleNameTxtFld;
 	//private TextField<String>						lastNameTxtFld;
@@ -122,6 +124,7 @@ public class SearchForm extends AbstractSearchForm<SubjectVO> {
 		add(studyDdc);
 		add(subjectUIDTxtFld);
 		add(familyIdTxtFld);
+		add(ethnicityTypeDdc);
 		//add(firstNameTxtFld);
 		//add(middleNameTxtFld);
 		//add(lastNameTxtFld);
@@ -140,6 +143,8 @@ public class SearchForm extends AbstractSearchForm<SubjectVO> {
 		//middleNameTxtFld = new TextField<String>(Constants.PERSON_MIDDLE_NAME);
 		//lastNameTxtFld = new TextField<String>(Constants.PERSON_LAST_NAME);
 		otherIDTxtFld = new TextField<String>("linkSubjectStudy.person.otherIDs", new Model<String>(""));
+		
+		initEthnicityDdc();
 		initVitalStatusDdc();
 		initSubjectStatusDdc();
 		initGenderTypeDdc();
@@ -196,6 +201,17 @@ public class SearchForm extends AbstractSearchForm<SubjectVO> {
 				target.add(SearchForm.this);
 			}
 		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void initEthnicityDdc() {
+		CompoundPropertyModel<SubjectVO> subjectCpm = cpmModel;
+		PropertyModel<LinkSubjectStudy> linkSubjectStudyPm = new PropertyModel<LinkSubjectStudy>(subjectCpm, "linkSubjectStudy");
+		PropertyModel<Person> personPm = new PropertyModel<Person>(linkSubjectStudyPm, "person");
+		PropertyModel<EthnicityType> ethnicityTypePm = new PropertyModel<EthnicityType>(personPm, Constants.ETHNICITY_TYPE);
+		Collection<EthnicityType> ethnicityTypeList = iArkCommonService.getEthnicityTypes();
+		ChoiceRenderer ethnicityTypeRenderer = new ChoiceRenderer(Constants.NAME, Constants.ID);
+		ethnicityTypeDdc = new DropDownChoice<EthnicityType>(Constants.ETHNICITY_TYPE, ethnicityTypePm, (List) ethnicityTypeList, ethnicityTypeRenderer);
 	}
 
 	@SuppressWarnings("unchecked")

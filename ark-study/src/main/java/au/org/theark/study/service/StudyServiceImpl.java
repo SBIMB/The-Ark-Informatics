@@ -637,6 +637,7 @@ public class StudyServiceImpl implements IStudyService {
 		lssConsentHistory.setConsentType(newLinkSubjectStudy.getConsentType());
 		lssConsentHistory.setConsentDate(newLinkSubjectStudy.getConsentDate());
 		lssConsentHistory.setConsentDownloaded(newLinkSubjectStudy.getConsentDownloaded());
+		lssConsentHistory.setTimestamp(new Date());
 		iAuditDao.createLssConsentHistory(lssConsentHistory);
 	}
 

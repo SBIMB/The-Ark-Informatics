@@ -195,6 +195,7 @@ public class Constants {
 	public static final String CONFIG_SCHEMA = "config";
 	public static final String DISEASE_SCHEMA = "disease";
 	public static final String SPARK_SCHEMA = "spark";
+	public static final String SHIPMENT_SCHEMA = "shipment";
 
 	/* Geno fields for output in dataextraction - will later allow choice
 	 * - these are used in a linked hash map often, so please 
@@ -270,7 +271,7 @@ public class Constants {
 	public static final String ENTITY_TYPE_INV_RACK = "InvRack";
 	public static final String ENTITY_TYPE_INV_BOX = "InvBox";
 	public static final String ENTITY_TYPE_INV_CELL = "InvCell";
-	public static final String	ENTITY_TYPE_SEARCH	= "Search";
+	public static final String ENTITY_TYPE_SEARCH	= "Search";
 
 	/* Audit history actions */
 	public static final String ACTION_INSERT = "Insert";
@@ -363,6 +364,10 @@ public class Constants {
 
 	public static final String FUNCTION_KEY_VALUE_GLOBAL_BIOSPECIMEN_SEARCH = "GLOBAL_BIOSPECIMEN_SEARCH";
 	
+	public static final String FUNCTION_KEY_VALUE_SHIPMENT = "SHIPMENT";
+	public static final String FUNCTION_KEY_VALUE_ORGANISATION = "ORGANISATION";
+	public static final String FUNCTION_KEY_VALUE_STAFF	= "STAFF";
+	
 	/* Ark Module Keys */
 	public static final String ARK_MODULE_KEY = "MODULE_KEY";
 
@@ -382,6 +387,7 @@ public class Constants {
 	public static final String ARK_MODULE_GENOMICS = "Genomics";
 	public static final String ARK_MODULE_CALENDAR = "Calendar";
 	public static final String CALENDAR_SUBMENU	= "CalendarSubMenus";
+	public static final String ARK_MODULE_SHIPMENT = "Shipment";
 
 	public static final char DEFAULT_DELIMITER_CHARACTER = ',';
 	public static final String DEFAULT_FILE_FORMAT = "CSV";
@@ -884,7 +890,7 @@ public class Constants {
 	
 	//Security permission types
 	public static final String PERMISSION_UPDATE="UPDATE";
-	public static final String	ENCODED_VALUES_PATTERN	= "(-?[0-9]+=[^;]+;)+";
+	public static final String ENCODED_VALUES_PATTERN	= "(-?[0-9]+=[^;]+;)+";
 	public static final String SEARCH_ID = "search.id";
 	public static final String SEARCH_NAME = "search.name";
 	public static final String SEARCH_INCLUDE_GENO = "search.includeGeno";

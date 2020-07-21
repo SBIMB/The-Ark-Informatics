@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package au.org.theark.lims.web.component.bioshipmentlabel.form;
+package za.ac.theark.shipment.web.component.shipmentlabel.form;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

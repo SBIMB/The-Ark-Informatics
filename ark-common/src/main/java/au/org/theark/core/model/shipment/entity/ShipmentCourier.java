@@ -51,7 +51,7 @@ public class ShipmentCourier implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
     private Long                            id;
-    private ShipOrganisation                    shipOrganisation;
+    private Organisation                    organisation;
     private String                            name;
     private String                            description;
     private String                            labelPrefix;
@@ -65,10 +65,10 @@ public class ShipmentCourier implements java.io.Serializable {
         this.id = id;
     }
 
-    public ShipmentCourier(Long id, ShipOrganisation shipOrganisation, String name, String description, String labelPrefix, String labelSuffix, List<BarcodeLabelData> barcodeLabelData) {
+    public ShipmentCourier(Long id, Organisation organisation, String name, String description, String labelPrefix, String labelSuffix, List<BarcodeLabelData> barcodeLabelData) {
         super();
         this.id = id;
-        this.shipOrganisation = shipOrganisation;
+        this.organisation = organisation;
         this.name = name;
         this.description = description;
         this.labelPrefix = labelPrefix;
@@ -90,12 +90,12 @@ public class ShipmentCourier implements java.io.Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STUDY_ID")
-    public ShipOrganisation getShipOrganisation() {
-        return this.shipOrganisation;
+    public Organisation getShipOrganisation() {
+        return this.organisation;
     }
 
-    public void setShipOrgamisation(ShipOrganisation shipOrganisation) {
-        this.shipOrganisation = shipOrganisation;
+    public void setShipOrgamisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 
     @Column(name = "NAME", length = 50, nullable = false)

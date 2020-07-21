@@ -126,6 +126,11 @@
 			<version>${ark-disease.version}</version>
 		</dependency>		
 
+		<dependency>
+			<groupId>za.ac.theark.shipment</groupId>
+			<artifactId>ark-shipment</artifactId>
+			<version>${ark-shipment.version}</version>
+		</dependency>
 
 
 		<!--  JUNIT DEPENDENCY FOR TESTING -->
@@ -216,6 +221,7 @@
 		<ark-work-tracking.version>1.2b.3</ark-work-tracking.version>
 		<ark-disease.version>1.2b.3</ark-disease.version>
 		<ark-genomics.version>1.2b.3</ark-genomics.version>
+		<ark-shipment.version>1.2b.3</ark-shipment.version>
         <redcap-api.version>1.0.0</redcap-api.version>
 	</properties>
 </project>
