@@ -59,7 +59,7 @@ public class LinkSubjectStudy implements java.io.Serializable {
 	private SubjectStatus subjectStatus;
 	private Person person;
 	private String subjectUID;
-	private String familyId;
+	private String familyUID;
 	private String naturalUID;
 	private Date dateOfEnrollment;
 	private Integer ageAtEnrollment;
@@ -72,6 +72,7 @@ public class LinkSubjectStudy implements java.io.Serializable {
 	private ConsentStatus consentStatus;
 	private ConsentType consentType;
 	private Date consentDate;
+	private Date consentExpiryDate;
 	private String heardAboutStudy;
 	private String comment;
 	private YesNo consentDownloaded;
@@ -117,6 +118,15 @@ public class LinkSubjectStudy implements java.io.Serializable {
 	@JoinColumn(name = "CONSENT_TO_USE_DATA_ID")
 	public ConsentOption getConsentToUseData() {
 		return consentToUseData;
+	}
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "CONSENT_DATE_OF_CHANGE", length = 7)
+	public Date getConsentDateOfLastChange() {
+		return consentDateOfLastChange;
+	}
+	public void setConsentDateOfLastChange(Date consentDateOfLastChange) {
+		this.consentDateOfLastChange = consentDateOfLastChange;
 	}
 	public void setConsentToUseData(ConsentOption consentToUseData) {
 		this.consentToUseData = consentToUseData;
@@ -183,13 +193,12 @@ public class LinkSubjectStudy implements java.io.Serializable {
 	}
 	
 	@Column(name = "FAMILY_UID", length = 50)
-	public String getFamilyId() {
-		return familyId;
+	public String getFamilyUID() {
+		return familyUID;
 	}
-	public void setFamilyId(String familyId) {
-		this.familyId = familyId;
+	public void setFamilyUID(String familyUID) {
+		this.familyUID = familyUID;
 	}
-	
 	@NotAudited
 	@Column(name = "NATURAL_UID", length = 100)
 	public String getNaturalUID() {
@@ -247,7 +256,15 @@ public class LinkSubjectStudy implements java.io.Serializable {
 	public void setConsentDate(Date consentDate) {
 		this.consentDate = consentDate;
 	}
-
+		
+	@Temporal(TemporalType.DATE)
+	@Column(name = "CONSENT_EXPIRY_DATE", length = 7)
+	public Date getConsentExpiryDate() {
+		return consentExpiryDate;
+	}
+	public void setConsentExpiryDate(Date consentExpiryDate) {
+		this.consentExpiryDate = consentExpiryDate;
+	}
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "linkSubjectStudy")
 	public Set<Consent> getConsents() {
 		return consents;

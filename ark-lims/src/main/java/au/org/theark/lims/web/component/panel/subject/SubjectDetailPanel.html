@@ -36,7 +36,7 @@
 			<div class="panelContentLeft">
 				&nbsp;
 			</div>
-
+			
 			<div class="fldLabel">
 				<wicket:message key="subjectStatus">
 					Subject Status:
@@ -55,10 +55,11 @@
 					Last Name:
 				</wicket:message>
 			</div>
-			<div class="fldControl">
-				<input wicket:id="person.lastName"/>
-			</div>
 
+			<div class="fldControl">
+				<input wicket:id="person.lastName" maxLength="10"/>
+			</div>
+			
 			<div class="panelMargin">
 				&nbsp;
 			</div>
@@ -81,9 +82,8 @@
 					Date Of Birth:
 				</wicket:message>
 			</div>
-
 			<div class="fldControl">
-				<input wicket:id="person.dateOfBirth" maxLength="10"/>
+				<input wicket:id="person.dateOfBirth"/>
 			</div>
  -->
 			<div class="detailPanelBreaker">

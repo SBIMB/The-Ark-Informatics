@@ -42,7 +42,12 @@ public class QueryFilterPanel extends Panel {
 	}
 
 	public void initialisePanel(IModel<QueryFilterListVO> model, ModalWindow modalWindow,ArkCrudContainerVO arkCrudContainerVO) {
-		form = new QueryFilterForm("queryFilterForm", model, modalWindow,arkCrudContainerVO);
+		ModalWindow modalWindowEncoded = new ModalWindow("detailModalWindowEncoded");
+		modalWindowEncoded.setInitialHeight(80);
+		modalWindowEncoded.setInitialWidth(300);
+		modalWindowEncoded.setMinimalHeight(80);
+		modalWindowEncoded.setMinimalWidth(300);
+		form = new QueryFilterForm("queryFilterForm", model, modalWindow,modalWindowEncoded,arkCrudContainerVO);
 		form.initialiseForm();
 		add(form);
 	}

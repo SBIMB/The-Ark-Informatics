@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Copyright (c) 2011  University of Western Australia. All rights reserved.
- * 
+ *
  * This file is part of The Ark.
- * 
+ *
  * The Ark is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 3
  * of the License, or (at your option) any later version.
- * 
+ *
  * The Ark is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -40,6 +40,7 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.datetime.PatternDateConverter;
 import org.apache.wicket.datetime.markup.html.form.DateTextField;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
@@ -89,6 +90,8 @@ import au.org.theark.core.web.component.ArkDatePicker;
 import au.org.theark.core.web.component.audit.button.HistoryButtonPanel;
 import au.org.theark.core.web.component.listeditor.AbstractListEditor;
 import au.org.theark.core.web.component.listeditor.ListItem;
+import au.org.theark.core.web.component.panel.ConfirmationAnswer;
+import au.org.theark.core.web.component.panel.YesNoPanel;
 import au.org.theark.core.web.component.panel.collapsiblepanel.CollapsiblePanel;
 import au.org.theark.core.web.form.AbstractDetailForm;
 import au.org.theark.lims.service.ILimsService;
@@ -98,11 +101,8 @@ import au.org.theark.study.web.component.consenthistory.LinkSubjectStudyConsentH
 import au.org.theark.study.web.component.subject.ChildStudyPalettePanel;
 import au.org.theark.study.web.component.subject.ChildStudySubjectPanel;
 
-/**
- * @author nivedann
- * 
- */
 public class DetailForm extends AbstractDetailForm<SubjectVO> {
+
 	static Logger log = LoggerFactory.getLogger(DetailForm.class);
 
 	private static final long								serialVersionUID	= -9196914684971413116L;

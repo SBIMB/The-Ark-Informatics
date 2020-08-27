@@ -573,7 +573,7 @@ public class StudyDao extends HibernateSessionDao implements IStudyDao {
 
 		// Set default foreign key reference
 		if (subjectVo.getLinkSubjectStudy().getPerson().getGenderType() == null || StringUtils.isBlank(subjectVo.getLinkSubjectStudy().getPerson().getGenderType().getName())) {
-			GenderType genderType = getGenderType(new Long(0));
+			GenderType genderType = getGenderType(getDefaultGenderType().getId());
 			subjectVo.getLinkSubjectStudy().getPerson().setGenderType(genderType);
 		}
 
@@ -695,7 +695,7 @@ public class StudyDao extends HibernateSessionDao implements IStudyDao {
 			criteria.add(Restrictions.eq("id", id));
 		}
 
-		return (GenderType) criteria.list().get(0);
+		return (GenderType) criteria.uniqueResult();
 	}
 
 	public TitleType getTitleType(Long id) {
@@ -735,11 +735,16 @@ public class StudyDao extends HibernateSessionDao implements IStudyDao {
 		Person person = subjectVO.getLinkSubjectStudy().getPerson();
 		String currentLastNameFromDB = getCurrentLastnameFromDB(person);// may need to test this effect of a reget
 
+		if(!subjectVO.isChangingLastName()){
+			person.setLastName(currentLastNameFromDB);
+		}
+	
 		session.update(person);// Update Person and associated Phones
 
 		PersonLastnameHistory personLastNameHistory = null;
 
-		if (currentLastNameFromDB != null && !currentLastNameFromDB.isEmpty() && !currentLastNameFromDB.equalsIgnoreCase(person.getLastName())) {
+		if (currentLastNameFromDB != null && !currentLastNameFromDB.isEmpty() && !currentLastNameFromDB.equalsIgnoreCase(person.getLastName()) 
+				&& subjectVO.isChangingLastName()) {
 			if (person.getLastName() != null) {
 				personLastNameHistory = new PersonLastnameHistory();
 				personLastNameHistory.setPerson(person);
@@ -1985,7 +1990,7 @@ public class StudyDao extends HibernateSessionDao implements IStudyDao {
 		sb.append(" order by cfd.sequence");
 		
 		Query query = getSession().createQuery(sb.toString());
-		query.setParameter("familyUid", linkSubjectStudyCriteria.getFamilyId());
+		query.setParameter("familyUID", linkSubjectStudyCriteria.getFamilyUID());
 		query.setParameter("studyId", linkSubjectStudyCriteria.getStudy().getId());
 		query.setParameter("functionId", arkFunction.getId());
 		//Add type and category
@@ -2192,7 +2197,7 @@ public class StudyDao extends HibernateSessionDao implements IStudyDao {
 	}
 
 	public GenderType getDefaultGenderType() {
-		return getGenderType(0L);// TODO meaningful use of constants perhaps or a default bool in db
+		return getGenderType(5L);//The default gender type has been moved to create a primary key for the table Gender Type.
 	}
 
 	// TODO ASAP - I see hardcoding everywhere, fix

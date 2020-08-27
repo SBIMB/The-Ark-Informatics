@@ -599,6 +599,8 @@ public interface IStudyDao {
 	
 	public long getCountOfSubjects(Study study);
 	
+	public long getCountOfSubjectsForSubjectStatus(Study study,int subjectStatusID);
+	
 	/**
 	 * Match a file containing a list of SubjectUid's for a given study, and return the matched list
 	 * @param subjectFileUpload
@@ -697,12 +699,16 @@ public interface IStudyDao {
 	public Collection<PhenoDataSetFieldDisplay> getSelectedPhenoDataSetFieldDisplaysForSearch(Search search);
 
 	public List<CustomFieldDisplay> getCustomFieldDisplaysIn(Study study, ArkFunction arkFunction);
+	
+	public List<CustomFieldDisplay> getCustomFieldDisplaysInForCustomFieldType(Study study, CustomFieldType customFieldType,ArkFunction arkFunction);
 
 	public Collection<CustomFieldDisplay> getSelectedSubjectCustomFieldDisplaysForSearch(Search search);
 
-	public Collection<CustomFieldDisplay> getSelectedBiospecimenCustomFieldDisplaysForSearch(Search search);
+	/*public Collection<CustomFieldDisplay> getSelectedBiospecimenCustomFieldDisplaysForSearch(Search search,CustomFieldType customFieldType);
 
-	public Collection<CustomFieldDisplay> getSelectedBiocollectionCustomFieldDisplaysForSearch(Search search);
+	public Collection<CustomFieldDisplay> getSelectedBiocollectionCustomFieldDisplaysForSearch(Search search,CustomFieldType customFieldType);*/
+	
+	public Collection<CustomFieldDisplay> getSelectedLIMSCustomFieldDisplaysForSearchOnCustomFieldType(Search search,CustomFieldType customFieldType);
 
 	public void runSearch(Long searchId);
 
@@ -786,5 +792,7 @@ public interface IStudyDao {
 	public SubjectStatus getSubjectStatusById(Long id);
 	
 	public StudyStatus getStudyStatusById(Long id);
+	
+	public StudyCompStatus getStudyCompStatusById(Long id);
 	
 }
