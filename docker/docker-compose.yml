@@ -2,17 +2,27 @@ version: '2'
 services:
         base:
                 build: ..
+                restart: on-failure
                 image: the-ark/base:latest
         mysql:
                 build: db
+                container_name: ark-database
+                command: --default-authentication-plugin=mysql_native_password
+                restart: always
+                cap_add:
+                    - SYS_NICE # CAP_SYS_NICE
                 ports:
                         - "3306:3306"
                 env_file: env_file
                 volumes:
                         - ./db/init:/docker-entrypoint-initdb.d
                         - mysql_data:/var/lib/mysql
+                        - mysql_logs:/var/log/mysql
+                        - mysql_files:/var/lib/mysql_files
         slapd:
                 build: slapd
+                container_name: ark-ldap
+                restart: on-failure
                 env_file: env_file
                 depends_on:
                         - base
@@ -26,6 +36,7 @@ services:
 
         tomcat:
                 build: tomcat
+                restart: on-failure
                 depends_on:
                         - mysql
                         - slapd
@@ -44,4 +55,6 @@ volumes:
         slapd_data:
         slapd_conf:
         mysql_data:
+        mysql_logs:
         datastore:
+        mysql_files:

@@ -35,8 +35,8 @@ SAX.startElementNs(tst, NULL, NULL, 0, 2, 0, a='&d;&...', 19, b='&d;&...', 19)
 SAX.endElementNs(tst, NULL, NULL)
 SAX.characters(
 , 1)
-SAX.startElementNs(tst, NULL, NULL, 0, 2, 0, a='A
-...', 8, b='A
+SAX.startElementNs(tst, NULL, NULL, 0, 2, 0, a='A
+...', 8, b='A
 ...', 8)
 SAX.endElementNs(tst, NULL, NULL)
 SAX.characters(

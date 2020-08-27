@@ -370,6 +370,7 @@ public class BioCollectionSpecimenUploader {
 				InvCell invCell;
 				String siteName = null;
 				String freezerName = null;
+				String shelfName = null;
 				String rackName = null;
 				String boxName = null;
 				String row = null;
@@ -381,6 +382,10 @@ public class BioCollectionSpecimenUploader {
 
 				if (csvReader.getIndex("FREEZER") > 0) {
 					freezerName = csvReader.get("FREEZER");
+				}
+				
+				if (csvReader.getIndex("SHELF") > 0) {
+					shelfName = csvReader.get("SHELF");
 				}
 
 				if (csvReader.getIndex("RACK") > 0) {
@@ -399,7 +404,7 @@ public class BioCollectionSpecimenUploader {
 					column = csvReader.get("COLUMN");
 				}
 				
-				invCell = iInventoryService.getInvCellByLocationNames(siteName, freezerName, rackName, boxName, row, column);
+				invCell = iInventoryService.getInvCellByLocationNames(siteName, freezerName, shelfName, rackName, boxName, row, column);
 
 				if(invCell != null && invCell.getId() != null) {
 					if(invCell.getBiospecimen()!=null){
@@ -635,11 +640,12 @@ public class BioCollectionSpecimenUploader {
 				// Allocation details
 				String siteName =  csvReader.get("SITE");
 				String freezerName =csvReader.get("FREEZER");
+				String shelfName = csvReader.get("SHELF");
 				String rackName = csvReader.get("RACK");
 				String boxName = csvReader.get("BOX");
 				String row = csvReader.get("ROW");
 				String column = csvReader.get("COLUMN");
-				InvCell invCell = iInventoryService.getInvCellByLocationNames(siteName, freezerName, rackName, boxName, row, column);
+				InvCell invCell = iInventoryService.getInvCellByLocationNames(siteName, freezerName, shelfName, rackName, boxName, row, column);
 				//Biospecimen was supposed to locate in the following valid, empty inventory cell
 				// inventory cell is not persist with biospeciman. So we have to update the valid inventory cell location with the 
 				//biospecimen uid which we will do it while bispecimen creates.

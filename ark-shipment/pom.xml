@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>za.ac.theark.shipment</groupId>
+  <artifactId>ark-shipment</artifactId>
+  <packaging>jar</packaging>
+  <name>Ark Shipment</name>
+	<description>ARK Laboratory Information Management System. Deals with all functions related to Biospecimen collection management (patient reference, biospecimen details, location etc)</description>
+	<url>http://the-ark.org.au/</url>
+	<issueManagement>
+		<system>JIRA</system>
+		<url>http://projects.genepi.org.au/secure/Dashboard.jspa</url>
+	</issueManagement>
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE, Version 3.0</name>
+			<url>http://www.gnu.org/copyleft/gpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<parent>
+		<groupId>au.org.theark</groupId>
+		<artifactId>ark</artifactId>
+		<version>1.2b.3</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jetty.version>6.1.4</jetty.version>
+	<ark-common.version>1.2b.3</ark-common.version>
+  </properties>
+
+  <dependencies>
+    <!--  Ark Dependencies  -->
+		<dependency>
+			<groupId>au.org.theark.core</groupId>
+			<artifactId>ark-common</artifactId>
+			<version>${ark-common.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>au.org.theark.core</groupId>
+			<artifactId>ark-common</artifactId>
+			<version>${ark-common.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

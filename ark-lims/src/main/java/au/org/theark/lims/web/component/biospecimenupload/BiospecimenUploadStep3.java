@@ -161,6 +161,7 @@ public class BiospecimenUploadStep3 extends AbstractWizardStepPanel {
 			}else if(uploadType.equalsIgnoreCase(Constants.UPLOAD_TYPE_FOR_BIOSPECIMEN)){
 				validationMessages = biospecimenUploadValidator.validateBiospecimenFileData(containerForm.getModelObject());
 			}
+
 			this.containerForm.getModelObject().setValidationMessages(validationMessages);
 			validationMessage = containerForm.getModelObject().getValidationMessagesAsString();
 			addOrReplace(new MultiLineLabel("multiLineLabel", validationMessage));

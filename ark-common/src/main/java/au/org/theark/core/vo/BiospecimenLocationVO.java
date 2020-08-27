@@ -34,6 +34,7 @@ public class BiospecimenLocationVO implements Serializable {
 	protected Boolean				isAllocated;
 	protected String				siteName;
 	protected String				freezerName;
+	protected String				shelfName;
 	protected String				rackName;
 	protected String				boxName;
 	protected Long					row;
@@ -59,6 +60,14 @@ public class BiospecimenLocationVO implements Serializable {
 
 	public void setFreezerName(String freezerName) {
 		this.freezerName = freezerName;
+	}
+
+	public String getShelfName() {
+		return shelfName;
+	}
+
+	public void setShelfName(String shelfName) {
+		this.shelfName = shelfName;
 	}
 
 	public String getRackName() {

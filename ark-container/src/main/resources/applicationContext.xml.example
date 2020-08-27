@@ -33,7 +33,8 @@
 
 	<!--  Belongs to the Ark Container Application -->
 	<context:component-scan base-package="au.org.theark.dao" />
-	<context:component-scan base-package="au.org.theark.service" />
+    <context:component-scan base-package="za.ac.theark.dao"/>
+    <context:component-scan base-package="au.org.theark.service" />
 	<context:component-scan base-package="au.org.theark.security" />
 
 	<!-- Imports the sub-module contexts (dynamically) -->
@@ -80,12 +81,12 @@
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url"
-			value="jdbc:mysql://ark-database:3306?rewriteBatchedStatements=true&amp;characterEncoding=utf8" />
+			value="jdbc:mysql://ark-database:3306?rewriteBatchedStatements=true&amp;sessionVariables=sql_mode=''" />
 		<!-- or for utf-8	
 			value="jdbc:mysql://ark-database:3306?characterEncoding=utf8" /> 
 			but the slightest typo or variation will cause you problems!!!
 		-->
-		<property name="username" value="arkadmin" />
+		<property name="username" value="ark" />
 		<property name="password" value="##MYSQL_PASSWORD##" />
 	</bean>
 
@@ -133,6 +134,7 @@
 		<property name="packagesToScan">
 			<list>
 				<value>au.org.theark.core.model.study.entity</value>
+				<value>za.ac.theark.core.model.study.entity</value>
 				<value>au.org.theark.core.model.pheno.entity</value>
 				<value>au.org.theark.core.model.geno.entity</value>
 				<value>au.org.theark.core.model.report.entity</value>

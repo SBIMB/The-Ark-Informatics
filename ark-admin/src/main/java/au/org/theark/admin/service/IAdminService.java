@@ -104,6 +104,10 @@ public interface IAdminService<T> {
 	
 	public ArkRole getArkRoleByName(String name);
 
+	public void createOrUpdateArkRedcap(AdminVO adminVO);
+
+	public void deleteArkRedcap(AdminVO adminVO);
+
 	public List<ArkRoleModuleFunctionVO> getArkRoleModuleFunctionVoList(ArkRole arkRole);
 
 	public List<ArkModule> getArkModuleList(ArkRole arkRole);
@@ -139,4 +143,5 @@ public interface IAdminService<T> {
 	public void updateArkModuleRole(AdminVO modelObject);
 
 	public List<ArkModule> getArkModuleListByArkRole(ArkRole arkRole);
+
 }

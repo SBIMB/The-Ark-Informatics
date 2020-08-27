@@ -4,6 +4,8 @@
 <div class="searchPanelContainer">
 	<form wicket:id="searchForm">
 		<div class="searchPanelContent">
+		
+		<!--  Row One begins (Study and Other IDs) -->
 			<div class="searchPanelBreaker">&nbsp;</div>
 			<div class="panelContentLeft">&nbsp;</div>
 			<div class="fldLabel">
@@ -27,7 +29,9 @@
 					<input wicket:id="linkSubjectStudy.person.otherIDs"/>
 				</div>
 			</div>
+			<!-- Row One Ends -->
 			
+			<!-- Row Two Begins (Subject UID and Family ID) -->
 			<div class="searchPanelBreaker">&nbsp;</div>
 			<div class="panelContentLeft">&nbsp;</div>
 			<div class="fldLabel">
@@ -50,9 +54,10 @@
 			<div class="fldControl">
 				<div class="label"><input wicket:id="linkSubjectStudy.familyUID" type="text" /></div>
 			</div>
-
-
+			<!-- Row Two Ends -->
 			
+
+			<!-- 
 			<div class="searchPanelBreaker">&nbsp;</div>
 			<div class="panelContentLeft">&nbsp;</div>
 			
@@ -72,9 +77,9 @@
 			<div class="fldControl">
 				<div class="label"><input wicket:id="linkSubjectStudy.person.middleName" type="text" /></div>
 			</div>
-			
+			-->
 
-
+			<!--
 			<div class="searchPanelBreaker">&nbsp;</div>
 			<div class="panelContentLeft">&nbsp;</div>
 			
@@ -95,17 +100,16 @@
 				</div>
 			</div>
 
-
 			<div class="fldControl">
 				<div class="label">
 					<input wicket:id="linkSubjectStudy.person.dateOfBirth" maxLength="10"/>
 				</div>
 			</div>
-
-
+			-->
 			
+			<!-- Row Three Begins (Vital Status and Sex) -->
 			<div class="searchPanelBreaker">&nbsp;</div>
-
+			
 			<div class="panelContentLeft">&nbsp;</div>
 			
 			<div class="fldLabel">
@@ -123,7 +127,7 @@
 			<div class="panelMargin">&nbsp;</div>
 			
 			<div class="fldLabel">
-				<div class="label"><label for="genderType"> <wicket:message key="gender">Gender:</wicket:message> </label></div>
+				<div class="label"><label for="genderType"> <wicket:message key="gender">Sex:</wicket:message> </label></div>
 			</div>
 			<div class="fldControl">
 				<div class="label">
@@ -133,6 +137,9 @@
 					</select>
 				</div>
 			</div>
+			<!-- Row Three Ends -->
+			
+			<!-- Row Four Begins (Vital Status and Ethnicity) -->
 			
 			<div class="searchPanelBreaker">&nbsp;</div>
 			
@@ -151,12 +158,18 @@
 			<div class="panelMargin">&nbsp;</div>
 			
 			<div class="fldLabel">
-				
+				<div class="label"><label for="ethnicityType"><wicket:message key="ethnicityType">Ethnicity :</wicket:message></label></div>
 			</div>
+
 			<div class="fldControl">
 				<div class="label">
+					<select wicket:id="ethnicityType">
+						<option>Unknown</option>
+						<option>Other</option>
+					</select>
 				</div>
 			</div>
+			<!-- Row Four Ends  -->
 			
 			<div class="searchPanelBreaker">&nbsp;</div>
 			

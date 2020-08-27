@@ -32,6 +32,11 @@ while [[ $pointer -le $# ]]; do
 	fi
 done
 
+mvn install:install-file \
+    -Dpackaging=pom \
+    -Dfile=pom.xml \
+    -DpomFile=pom.xml
+
 cd $WORKSPACE_DIR/recaptcha4j
 if [ ! -d "target" ];
 then
@@ -42,6 +47,15 @@ then
 fi
 
 # Maven build/install/package the source 
+cd $WORKSPACE_DIR/REDCapAPI
+if is_changed; 
+then 
+	mvn clean install
+	if [ "$?" != "0" ]; then
+	exit 1
+	fi
+fi
+
 cd $WORKSPACE_DIR/ark-common
 if is_changed; 
 then 

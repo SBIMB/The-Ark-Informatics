@@ -85,7 +85,7 @@
 			value="jdbc:mysql://ark-database:3306?characterEncoding=utf8" /> 
 			but the slightest typo or variation will cause you problems!!!
 		-->
-		<property name="username" value="arkadmin" />
+		<property name="username" value="ark" />
 		<property name="password" value="##MYSQL_PASSWORD##" />
 	</bean>
 

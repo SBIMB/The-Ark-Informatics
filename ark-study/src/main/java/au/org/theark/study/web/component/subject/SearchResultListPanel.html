@@ -18,6 +18,7 @@
 					</wicket:message>
 				</label>
 			</th>
+			<!--
 			<th width="10%">
 				<label for="fullName">
 					<wicket:message	key="fullName">
@@ -39,6 +40,14 @@
 					</wicket:message>
 				</label>
 			</th>
+			-->
+			<th width="10%">
+				<label for="ageAtEnrollment">
+					<wicket:message	key="ageAtEnrollment">
+						Age at Enrollment:
+					</wicket:message>
+				</label>
+			</th>
 			<th width="10%">
 				<label for="vitalStatus">
 					<wicket:message	key="vitalStatus">
@@ -54,11 +63,23 @@
 				</label>
 			</th>
 			<th width="10%">
+				<label for="ethnicityType">
+					<wicket:message	key="ethnicityType">
+						Ethnicity:
+					</wicket:message>
+				</label>
+			</th>
+			<th width="10%">
 				<label for="subjectStatus">
 					<wicket:message	key="subjectStatus">
 						Subject Status:
 					</wicket:message>
 				</label>
+			</th>
+			<th width="10%">
+				<wicket:message	key="consentDate">
+						Consent Date:
+				</wicket:message>
 			</th>
 			<th width="10%">
 				<wicket:message	key="consentStatus">
@@ -88,6 +109,7 @@
 					</span>
 				</a>
 			</td>
+			<!-- 
 			<td width="10%">
 				<span wicket:id="subjectFullName">
 					Full Name
@@ -103,6 +125,12 @@
 					Date Of Birth:
 				</span>
 			</td>
+			-->
+			<td width="10%">
+				<span wicket:id="linkSubjectStudy.ageAtEnrollment">
+					Age at Enrollment
+				</span>
+			</td>
 			<td width="10%">
 				<span wicket:id="linkSubjectStudy.person.vitalStatus.name">
 					Vital Status
@@ -114,8 +142,18 @@
 				</span>
 			</td>
 			<td width="10%">
+				<span wicket:id="linkSubjectStudy.person.ethnicityType.name">
+					Ethnicity
+				</span>
+			</td>
+			<td width="10%">
 				<span wicket:id="linkSubjectStudy.subjectStatus.name">
 					Subject Status
+				</span>
+			</td>
+			<td width="10%">
+				<span wicket:id="linkSubjectStudy.consentDate">
+					Consent Date
 				</span>
 			</td>
 			<td width="10%">

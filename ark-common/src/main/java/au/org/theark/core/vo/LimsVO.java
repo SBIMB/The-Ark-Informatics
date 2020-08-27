@@ -32,6 +32,7 @@ import au.org.theark.core.model.lims.entity.InvBox;
 import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.model.lims.entity.InvFreezer;
 import au.org.theark.core.model.lims.entity.InvRack;
+import au.org.theark.core.model.lims.entity.InvShelf;
 import au.org.theark.core.model.lims.entity.InvSite;
 import au.org.theark.core.model.study.entity.CustomFieldCategory;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
@@ -48,6 +49,7 @@ public class LimsVO implements Serializable {
 	protected BioTransaction			bioTransaction;
 	protected InvSite					invSite;
 	protected InvFreezer				invFreezer;
+	protected InvShelf					invShelf;
 	protected InvRack					invRack;
 	protected InvBox					invBox;
 	protected InvCell					invCell;
@@ -100,6 +102,7 @@ public class LimsVO implements Serializable {
 		this.bioTransaction = new BioTransaction();
 		this.invSite = new InvSite();
 		this.invFreezer = new InvFreezer();
+		this.invShelf = new InvShelf();
 		this.invRack = new InvRack();
 		this.invBox = new InvBox();
 		this.bioCollectionList = new ArrayList<BioCollection>(0);
@@ -234,6 +237,21 @@ public class LimsVO implements Serializable {
 	 */
 	public void setInvFreezer(InvFreezer invFreezer) {
 		this.invFreezer = invFreezer;
+	}
+	
+	/**
+	 * @return the invTray
+	 */
+	public InvShelf getInvShelf() {
+		return invShelf;
+	}
+
+	/**
+	 * @param invRack
+	 *           the invRack to set
+	 */
+	public void setInvShelf(InvShelf invShelf) {
+		this.invShelf = invShelf;
 	}
 
 	/**

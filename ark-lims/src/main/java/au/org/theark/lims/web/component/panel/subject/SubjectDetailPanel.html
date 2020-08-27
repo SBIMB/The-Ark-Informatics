@@ -38,16 +38,15 @@
 			</div>
 			
 			<div class="fldLabel">
-				<wicket:message key="person.dateOfBirth">
-					Date Of Birth:
+				<wicket:message key="subjectStatus">
+					Subject Status:
 				</wicket:message>
 			</div>
-
 			<div class="fldControl">
-				<input wicket:id="person.dateOfBirth" maxLength="10"/>
+				<input wicket:id="subjectStatus"/>
 			</div>
-			
-			<div class="panelMargin">
+
+			<div class="panelContentLeft">
 				&nbsp;
 			</div>
 
@@ -56,10 +55,37 @@
 					Last Name:
 				</wicket:message>
 			</div>
+
 			<div class="fldControl">
-				<input wicket:id="person.lastName"/>
+				<input wicket:id="person.lastName" maxLength="10"/>
+			</div>
+			
+			<div class="panelMargin">
+				&nbsp;
 			</div>
 
+			<div class="fldLabel">
+				<wicket:message key="person.ethnicity">
+					Ethnicity:
+				</wicket:message>
+			</div>
+			<div class="fldControl">
+				<input wicket:id="ethnicity"/>
+			</div>
+
+			<div class="panelMargin">
+				&nbsp;
+			</div>
+
+			<!-- <div class="fldLabel">
+				<wicket:message key="person.dateOfBirth">
+					Date Of Birth:
+				</wicket:message>
+			</div>
+			<div class="fldControl">
+				<input wicket:id="person.dateOfBirth"/>
+			</div>
+ -->
 			<div class="detailPanelBreaker">
 				&nbsp;
 			</div>

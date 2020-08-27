@@ -35,10 +35,10 @@ SAX.startElement(tst, a='&d;&d;A&a; &a;B&da;', b='&d;&d;A&a; &a;B&da;')
 SAX.endElement(tst)
 SAX.characters(
 , 1)
-SAX.startElement(tst, a='A
+SAX.startElement(tst, a='A
 
 B
-', b='A
+', b='A
 
 B
 ')

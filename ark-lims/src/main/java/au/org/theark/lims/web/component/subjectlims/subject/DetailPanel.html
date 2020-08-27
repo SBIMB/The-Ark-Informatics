@@ -32,7 +32,19 @@
 					&nbsp;
 				</div>
 
+				<!-- Date of Enrollment -->
+
 				<div class="fldLabel">
+					<wicket:message	key="dateOfEnrollment">
+						Date of Enrollment:
+					</wicket:message>
+				</div>
+
+				<div class="fldControl">
+					<input wicket:id="linkSubjectStudy.dateOfEnrollment"/>
+				</div>
+				
+				<!--<div class="fldLabel">
 					<div class="label">
 						<label for="title">
 							<wicket:message	key="title">
@@ -52,18 +64,29 @@
 							</option>
 						</select>
 					</div>
-				</div>
+				</div>-->
 				<div class="detailPanelBreaker">
 					&nbsp;
 				</div>
 				<!-- Row 1 Ends-->
 
-				<!-- Row 2 -->
+				<!-- Row 2 Other ID and Subject Status-->
+	
 				<div class="panelContentLeft">
 					&nbsp;
 				</div>
 
+				<!-- Other ID 1 -->
 				<div class="fldLabel">
+					<wicket:message key="otherId">
+						OtherID:
+					</wicket:message>
+				</div>
+
+				<div class="fldControl">
+					<input placeholder="Source" wicket:id="otherIDSource"/>:<input placeholder="Other ID" wicket:id="otherIDTxtFld"/>
+				</div>
+				|<!--<div class="fldLabel">
 					<div class="label">
 						<label for="firstName">
 							<wicket:message key="firstName">
@@ -76,13 +99,27 @@
 					<div class="label">
 						<input wicket:id="linkSubjectStudy.person.firstName"/>
 					</div>
-				</div>
+				</div>-->
 
 				<div class="panelMargin">
 					&nbsp;
 				</div>
 
 				<div class="fldLabel">
+					<wicket:message key="subjectStatus">
+						Subject Status:
+					</wicket:message>
+				</div>
+				
+				<div class="fldControl">
+					<select wicket:id="linkSubjectStudy.subjectStatus">
+						<option>
+							Status
+						</option>
+					</select>
+				</div>
+
+				<--<div class="fldLabel">
 					<div class="label">
 						<label for="lastName">
 							<wicket:message key="lastName">
@@ -95,18 +132,29 @@
 					<div class="label">
 						<input wicket:id="linkSubjectStudy.person.lastName"/>
 					</div>
-				</div>
+				</div>-->
 
 				<div class="detailPanelBreaker">
 					&nbsp;
 				</div>
 
-				<!-- Row 4 -->
+				<!-- Row 3 Age at Enrollment and Ethnicity-->
+	
 				<div class="panelContentLeft">
 					&nbsp;
 				</div>
 
 				<div class="fldLabel">
+					<wicket:message key="ageAtEnrollment">
+						Age at Enrollment:
+					</wicket:message>
+				</div>
+
+				<div class="fldControl">
+					<input wicket:id="linkSubjectStudy.ageAtEnrollment"/>
+				</div>
+				
+				<!--<div class="fldLabel">
 					<div class="label">
 						<label for="dateOfBirth">
 							<wicket:message key="dateOfBirth">
@@ -119,13 +167,24 @@
 					<div class="label">
 						<input wicket:id="linkSubjectStudy.person.dateOfBirth" maxLength="10"/>
 					</div>
-				</div>
+				</div>-->
 
 				<div class="panelMargin">
 					&nbsp;
 				</div>
 
 				<div class="fldLabel">
+					<wicket:message	key="ethnicity">
+						Ethnicity:
+					</wicket:message>
+				</div>
+
+				<div class="fldControl">
+					<select wicket:id="linkSubjectStudy.person.ethnicityType">
+						<option>unknown</option>
+					</select>
+				</div>
+				<!--<div class="fldLabel">
 					<div class="label">
 						<label for="vitalStatus">
 							<wicket:message key="vitalStatus">
@@ -145,7 +204,7 @@
 							</option>
 						</select>
 					</div>
-				</div>
+				</div>-->
 
 
 				<div class="detailPanelBreaker">

@@ -37,6 +37,9 @@ import au.org.theark.admin.web.component.function.FunctionContainerPanel;
 import au.org.theark.admin.web.component.module.ModuleContainerPanel;
 import au.org.theark.admin.web.component.modulefunction.ModuleFunctionContainerPanel;
 import au.org.theark.admin.web.component.modulerole.ModuleRoleContainerPanel;
+
+import za.ac.theark.admin.web.component.redcap.RedcapContainerPanel;
+
 import au.org.theark.admin.web.component.role.RoleContainerPanel;
 import au.org.theark.admin.web.component.rolePolicy.RolePolicyContainerPanel;
 import au.org.theark.core.model.study.entity.ArkFunction;

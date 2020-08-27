@@ -1,6 +1,7 @@
 package au.org.theark.arkcalendar;
 
 import java.util.Hashtable;
+
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -17,7 +18,7 @@ public class AdvancedBindDemo {
 	            System.exit(1);
 	        }
 
-	        Hashtable env = new Hashtable();
+	        Hashtable<String, String> env = new Hashtable();
 	        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 	        env.put(Context.PROVIDER_URL, "ldap://ark-ldap:389/");
 	        env.put(Context.SECURITY_AUTHENTICATION, "simple");

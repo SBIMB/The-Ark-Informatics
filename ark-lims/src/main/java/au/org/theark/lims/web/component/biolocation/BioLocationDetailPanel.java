@@ -7,8 +7,6 @@ import org.apache.wicket.model.CompoundPropertyModel;
 
 import au.org.theark.core.vo.LimsVO;
 
-
-
 /**
  * Panel displaying the location/not allocated details for a Biospecimen in context
  * 

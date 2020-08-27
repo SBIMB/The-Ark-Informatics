@@ -21,9 +21,6 @@ package au.org.theark.lims.model.dao;
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-
 import au.org.theark.core.exception.ArkSystemException;
 import au.org.theark.core.exception.EntityNotFoundException;
 import au.org.theark.core.model.lims.entity.BioCollection;
@@ -151,15 +148,25 @@ public interface IBiospecimenDao {
 	 * @return
 	 */
 	public Double getQuantityAvailable(Biospecimen biospecimen);
-	
+
+	public BiospecimenGrade getBiospecimenGradeByName(String name);
+
 	public List<BiospecimenGrade> getBiospecimenGradeList();
-
+	
+	public BiospecimenStorage getBiospecimenStorageByName(String name);	
+	
 	public List<BiospecimenStorage> getBiospecimenStorageList();
-
+	
+	public BiospecimenAnticoagulant getBiospecimenAnticoagulantByName(String name);
+	
 	public List<BiospecimenAnticoagulant> getBiospecimenAnticoagulantList();
-
+	
+	public BiospecimenStatus getBiospecimenStatusByName(String name);
+	
 	public List<BiospecimenStatus> getBiospecimenStatusList();
-
+	
+	public BiospecimenQuality getBiospecimenQualityByName(String name);
+	
 	public List<BiospecimenQuality> getBiospecimenQualityList();
 	
 	public String getNextGeneratedBiospecimenUID(Study study);
@@ -182,6 +189,8 @@ public interface IBiospecimenDao {
 
 	public void batchAliquotBiospecimens(List<Biospecimen> biospecimenList);
 
+	public BiospecimenProtocol getBiospecimenProtocolByName(String name);
+	
 	public List<BiospecimenProtocol> getBiospecimenProtocolList();
 
 	public List<Biospecimen> getRootBiospecimensForBiocollection(BioCollection bc);

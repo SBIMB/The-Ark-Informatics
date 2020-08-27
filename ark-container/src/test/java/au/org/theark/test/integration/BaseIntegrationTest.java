@@ -5,8 +5,6 @@ import au.org.theark.core.service.IArkCommonService;
 import au.org.theark.test.util.externalresource.ScreenRecordingExternalResource;
 import au.org.theark.test.util.runners.NameAwareRunner;
 import au.org.theark.test.util.Reference;
-import au.org.theark.web.pages.login.LoginPage;
-import com.gargoylesoftware.htmlunit.javascript.host.External;
 import com.google.common.base.Function;
 import com.google.common.net.HostAndPort;
 import junit.framework.TestCase;
@@ -22,9 +20,6 @@ import org.apache.directory.api.ldap.model.message.*;
 import org.apache.directory.api.ldap.model.message.controls.ManageDsaITImpl;
 import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
-import org.apache.wicket.util.tester.WicketTester;
-import org.bytedeco.javacpp.avutil;
-import org.bytedeco.javacv.*;
 import org.junit.*;
 import org.junit.rules.ExternalResource;
 import org.junit.runner.RunWith;
@@ -45,13 +40,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-
+//#@ContextConfiguration(locations = {"file:src/test/resources/applicationContext.xml"})
 @Transactional
 @RunWith(NameAwareRunner.class)
-@ContextConfiguration(locations = {"file:src/test/resources/applicationContext.xml"})
+@ContextConfiguration(locations = {"classpath:*/applicationContext.xml"})
 public class BaseIntegrationTest extends TestCase {
 
     private transient static Logger log = LoggerFactory.getLogger(BaseIntegrationTest.class);
@@ -67,14 +60,14 @@ public class BaseIntegrationTest extends TestCase {
         this.context = context;
     }
 
-    protected IArkCommonService iArkCommonService;
+    protected IArkCommonService<?> iArkCommonService;
 
-    public IArkCommonService getiArkCommonService() {
+    public IArkCommonService<?> getiArkCommonService() {
         return iArkCommonService;
     }
 
     @Autowired
-    public void setiArkCommonService(IArkCommonService iArkCommonService) {
+    public void setiArkCommonService(IArkCommonService<?> iArkCommonService) {
         this.iArkCommonService = iArkCommonService;
     }
 
@@ -111,7 +104,7 @@ public class BaseIntegrationTest extends TestCase {
     public void setup() {
         importBaseSQL();
         importLDIF();
-        driver.get("http://" + getHostIP() + ":8080/ark");
+        driver.get("http://" + getHostIP() + ":8989/ark");
     }
 
     public void importBaseSQL() {
@@ -193,8 +186,8 @@ public class BaseIntegrationTest extends TestCase {
     }
 
     public void loginAsSuperUser() {
-        String superUserName = "arksuperuser@ark.org.au";
-       String superUserPassword = "Password_1";
+        String superUserName = "arksuperuser@ark.core.wits.ac.za";
+       String superUserPassword = "ark";
        
 
         if (System.getenv("ARK_USERNAME") != null) {

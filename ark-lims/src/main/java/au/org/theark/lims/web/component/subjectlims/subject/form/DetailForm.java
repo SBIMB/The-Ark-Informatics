@@ -26,10 +26,12 @@ import java.util.List;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.datetime.PatternDateConverter;
 import org.apache.wicket.datetime.markup.html.form.DateTextField;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -37,15 +39,18 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.theark.core.exception.EntityNotFoundException;
+import au.org.theark.core.model.lims.entity.Biospecimen;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkUser;
 import au.org.theark.core.model.study.entity.ConsentStatus;
 import au.org.theark.core.model.study.entity.ConsentType;
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.GenderType;
 import au.org.theark.core.model.study.entity.MaritalStatus;
 import au.org.theark.core.model.study.entity.PersonContactMethod;
@@ -61,6 +66,7 @@ import au.org.theark.core.vo.LimsVO;
 import au.org.theark.core.web.behavior.ArkDefaultFormFocusBehavior;
 import au.org.theark.core.web.component.ArkDatePicker;
 import au.org.theark.core.web.form.AbstractDetailForm;
+import au.org.theark.lims.service.ILimsService;
 import au.org.theark.lims.web.Constants;
 
 /**
@@ -72,40 +78,50 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 
 	private static final long								serialVersionUID	= 6510243238571556231L;
 	protected static final Logger							log					= LoggerFactory.getLogger(DetailForm.class);
+	
+	@SpringBean(name = Constants.LIMS_SERVICE)
+	private ILimsService										iLimsService;
 
 	@SpringBean(name = au.org.theark.core.Constants.ARK_COMMON_SERVICE)
 	private IArkCommonService<Void>						iArkCommonService;
 	
 	protected TextField<String>							subjectUIDTxtFld;
-	protected TextField<String>							firstNameTxtFld;
-	protected TextField<String>							middleNameTxtFld;
-	protected TextField<String>							lastNameTxtFld;
-	protected TextField<String>							previousLastNameTxtFld;
-	protected TextField<String>							preferredNameTxtFld;
+	//protected TextField<String>							firstNameTxtFld;
+	//protected TextField<String>							middleNameTxtFld;
+	//protected TextField<String>							lastNameTxtFld;
+	//protected TextField<String>							previousLastNameTxtFld;
+	//protected TextField<String>							preferredNameTxtFld;
 
-	protected DateTextField									dateOfBirthTxtFld;
-	protected DateTextField									dateOfDeathTxtFld;
+	//protected DateTextField								dateOfBirthTxtFld;
+	protected TextField<Integer>						ageAtEnrollmentTxtFld;
+	protected DateTextField								dateOfEnrollmentTxtFld;
+	//protected DateTextField								dateOfDeathTxtFld;
+	protected TextField<Integer>							ageAtDeathTxtFld;
 	protected TextField<String>							causeOfDeathTxtFld;
 
 	// Custom Fields and Consents at Subject Study Level
 	protected TextField<String>							amdrifIdTxtFld;
-	protected TextField<Long>								yearOfFirstMamogramTxtFld;
+	protected TextField<Long>							yearOfFirstMamogramTxtFld;
 	protected TextField<String>							yearOfRecentMamogramTxtFld;
 	protected TextField<String>							totalNumberOfMamogramsTxtFld;
-	protected DropDownChoice<YesNo>						consentToActiveContactDdc;
-	protected DropDownChoice<YesNo>						consentToUseDataDdc;
+	//protected DropDownChoice<YesNo>						consentToActiveContactDdc;
+	protected DropDownChoice<ConsentType>				consentToUseDataDdc;
+	protected DropDownChoice<ConsentType>				consentToShareDataDdc;
 	protected DropDownChoice<YesNo>						consentToPassDataGatheringDdc;
+	protected DropDownChoice<ConsentType>				consentToUseBiospecimenDdc;
+	protected DropDownChoice<ConsentType>				consentToShareBiospecimebnDdc;
 
 	// Address Stuff comes here
 	protected TextField<String>							preferredEmailTxtFld;
 	protected TextField<String>							otherEmailTxtFld;
 
 	// Reference Data
-	protected DropDownChoice<TitleType>					titleTypeDdc;
+	//protected DropDownChoice<TitleType>					titleTypeDdc;
 	protected DropDownChoice<VitalStatus>				vitalStatusDdc;
+	protected DropDownChoice<EthnicityType>				ethnicityTypeDdc;
 	protected DropDownChoice<GenderType>				genderTypeDdc;
 	protected DropDownChoice<SubjectStatus>			subjectStatusDdc;
-	protected DropDownChoice<MaritalStatus>			maritalStatusDdc;
+	//protected DropDownChoice<MaritalStatus>			maritalStatusDdc;
 	protected DropDownChoice<PersonContactMethod>	personContactMethodDdc;
 
 	// Study Level Consent Controls
@@ -116,6 +132,10 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 	protected WebMarkupContainer							wmcPreferredEmailContainer;
 	protected WebMarkupContainer							wmcDeathDetailsContainer;
 	protected ContainerForm									containerForm;
+	
+	private MultiLineLabel	otherIDLabel;
+	private TextField<String> otherIDTxtFld;
+	private TextField<String> otherIDSourceTxtFld;
 
 	protected Study											study;
 	
@@ -168,8 +188,53 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 	public void initialiseDetailForm() {
 		subjectUIDTxtFld = new TextField<String>(Constants.SUBJECT_UID);
 		subjectUIDTxtFld.setOutputMarkupId(true);
+		
+		dateOfEnrollmentTxtFld = new DateTextField(Constants.SUBJECT_DATE_OF_ENROLLMENT, new PatternDateConverter(au.org.theark.core.Constants.DD_MM_YYYY, false));
+		ArkDatePicker doeDatePicker = new ArkDatePicker();
+		doeDatePicker.bind(dateOfEnrollmentTxtFld);
+		dateOfEnrollmentTxtFld.add(doeDatePicker);
+		
+		otherIDSourceTxtFld = new TextField<String>("otherIDSource") {
+			private static final long serialVersionUID = 1L;
+			
+			protected void onBeforeRender() {
+				this.setDefaultModel(new Model<String>(""));
+				super.onBeforeRender();
+			}
+		};
+		otherIDSourceTxtFld.setModel(new Model<String>(""));
+		otherIDTxtFld = new TextField<String>("otherIDTxtFld") {
+			private static final long serialVersionUID = 1L;
+			
+			protected void onBeforeRender() {
+				this.setDefaultModel(new Model<String>(""));
+				super.onBeforeRender();
+			}
+		};
+		otherIDTxtFld.setModel(new Model<String>(""));
+		
+		/*otherIDLabel = new MultiLineLabel("otherId", "") {
+			private static final long serialVersionUID = 1L;
 
-		firstNameTxtFld = new TextField<String>(Constants.PERSON_FIRST_NAME);
+			protected void onBeforeRender() {
+				if(!isNew()) {
+					Set<OtherID> otherIDs = containerForm.getModelObject().getLinkSubjectStudy().getPerson().getOtherIDs();
+					String otherIDstring = "";
+					for(OtherID o : otherIDs) {
+						otherIDstring += o.getOtherID_Source() + ": " + o.getOtherID() + "\n";
+					}
+					this.setDefaultModel(new Model<String>(otherIDstring));
+				} else {
+					this.setDefaultModel(new Model<String>(""));
+				}
+				super.onBeforeRender();
+			}
+		};*/
+		
+		ageAtEnrollmentTxtFld = new TextField<Integer>(Constants.SUBJECT_AGE_AT_ENROLLMENT);
+		
+		ageAtDeathTxtFld = new TextField<Integer>(Constants.PERSON_AGE_AT_DEATH);
+		/*firstNameTxtFld = new TextField<String>(Constants.PERSON_FIRST_NAME);
 		middleNameTxtFld = new TextField<String>(Constants.PERSON_MIDDLE_NAME);
 		lastNameTxtFld = new TextField<String>(Constants.PERSON_LAST_NAME);
 
@@ -182,19 +247,19 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 		ArkDatePicker dobDatePicker = new ArkDatePicker();
 		dobDatePicker.bind(dateOfBirthTxtFld);
 		dateOfBirthTxtFld.add(dobDatePicker);
-
+*/
 		consentDateTxtFld = new DateTextField(Constants.PERSON_CONSENT_DATE, new PatternDateConverter( au.org.theark.core.Constants.DD_MM_YYYY, false));
 		ArkDatePicker consentDatePicker = new ArkDatePicker();
 		consentDatePicker.bind(consentDateTxtFld);
 		consentDateTxtFld.add(consentDatePicker);
 
-		dateOfDeathTxtFld = new DateTextField(Constants.PERSON_DOD, new PatternDateConverter( au.org.theark.core.Constants.DD_MM_YYYY, false));
+		//dateOfDeathTxtFld = new DateTextField(Constants.PERSON_DOD, new PatternDateConverter( au.org.theark.core.Constants.DD_MM_YYYY, false));
 
 		causeOfDeathTxtFld = new TextField<String>(Constants.PERSON_CAUSE_OF_DEATH);
-		ArkDatePicker dodDatePicker = new ArkDatePicker();
+/*		ArkDatePicker dodDatePicker = new ArkDatePicker();
 		dodDatePicker.bind(dateOfDeathTxtFld);
 		dateOfDeathTxtFld.add(dodDatePicker);
-
+*/
 		wmcDeathDetailsContainer = new WebMarkupContainer("deathDetailsContainer");
 		wmcDeathDetailsContainer.setOutputMarkupId(true);
 
@@ -203,15 +268,21 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 		// and refer to a static list instead of hitting the database
 
 		// Title
-		Collection<TitleType> titleTypeList = iArkCommonService.getTitleType();
+/*		Collection<TitleType> titleTypeList = iArkCommonService.getTitleType();
 		ChoiceRenderer<TitleType> defaultChoiceRenderer = new ChoiceRenderer<TitleType>(Constants.NAME, Constants.ID);
 		titleTypeDdc = new DropDownChoice<TitleType>(Constants.PERSON_TYTPE_TYPE, (List) titleTypeList, defaultChoiceRenderer);
 		titleTypeDdc.add(new ArkDefaultFormFocusBehavior());
-
+*/
 		// Vital Status
 		Collection<VitalStatus> vitalStatusList = iArkCommonService.getVitalStatus();
 		ChoiceRenderer<VitalStatus> vitalStatusRenderer = new ChoiceRenderer<VitalStatus>(Constants.NAME, Constants.ID);
 		vitalStatusDdc = new DropDownChoice<VitalStatus>(Constants.PERSON_VITAL_STATUS, (List<VitalStatus>) vitalStatusList, vitalStatusRenderer);
+
+		
+		// Ethnicity Type
+		Collection<EthnicityType> ethnicityTypeList = iArkCommonService.getEthnicityTypes();
+		ChoiceRenderer<EthnicityType> ethnicityTypeRenderer = new ChoiceRenderer<EthnicityType>(Constants.NAME, Constants.ID);
+		ethnicityTypeDdc = new DropDownChoice<EthnicityType>(Constants.PERSON_ETHNICITY_TYPE, (List<EthnicityType>) ethnicityTypeList, ethnicityTypeRenderer);
 
 		// Gender Type
 		Collection<GenderType> genderTypeList = iArkCommonService.getGenderTypes();
@@ -222,20 +293,41 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 		List<SubjectStatus> subjectStatusList = iArkCommonService.getSubjectStatus();
 		ChoiceRenderer<SubjectStatus> subjectStatusRenderer = new ChoiceRenderer<SubjectStatus>(Constants.NAME, Constants.SUBJECT_STATUS_ID);
 		subjectStatusDdc = new DropDownChoice<SubjectStatus>(Constants.SUBJECT_STATUS, subjectStatusList, subjectStatusRenderer);
+		subjectStatusDdc.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
+					private static final long	serialVersionUID	= 1L;
+
+					@Override
+					protected void onUpdate(AjaxRequestTarget target) {
+						if(subjectStatusDdc.getModelObject().getName().equalsIgnoreCase("Archive")) {
+							Biospecimen biospecimenCriteria = new Biospecimen();
+							biospecimenCriteria.setLinkSubjectStudy(containerForm.getModelObject().getLinkSubjectStudy());
+							biospecimenCriteria.setStudy(containerForm.getModelObject().getLinkSubjectStudy().getStudy());
+							// check no biospecimens exist
+							long count = iLimsService.getBiospecimenCount(biospecimenCriteria);
+							if(count >0) {
+								error("You cannot archive this subject as there are Biospecimens associated ");
+								target.focusComponent(subjectStatusDdc);
+							}
+						}
+						processErrors(target);
+					}
+				});
+		
+		
 		// Marital Status
-		Collection<MaritalStatus> maritalStatusList = iArkCommonService.getMaritalStatus();
+		/*Collection<MaritalStatus> maritalStatusList = iArkCommonService.getMaritalStatus();
 		ChoiceRenderer<MaritalStatus> maritalStatusRender = new ChoiceRenderer<MaritalStatus>(Constants.NAME, Constants.ID);
 		maritalStatusDdc = new DropDownChoice<MaritalStatus>(Constants.PERSON_MARITAL_STATUS, (List) maritalStatusList, maritalStatusRender);
 
 		// Container for preferredEmail (required when Email selected as preferred contact)
 		wmcPreferredEmailContainer = new WebMarkupContainer("preferredEmailContainer");
-		wmcPreferredEmailContainer.setOutputMarkupPlaceholderTag(true);
+		wmcPreferredEmailContainer.setOutputMarkupPlaceholderTag(true);*/
 
 		// Person Contact Method
-		Collection<PersonContactMethod> contactMethodList = iArkCommonService.getPersonContactMethodList();
+		/*Collection<PersonContactMethod> contactMethodList = iArkCommonService.getPersonContactMethodList();
 		ChoiceRenderer<PersonContactMethod> contactMethodRender = new ChoiceRenderer<PersonContactMethod>(Constants.NAME, Constants.ID);
-		personContactMethodDdc = new DropDownChoice<PersonContactMethod>(Constants.PERSON_CONTACT_METHOD, (List) contactMethodList, contactMethodRender);
+		personContactMethodDdc = new DropDownChoice<PersonContactMethod>(Constants.PERSON_CONTACT_METHOD, (List) contactMethodList, contactMethodRender); */
 
 		initialiseConsentStatusChoice();
 		initialiseConsentTypeChoice();
@@ -263,18 +355,26 @@ public class DetailForm extends AbstractDetailForm<LimsVO> {
 
 	public void addDetailFormComponents() {
 		arkCrudContainerVO.getDetailPanelFormContainer().add(subjectUIDTxtFld);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(titleTypeDdc);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(firstNameTxtFld);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(lastNameTxtFld);
-		arkCrudContainerVO.getDetailPanelFormContainer().add(dateOfBirthTxtFld);
+		//arkCrudContainerVO.getDetailPanelFormContainer().add(titleTypeDdc);
+		//arkCrudContainerVO.getDetailPanelFormContainer().add(firstNameTxtFld);
+		//arkCrudContainerVO.getDetailPanelFormContainer().add(lastNameTxtFld);
+		//arkCrudContainerVO.getDetailPanelFormContainer().add(dateOfBirthTxtFld);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(ethnicityTypeDdc);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(vitalStatusDdc);
 
+		arkCrudContainerVO.getDetailPanelFormContainer().add(dateOfEnrollmentTxtFld);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(otherIDSourceTxtFld);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(subjectStatusDdc);
 		// Death details only be edited when vital status set to deceased
-		wmcDeathDetailsContainer.add(dateOfDeathTxtFld);
+		//wmcDeathDetailsContainer.add(dateOfDeathTxtFld);
+		wmcDeathDetailsContainer.add(ageAtDeathTxtFld);
 		wmcDeathDetailsContainer.add(causeOfDeathTxtFld);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(wmcDeathDetailsContainer);
-
+		arkCrudContainerVO.getDetailPanelFormContainer().add(ageAtEnrollmentTxtFld);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(ethnicityTypeDdc);
 		arkCrudContainerVO.getDetailPanelFormContainer().add(genderTypeDdc);
+		//arkCrudContainerVO.getDetailPanelFormContainer().add(otherIDLabel);
+		arkCrudContainerVO.getDetailPanelFormContainer().add(otherIDTxtFld);
 	}
 
 	/*

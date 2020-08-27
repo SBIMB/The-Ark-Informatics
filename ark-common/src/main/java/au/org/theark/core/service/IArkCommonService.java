@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.Hashtable;
 
 import au.org.theark.core.dao.IArkAuthorisation;
 import au.org.theark.core.model.study.entity.*;
@@ -32,11 +33,10 @@ import au.org.theark.core.model.study.entity.*;
 import org.apache.velocity.exception.VelocityException;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 
+import za.ac.theark.core.model.study.entity.UploadMethod;
 import au.org.theark.core.dao.ReCaptchaContextSource;
 import au.org.theark.core.exception.ArkAlreadyBeingUsedException;
 import au.org.theark.core.exception.ArkCheckSumNotSameException;
@@ -63,7 +63,6 @@ import au.org.theark.core.model.lims.entity.BiospecimenUidTemplate;
 import au.org.theark.core.model.lims.entity.BiospecimenUidToken;
 import au.org.theark.core.model.lims.entity.TreatmentType;
 import au.org.theark.core.model.lims.entity.Unit;
-import au.org.theark.core.model.pheno.entity.PhenoDataSetField;
 import au.org.theark.core.model.pheno.entity.PhenoDataSetFieldDisplay;
 import au.org.theark.core.model.report.entity.BiocollectionField;
 import au.org.theark.core.model.report.entity.BiospecimenField;
@@ -117,6 +116,8 @@ public interface IArkCommonService<T> {
 	public Collection<VitalStatus> getVitalStatus();
 
 	public Collection<GenderType> getGenderTypes();
+	
+	public Collection<EthnicityType> getEthnicityTypes();
 
 	public List<PhoneType> getListOfPhoneType();
 
@@ -142,6 +143,14 @@ public interface IArkCommonService<T> {
 	public Collection<EmailStatus> getAllEmailStatuses();
 	
 	public List<EmailAccountType> getEmailAccountTypes();
+
+	public List<Study> getAllStudies();
+	
+	public List<Study> getAllParentStudies();
+	
+	public List<Study> getAllSubStudiesList(Study study);
+	
+	public Hashtable<String, Study> getAllSubStudiesHashTable(Study study);
 
 	public List<Country> getCountries();
 
@@ -772,6 +781,12 @@ public interface IArkCommonService<T> {
 	public Payload createPayload(byte[] bytes);
 
 	public Payload getPayloadForUpload(Upload upload);
+
+	public UploadStatus getUploadStatusForUploaded();
+
+	public UploadStatus getUploadStatusForAwaitingValidation();
+	
+	public UploadMethod getUploadMethod(Long id);
 
 	public UploadStatus getUploadStatusFor(String uploadStatusConstant);
 

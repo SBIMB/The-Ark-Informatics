@@ -13,6 +13,9 @@ mv /usr/target/libmadeline.so /usr/local/tomcat/lib
 chown root:root /usr/local/tomcat/lib/libmadeline.so
 chmod 644 /usr/local/tomcat/lib/libmadeline.so
 
+#mv tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
+#chown root:root /usr/local/tomcat/conf/tomcat-users.xml
+#chmod 644 /usr/local/tomcat/conf/tomcat-users.xml
 
 while [ ! -f /usr/target/ark.war ]; do
 	sleep 1

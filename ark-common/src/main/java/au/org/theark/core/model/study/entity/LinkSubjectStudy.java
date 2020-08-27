@@ -61,10 +61,14 @@ public class LinkSubjectStudy implements java.io.Serializable {
 	private String subjectUID;
 	private String familyUID;
 	private String naturalUID;
+	private Date dateOfEnrollment;
+	private Integer ageAtEnrollment;
 	private ConsentOption consentToActiveContact;
 	private ConsentOption consentToPassiveDataGathering;
 	private ConsentOption consentToUseData;
-	private Date consentDateOfLastChange;
+	private ConsentOption consentToShareData;
+	private ConsentOption consentToUseBiospecimen;
+	private ConsentOption consentToShareBiospecimen;
 	private ConsentStatus consentStatus;
 	private ConsentType consentType;
 	private Date consentDate;
@@ -73,6 +77,7 @@ public class LinkSubjectStudy implements java.io.Serializable {
 	private String comment;
 	private YesNo consentDownloaded;
 	private Boolean updateConsent;
+	
 	private Set<Consent> consents = new HashSet<Consent>();
 	private Set<SubjectCustomFieldData> subjectCustomFieldDataSet = new HashSet<SubjectCustomFieldData>();
 	private Set<LinkSubjectTwin> linkSubjectTwinsAsFirstSubject=new HashSet<LinkSubjectTwin>(0);
@@ -202,6 +207,26 @@ public class LinkSubjectStudy implements java.io.Serializable {
 	public void setNaturalUID(String naturalUID) {
 		this.naturalUID = naturalUID;
 	}
+	
+	@Column(name = "DATE_OF_ENROLLMENT")
+	public Date getDateOfEnrollment() {
+		return dateOfEnrollment;
+	}
+
+	public void setDateOfEnrollment(Date dateOfEnrollment) {
+		this.dateOfEnrollment = dateOfEnrollment;
+	}
+	
+	@Column(name = "AGE_AT_ENROLLMENT")
+	public Integer getAgeAtEnrollment() {
+		return ageAtEnrollment;
+	}
+	
+
+	public void setAgeAtEnrollment(Integer ageAtEnrollment) {
+		this.ageAtEnrollment = ageAtEnrollment;
+	}
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CONSENT_STATUS_ID")
 	public ConsentStatus getConsentStatus() {

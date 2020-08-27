@@ -24,11 +24,12 @@
 		</license>
 	</licenses>
 	<parent>
-        <groupId>au.org.theark</groupId>
-        <artifactId>ark</artifactId>
-        <version>1.2b.3</version>
-		<relativePath>../pom.xml</relativePath>
-    </parent>
+                <groupId>au.org.theark</groupId>
+                <artifactId>ark</artifactId>
+                <version>1.2b.3</version>
+		     <relativePath>../pom.xml</relativePath>
+       </parent>
+  
 	<dependencies>
 
 		
@@ -46,6 +47,13 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
+
+                <!-- REDCap API -->
+                <dependency>
+                        <groupId>org.projectredcap.main</groupId>
+                        <artifactId>REDCapAPI</artifactId>
+                        <version>${redcap-api.version}</version>
+                </dependency>
 
 		<!-- Ark Study Module -->
 		<dependency>
@@ -118,6 +126,11 @@
 			<version>${ark-disease.version}</version>
 		</dependency>		
 
+		<dependency>
+			<groupId>za.ac.theark.shipment</groupId>
+			<artifactId>ark-shipment</artifactId>
+			<version>${ark-shipment.version}</version>
+		</dependency>
 
 
 		<!--  JUNIT DEPENDENCY FOR TESTING -->
@@ -157,6 +170,7 @@
 		</dependency>
 
 	</dependencies>
+
 	<build>
 	 	<finalName>ark</finalName>
 		<resources>
@@ -210,7 +224,8 @@
 		<ark-genomics.version>1.2b.3</ark-genomics.version>
 		<!-- <springframework.version>[4.3.1,)</springframework.version> -->
 		<springframework.version>4.3.0.RELEASE</springframework.version>
-
-        <maven.test.skip>true</maven.test.skip>
+    <ark-shipment.version>1.2b.3</ark-shipment.version>
+    <redcap-api.version>1.0.0</redcap-api.version>
+    <maven.test.skip>true</maven.test.skip>
 	</properties>
 </project>

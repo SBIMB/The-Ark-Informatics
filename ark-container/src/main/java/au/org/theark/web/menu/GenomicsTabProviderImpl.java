@@ -32,6 +32,11 @@ public class GenomicsTabProviderImpl extends Panel implements IMainTabProvider {
 
 	public ITab createTab(String tabName) {
 		return new ArkMainTab(new Model<String>(tabName)) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public Panel getPanel(String pid) {
 				// The sub menu(s) for Reporting

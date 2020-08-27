@@ -1,5 +1,15 @@
 #!/bin/sh
 
+#mkdir /var/lib/mysql/mysql-files
+
+#chown -R mysql:mysql /var/lib/mysql/mysql-files
+
+#mkdir /var/log/mysql/
+
+#touch /var/log/mysql/error.log
+
+#echo ${MYSQL_ROOT_PASSWORD}
+
 sed "s/##ARK_USERNAME##/${ARK_USERNAME}/g" /docker-entrypoint-initdb.d/data_to_import.sql.example | \
 	mysql --protocol=socket -uroot -p${MYSQL_ROOT_PASSWORD}
 

@@ -41,6 +41,7 @@ public class ArkShibbolethServiceProviderContextSource {
 		ArkShibbolethServiceProviderContextSource.handlerUrl = handlerUrl;
 	}
 
+	
 	/**
 	 * @return the metadataGenerator
 	 */
@@ -49,8 +50,7 @@ public class ArkShibbolethServiceProviderContextSource {
 	}
 
 	/**
-	 * @param metadataGenerator
-	 *           the metadataGenerator to set
+	 * @param metadataGenerator the metadataGenerator to set
 	 */
 	public static void setMetadataGenerator(String metadataGenerator) {
 		ArkShibbolethServiceProviderContextSource.metadataGenerator = metadataGenerator;

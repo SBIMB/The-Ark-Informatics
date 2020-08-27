@@ -26,17 +26,23 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.org.theark.core.model.study.entity.EthnicityType;
 import au.org.theark.core.model.study.entity.LinkSubjectStudy;
 import au.org.theark.core.model.study.entity.Study;
+import au.org.theark.core.service.IArkCommonService;
 
 /**
  * @author cellis
  * 
  */
 public class SubjectDetailForm extends Form<LinkSubjectStudy> {
+
+	@SpringBean(name = au.org.theark.core.Constants.ARK_COMMON_SERVICE)
+	private IArkCommonService<Void>						iArkCommonService;
 
 	private static final long		serialVersionUID	= 1L;
 	protected static final Logger	log					= LoggerFactory.getLogger(SubjectDetailForm.class);
@@ -45,7 +51,9 @@ public class SubjectDetailForm extends Form<LinkSubjectStudy> {
 	protected TextField<String>	middleNameTxtFld;
 	protected TextField<String>	lastNameTxtFld;
 	protected DateTextField			dateOfBirthTxtFld;
-
+	protected TextField<String> 				subjectStatusTxtFld;	
+	protected TextField<String> 				ethnicityTxtFld;
+	protected TextField<Integer>			ageAtCollectionTxtFld;
 	protected Study					study;
 
 	public SubjectDetailForm(String id, IModel<LinkSubjectStudy> model) {
@@ -58,11 +66,27 @@ public class SubjectDetailForm extends Form<LinkSubjectStudy> {
 		firstNameTxtFld = new TextField<String>("person.firstName", new PropertyModel<String>(getDefaultModel(), "person.firstName"));
 		lastNameTxtFld = new TextField<String>("person.lastName", new PropertyModel<String>(getDefaultModel(), "person.lastName"));
 		dateOfBirthTxtFld = new DateTextField( "person.dateOfBirth", new PropertyModel<Date>(getDefaultModel(), "person.dateOfBirth"), new PatternDateConverter( au.org.theark.core.Constants.DD_MM_YYYY, false));
+		subjectStatusTxtFld = new TextField<String>("subjectStatus", new PropertyModel<String>(getModelObject(), "subjectStatus.name"));
+		//subjectStatusDdc = new DropDownChoice<SubjectStatus>("subjectStatus", new ListModel<SubjectStatus>(l),getModel().getObject().getSubjectStatus().getName());
+		/*List<SubjectStatus> subjectStatusList = iArkCommonService.getSubjectStatus();
+		ChoiceRenderer<SubjectStatus> subjectStatusRenderer = new ChoiceRenderer<SubjectStatus>(Constants.NAME, Constants.SUBJECT_STATUS_ID);
+		subjectStatusDdc = new DropDownChoice<SubjectStatus>("linkSubjectStudy.subjectStatus", subjectStatusList, subjectStatusRenderer);
+		//subjectStatusDdc = new DropDownChoice<SubjectStatus>("subjectStatus", new PropertyModel<String>(getDefaultModel(), "subjectStatus"));
+		
+		Collection<EthnicityType> ethnicityTypeList = iArkCommonService.getEthnicityTypes();
+		ChoiceRenderer<EthnicityType> ethnicityTypeRenderer = new ChoiceRenderer<EthnicityType>(Constants.NAME, Constants.ID);
+		ethnicityTypeDdc = new DropDownChoice<EthnicityType>("linkSubjectStudy.person.ethnicityType", (List<EthnicityType>) ethnicityTypeList, ethnicityTypeRenderer);*/
+		//ethnicityTxtFld = new TextField<String>("person.ethnicityType", new PropertyModel<String>(getDefaultModel(), "person.ethnicityType"));
+		//ageAtCollectionTxtFld = new TextField<Integer>( "person.d", new PropertyModel<Date>(getDefaultModel(), "person.dateOfBirth"), au.org.theark.core.Constants.DD_MM_YYYY);
+		ethnicityTxtFld = new TextField<String>("ethnicity", new PropertyModel<String>(getModelObject(), "person.ethnicityType.name"));
+		
 		addDetailFormComponents();
 	}
 
 	public void addDetailFormComponents() {
 		add(subjectUIDTxtFld);
+		add(subjectStatusTxtFld);
+		add(ethnicityTxtFld);
 		add(firstNameTxtFld);
 		add(lastNameTxtFld);
 		add(dateOfBirthTxtFld);

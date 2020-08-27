@@ -65,6 +65,7 @@ import au.org.theark.core.model.lims.entity.InvBox;
 import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.model.lims.entity.InvFreezer;
 import au.org.theark.core.model.lims.entity.InvRack;
+import au.org.theark.core.model.lims.entity.InvShelf;
 import au.org.theark.core.model.lims.entity.InvSite;
 import au.org.theark.core.model.study.entity.ArkModule;
 import au.org.theark.core.model.study.entity.ArkUser;
@@ -126,7 +127,8 @@ public class GridBoxPanel extends Panel {
 		StringBuilder str = new StringBuilder();
 		InvBox box = iInventoryService.getInvBox(limsVo.getInvBox().getId()); //limsVo.getInvBox();
 		InvRack rack = box.getInvRack();
-		InvFreezer freezer = rack.getInvFreezer();
+		InvShelf shelf = rack.getInvShelf();
+		InvFreezer freezer = shelf.getInvFreezer();
 		InvSite site  = freezer.getInvSite();
 		log.info(site.getName());
 		
@@ -135,6 +137,8 @@ public class GridBoxPanel extends Panel {
 		str.append(site.getName());
 		str.append(" > ");
 		str.append(freezer.getName());
+		str.append(" > ");
+		str.append(shelf.getName());
 		str.append(" > ");
 		str.append(rack.getName());
 		str.append(" > ");

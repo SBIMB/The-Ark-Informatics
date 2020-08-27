@@ -35,7 +35,6 @@ public class BeamListVO extends BaseVO implements ArkVo {
 		return "BeamListVO [beams=" + beams + "]";
 	}
 	
-	@Override
 	public String getArkVoName(){
 		return "Column";
 	}

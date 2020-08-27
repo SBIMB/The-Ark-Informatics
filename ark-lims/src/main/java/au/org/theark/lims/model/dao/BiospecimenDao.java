@@ -56,6 +56,7 @@ import au.org.theark.core.model.lims.entity.BiospecimenStatus;
 import au.org.theark.core.model.lims.entity.BiospecimenStorage;
 import au.org.theark.core.model.lims.entity.BiospecimenUidSequence;
 import au.org.theark.core.model.lims.entity.BiospecimenUidTemplate;
+import au.org.theark.core.model.lims.entity.InvBox;
 import au.org.theark.core.model.lims.entity.InvCell;
 import au.org.theark.core.model.lims.entity.TreatmentType;
 import au.org.theark.core.model.lims.entity.Unit;
@@ -474,17 +475,34 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 		Double sum = (Double) criteria.uniqueResult();
 		return sum;
 	}
-
+	
+	public BiospecimenAnticoagulant getBiospecimenAnticoagulantByName(String name) {
+		Criteria criteria = getSession().createCriteria(BiospecimenAnticoagulant.class);
+		criteria.add(Restrictions.eq("name", name));
+		return (BiospecimenAnticoagulant) criteria.uniqueResult();
+	}
+	
 	public List<BiospecimenAnticoagulant> getBiospecimenAnticoagulantList() {
 		Criteria criteria = getSession().createCriteria(BiospecimenAnticoagulant.class);
 		List<BiospecimenAnticoagulant> list = criteria.list();
 		return list;
 	}
-
+	
+	public BiospecimenGrade getBiospecimenGradeByName(String name) {
+		Criteria criteria = getSession().createCriteria(BiospecimenGrade.class);
+		criteria.add(Restrictions.eq("name", name));
+		return (BiospecimenGrade) criteria.uniqueResult();
+	}
 	public List<BiospecimenGrade> getBiospecimenGradeList() {
 		Criteria criteria = getSession().createCriteria(BiospecimenGrade.class);
 		List<BiospecimenGrade> list = criteria.list();
 		return list;
+	}
+	
+	public BiospecimenQuality getBiospecimenQualityByName(String name) {
+		Criteria criteria = getSession().createCriteria(BiospecimenQuality.class);
+		criteria.add(Restrictions.eq("name", name));
+		return (BiospecimenQuality) criteria.uniqueResult();
 	}
 
 	public List<BiospecimenQuality> getBiospecimenQualityList() {
@@ -492,11 +510,23 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 		List<BiospecimenQuality> list = criteria.list();
 		return list;
 	}
+	
+	public BiospecimenStatus getBiospecimenStatusByName(String name) {
+		Criteria criteria = getSession().createCriteria(BiospecimenStatus.class);
+		criteria.add(Restrictions.eq("name", name));
+		return (BiospecimenStatus) criteria.uniqueResult();
+	}
 
 	public List<BiospecimenStatus> getBiospecimenStatusList() {
 		Criteria criteria = getSession().createCriteria(BiospecimenStatus.class);
 		List<BiospecimenStatus> list = criteria.list();
 		return list;
+	}
+	
+	public BiospecimenStorage getBiospecimenStorageByName(String name) {
+		Criteria criteria = getSession().createCriteria(BiospecimenStorage.class);
+		criteria.add(Restrictions.eq("name", name));
+		return (BiospecimenStorage) criteria.uniqueResult();
 	}
 
 	public List<BiospecimenStorage> getBiospecimenStorageList() {
@@ -648,6 +678,12 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 				invCell.setBiospecimen(biospecimen);
 				invCell.setStatus("Not Empty"); // TODO constants/enum
 				getSession().saveOrUpdate(invCell);
+
+				InvBox invBox = invCell.getInvBox();
+				if(invBox!=null){
+					invBox.setAvailable(invBox.getAvailable()-1);
+				}
+				getSession().saveOrUpdate(invBox);
 			}
 		}
 	}
@@ -759,7 +795,13 @@ public class BiospecimenDao extends HibernateSessionDao implements IBiospecimenD
 			}
 		}
 	}
-
+	
+	public BiospecimenProtocol getBiospecimenProtocolByName(String name) {
+		Criteria criteria = getSession().createCriteria(BiospecimenProtocol.class);
+		criteria.add(Restrictions.eq("name", name));
+		return (BiospecimenProtocol) criteria.uniqueResult();
+	}
+	
 	public List<BiospecimenProtocol> getBiospecimenProtocolList() {
 		Criteria criteria = getSession().createCriteria(BiospecimenProtocol.class);
 		List<BiospecimenProtocol> list = criteria.list();

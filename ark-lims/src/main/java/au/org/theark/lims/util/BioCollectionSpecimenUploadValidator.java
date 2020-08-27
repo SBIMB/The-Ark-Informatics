@@ -708,6 +708,7 @@ public class BioCollectionSpecimenUploadValidator {
 					}else{	
 						String site = csvReader.get("SITE");
 						String freezer = csvReader.get("FREEZER");
+						String shelf =csvReader.get("SHELF");
 						String rack = csvReader.get("RACK");
 						String box = csvReader.get("BOX");
 						String rowString = csvReader.get("ROW");
@@ -717,7 +718,7 @@ public class BioCollectionSpecimenUploadValidator {
 										box != null && rowString != null && columnString != null) &&
 									(!site.isEmpty() && !freezer.isEmpty() && !rack.isEmpty() &&
 										!box.isEmpty() && !rowString.isEmpty() && !columnString.isEmpty())) {
-									InvCell invCell = iInventoryService.getInvCellByLocationNames(site, freezer, rack, box, rowString, columnString);
+									InvCell invCell = iInventoryService.getInvCellByLocationNames(site, freezer, shelf, rack, box, rowString, columnString);
 									if (invCell == null) {
 										errorInventoryLocationNotAvailable(csvReader, biospecimenUID);
 									}else{
@@ -995,6 +996,7 @@ public class BioCollectionSpecimenUploadValidator {
 				}
 				String site = csvReader.get("SITE");
 				String freezer = csvReader.get("FREEZER");
+				String shelf = csvReader.get("SHELF");
 				String rack = csvReader.get("RACK");
 				String box = csvReader.get("BOX");
 				String rowString = csvReader.get("ROW");
@@ -1004,7 +1006,7 @@ public class BioCollectionSpecimenUploadValidator {
 								box != null && rowString != null && columnString != null) &&
 							(!site.isEmpty() && !freezer.isEmpty() && !rack.isEmpty() &&
 								!box.isEmpty() && !rowString.isEmpty() && !columnString.isEmpty())) {
-							InvCell invCell = iInventoryService.getInvCellByLocationNames(site, freezer, rack, box, rowString, columnString);
+							InvCell invCell = iInventoryService.getInvCellByLocationNames(site, freezer, shelf, rack, box, rowString, columnString);
 							if (invCell == null) {
 								errorInventoryLocationNotAvailable(csvReader, biospecimenUID);
 							}else{

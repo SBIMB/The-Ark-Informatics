@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import za.ac.theark.core.model.study.entity.UploadMethod;
 import au.org.theark.core.Constants;
 
 /**
@@ -52,6 +53,7 @@ public class Upload implements java.io.Serializable {
 	private Payload payload;
 	private DelimiterType delimiterType;
 	private UploadType uploadType;
+	private UploadMethod uploadMethod;
 	private String filename;
 	private String checksum;
 	private Date startTime;
@@ -253,6 +255,16 @@ public class Upload implements java.io.Serializable {
 
 	public void setUploadType(UploadType uploadType) {
 		this.uploadType = uploadType;
+	}
+		
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "UPLOAD_METHOD_ID", nullable = false)
+	public UploadMethod getUploadMethod() {
+		return uploadMethod;
+	}
+
+	public void setUploadMethod(UploadMethod uploadMethod) {
+		this.uploadMethod = uploadMethod;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -104,7 +104,7 @@ public class SearchResultListPanel extends Panel {
 			protected void populateItem(final Item<SubjectVO> item) {
 				LinkSubjectStudy subject = item.getModelObject().getLinkSubjectStudy();
 				item.add(buildLink(item.getModelObject()));
-				item.add(new Label(Constants.SUBJECT_FULL_NAME, item.getModelObject().getSubjectFullName()));
+				//item.add(new Label(Constants.SUBJECT_FULL_NAME, item.getModelObject().getSubjectFullName()));
 				/*
 				 * if (subject != null && subject.getPerson() != null &&
 				 * subject.getPerson().getPreferredName() != null) {
@@ -113,7 +113,7 @@ public class SearchResultListPanel extends Panel {
 				 * item.add(new Label("linkSubjectStudy.person.preferredName",
 				 * "")); }
 				 */
-				List<PersonLastnameHistory> lastnameHistory = (List<PersonLastnameHistory>) iArkCommonService.getPersonLastNameHistory(subject.getPerson());
+				/*List<PersonLastnameHistory> lastnameHistory = (List<PersonLastnameHistory>) iArkCommonService.getPersonLastNameHistory(subject.getPerson());
 				String lastNameString = "";
 				if (!lastnameHistory.isEmpty()) {
 					lastNameString = lastnameHistory.get(0).getLastName();
@@ -126,18 +126,22 @@ public class SearchResultListPanel extends Panel {
 					item.add(new Label("linkSubjectStudy.person.previouslastnamehistory.lastname", lastNameString));
 				} else {
 					item.add(new Label("linkSubjectStudy.person.previouslastnamehistory.lastname", ""));
-				}
+				} */
+				
+				item.add(new Label("linkSubjectStudy.ageAtEnrollment", subject.getAgeAtEnrollment().toString()));
 
 				item.add(new Label("linkSubjectStudy.person.genderType.name", subject.getPerson().getGenderType().getName()));
 
-				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(au.org.theark.core.Constants.DD_MM_YYYY);
+				/*SimpleDateFormat simpleDateFormat = new SimpleDateFormat(au.org.theark.core.Constants.DD_MM_YYYY);
 				String dateOfBirth = "";
 				if (subject != null && subject.getPerson() != null && subject.getPerson().getDateOfBirth() != null) {
 					dateOfBirth = simpleDateFormat.format(subject.getPerson().getDateOfBirth());
 					item.add(new Label("linkSubjectStudy.person.dateOfBirth", dateOfBirth));
 				} else {
 					item.add(new Label("linkSubjectStudy.person.dateOfBirth", ""));
-				}
+				} */
+				
+				item.add(new Label("linkSubjectStudy.person.ethnicityType.name", subject.getPerson().getEthnicityType().getName()));
 
 				item.add(new Label("linkSubjectStudy.person.vitalStatus.name", subject.getPerson().getVitalStatus().getName()));
 
@@ -147,6 +151,15 @@ public class SearchResultListPanel extends Panel {
 					item.add(new Label("linkSubjectStudy.consentStatus.name", subject.getConsentStatus().getName()));
 				} else {
 					item.add(new Label("linkSubjectStudy.consentStatus.name", ""));
+				}
+				
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(au.org.theark.core.Constants.DD_MM_YYYY);
+				String consentDate = "";
+				if(subject != null && subject.getConsentDate() != null) {
+					consentDate = simpleDateFormat.format(subject.getConsentDate());
+					item.add(new Label("linkSubjectStudy.consentDate", consentDate));
+				} else {
+					item.add(new Label("linkSubjectStudy.consentDate",""));
 				}
 
 				List<OtherID> otherIDs = iArkCommonService.getOtherIDs(subject.getPerson());
@@ -179,7 +192,7 @@ public class SearchResultListPanel extends Panel {
 			protected void populateItem(final Item<SubjectVO> item) {
 				LinkSubjectStudy subject = item.getModelObject().getLinkSubjectStudy();
 				item.add(buildLink(item, modalWindow, relatives, feedbackPanel));
-				item.add(new Label(Constants.SUBJECT_FULL_NAME, item.getModelObject().getSubjectFullName()));
+				//item.add(new Label(Constants.SUBJECT_FULL_NAME, item.getModelObject().getSubjectFullName()));
 				/*
 				 * if (subject != null && subject.getPerson() != null &&
 				 * subject.getPerson().getPreferredName() != null) {
@@ -188,7 +201,7 @@ public class SearchResultListPanel extends Panel {
 				 * item.add(new Label("linkSubjectStudy.person.preferredName",
 				 * "")); }
 				 */
-				List<PersonLastnameHistory> lastnameHistory = (List<PersonLastnameHistory>) iArkCommonService.getPersonLastNameHistory(subject.getPerson());
+				/*List<PersonLastnameHistory> lastnameHistory = (List<PersonLastnameHistory>) iArkCommonService.getPersonLastNameHistory(subject.getPerson());
 				String lastNameString = "";
 				if (!lastnameHistory.isEmpty()) {
 					lastNameString = lastnameHistory.get(0).getLastName();
@@ -201,19 +214,27 @@ public class SearchResultListPanel extends Panel {
 					item.add(new Label("linkSubjectStudy.person.previouslastnamehistory.lastname", lastNameString));
 				} else {
 					item.add(new Label("linkSubjectStudy.person.previouslastnamehistory.lastname", ""));
+				}*/
+				
+				if(subject != null && subject.getAgeAtEnrollment() != null) {
+					item.add(new Label("linkSubjectStudy.ageAtEnrollment", subject.getAgeAtEnrollment().toString()));
+				}else {
+					item.add(new Label("linkSubjectStudy.ageAtEnrollment", ""));
 				}
 
 				item.add(new Label("linkSubjectStudy.person.genderType.name", subject.getPerson().getGenderType().getName()));
 
-				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(au.org.theark.core.Constants.DD_MM_YYYY);
+				/*SimpleDateFormat simpleDateFormat = new SimpleDateFormat(au.org.theark.core.Constants.DD_MM_YYYY);
 				String dateOfBirth = "";
 				if (subject != null && subject.getPerson() != null && subject.getPerson().getDateOfBirth() != null) {
 					dateOfBirth = simpleDateFormat.format(subject.getPerson().getDateOfBirth());
 					item.add(new Label("linkSubjectStudy.person.dateOfBirth", dateOfBirth));
 				} else {
 					item.add(new Label("linkSubjectStudy.person.dateOfBirth", ""));
-				}
+				} */
 
+				item.add(new Label("linkSubjectStudy.person.ethnicityType.name", subject.getPerson().getEthnicityType().getName()));
+				
 				item.add(new Label("linkSubjectStudy.person.vitalStatus.name", subject.getPerson().getVitalStatus().getName()));
 
 				item.add(new Label("linkSubjectStudy.subjectStatus.name", subject.getSubjectStatus().getName()));
@@ -222,6 +243,15 @@ public class SearchResultListPanel extends Panel {
 					item.add(new Label("linkSubjectStudy.consentStatus.name", subject.getConsentStatus().getName()));
 				} else {
 					item.add(new Label("linkSubjectStudy.consentStatus.name", ""));
+				}
+				
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(au.org.theark.core.Constants.DD_MM_YYYY);
+				String consentDate = "";
+				if(subject != null && subject.getConsentDate() != null) {
+					consentDate = simpleDateFormat.format(subject.getConsentDate());
+					item.add(new Label("linkSubjectStudy.consentDate", consentDate));
+				} else {
+					item.add(new Label("linkSubjectStudy.consentDate",""));
 				}
 
 				item.add(new AttributeModifier(Constants.CLASS, new AbstractReadOnlyModel() {
@@ -254,7 +284,7 @@ public class SearchResultListPanel extends Panel {
 			protected void populateItem(final ListItem<SubjectVO> item) {
 				LinkSubjectStudy subject = item.getModelObject().getLinkSubjectStudy();
 				item.add(buildLink(item.getModelObject()));
-				item.add(new Label(Constants.SUBJECT_FULL_NAME, item.getModelObject().getSubjectFullName()));
+				//item.add(new Label(Constants.SUBJECT_FULL_NAME, item.getModelObject().getSubjectFullName()));
 
 				/*
 				 * if (subject != null && subject.getPerson() != null &&
@@ -264,7 +294,7 @@ public class SearchResultListPanel extends Panel {
 				 * item.add(new Label("linkSubjectStudy.person.preferredName",
 				 * "")); }
 				 */
-				List<PersonLastnameHistory> lastnameHistory = (List<PersonLastnameHistory>) iArkCommonService.getPersonLastNameHistory(subject.getPerson());
+				/*List<PersonLastnameHistory> lastnameHistory = (List<PersonLastnameHistory>) iArkCommonService.getPersonLastNameHistory(subject.getPerson());
 				String lastNameString = "";
 				if (!lastnameHistory.isEmpty()) {
 					lastNameString = lastnameHistory.get(0).getLastName();
@@ -277,23 +307,36 @@ public class SearchResultListPanel extends Panel {
 					item.add(new Label("linkSubjectStudy.person.previouslastnamehistory.lastname", lastNameString));
 				} else {
 					item.add(new Label("linkSubjectStudy.person.previouslastnamehistory.lastname", ""));
-				}
+				} */
+				
+				item.add(new Label("linkSubjectStudy.ageAtEnrollment", subject.getAgeAtEnrollment().toString()));
 
 				item.add(new Label("linkSubjectStudy.person.genderType.name", subject.getPerson().getGenderType().getName()));
 
-				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(au.org.theark.core.Constants.DD_MM_YYYY);
+				item.add(new Label("linkSubjectStudy.person.ethnicityType.name", subject.getPerson().getEthnicityType().getName()));
+				
+				/*SimpleDateFormat simpleDateFormat = new SimpleDateFormat(au.org.theark.core.Constants.DD_MM_YYYY);
 				String dateOfBirth = "";
 				if (subject != null && subject.getPerson() != null && subject.getPerson().getDateOfBirth() != null) {
 					dateOfBirth = simpleDateFormat.format(subject.getPerson().getDateOfBirth());
 					item.add(new Label("linkSubjectStudy.person.dateOfBirth", dateOfBirth));
 				} else {
 					item.add(new Label("linkSubjectStudy.person.dateOfBirth", ""));
-				}
+				}*/
 
 				item.add(new Label("linkSubjectStudy.person.vitalStatus.statusName", subject.getPerson().getVitalStatus().getName()));
 
 				item.add(new Label("linkSubjectStudy.subjectStatus.name", subject.getSubjectStatus().getName()));
 
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(au.org.theark.core.Constants.DD_MM_YYYY);
+				String consentDate = "";
+				if(subject != null && subject.getConsentDate() != null) {
+					consentDate = simpleDateFormat.format(subject.getConsentDate());
+					item.add(new Label("linkSubjectStudy.consentDate", consentDate));
+				} else {
+					item.add(new Label("linkSubjectStudy.consentDate",""));
+				}
+				
 				item.add(new AttributeModifier(Constants.CLASS, new AbstractReadOnlyModel() {
 					@Override
 					public String getObject() {

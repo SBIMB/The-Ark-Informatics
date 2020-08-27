@@ -16,7 +16,7 @@ WORKDIR /usr/src/app
 
 ADD ark-common/src/main/native/madeline /usr/src/app/ark-common/src/main/native/madeline
 
-RUN apt-get update && apt-get install -y build-essential libxml2 libxml2-dev libcurl3 libcurl4-gnutls-dev zlib1g zlib1g-dev libbz2-1.0 libbz2-dev libssl-dev 
+RUN apt-get update && apt-get install -y build-essential libxml2 libxml2-dev libcurl4 libcurl4-gnutls-dev zlib1g zlib1g-dev libbz2-1.0 libbz2-dev libssl-dev 
 
 RUN cd /usr/src/app/ark-common/src/main/native/madeline && \ 
 	sed -i "s/java-6-openjdk-amd64/java-8-openjdk-amd64/g" Makefile && \
@@ -28,7 +28,8 @@ RUN cd /usr/src/app/ark-common/src/main/native/madeline && \
 # maven repository so that we won't have to download it every build,
 # although if you change any of the following pom files, it will be
 # run again.
-ADD pom.xml pom.xml 
+ADD pom.xml pom.xml
+ADD REDCapAPI/pom.xml REDCapAPI/pom.xml 
 ADD ark-admin/pom.xml ark-admin/pom.xml
 ADD ark-common/pom.xml ark-common/pom.xml
 ADD ark-container/pom.xml ark-container/pom.xml
@@ -44,7 +45,9 @@ ADD ark-work-tracking/pom.xml ark-work-tracking/pom.xml
 ADD 3rdParty 3rdParty
 
 ENV ARKVERSION 1.2b.3
+ENV REDCapAPIVERSION 1.0.0
 RUN mkdir -p $HOME/.m2/repository/au/org/theark/admin/ark-admin/${ARKVERSION} \
+        $HOME/.m2/repository/org/projectredcap/main/REDCapAPI/${REDCapAPIVERSION} \
 	$HOME/.m2/repository/au/org/theark/core/ark-common/${ARKVERSION} \
 	$HOME/.m2/repository/au/org/theark/disease/ark-disease/${ARKVERSION} \
 	$HOME/.m2/repository/au/org/theark/genomics/ark-genomics/${ARKVERSION} \
@@ -57,6 +60,8 @@ RUN mkdir -p $HOME/.m2/repository/au/org/theark/admin/ark-admin/${ARKVERSION} \
 
 RUN touch $HOME/.m2/repository/au/org/theark/admin/ark-admin/${ARKVERSION}/ark-admin-${ARKVERSION}.jar  \
 	$HOME/.m2/repository/au/org/theark/admin/ark-admin/${ARKVERSION}/ark-admin-${ARKVERSION}.pom \
+        $HOME/.m2/repository/org/projectredcap/main/REDCapAPI/${REDCapAPIVERSION}/REDCapAPI-${REDCapAPIVERSION}.jar \
+        $HOME/.m2/repository/org/projectredcap/main/REDCapAPI/${REDCapAPIVERSION}/REDCapAPI-${REDCapAPIVERSION}.pom \
 	$HOME/.m2/repository/au/org/theark/core/ark-common/${ARKVERSION}/ark-common-${ARKVERSION}-tests.jar \
 	$HOME/.m2/repository/au/org/theark/core/ark-common/${ARKVERSION}/ark-common-${ARKVERSION}.jar \
 	$HOME/.m2/repository/au/org/theark/core/ark-common/${ARKVERSION}/ark-common-${ARKVERSION}.pom \
@@ -114,3 +119,5 @@ CMD /bin/true
 
 #So that we can mount these volumes into the other containers, to pull out the pieces needed
 VOLUME /usr/target
+
+#CMD tail -f /dev/null
