@@ -2,7 +2,7 @@ FROM openjdk:8
 
 MAINTAINER George Gooden <gecgooden@gmail.com>
 
-ENV MAVEN_VERSION 3.6.1
+ENV MAVEN_VERSION 3.6.3
 
 RUN mkdir -p /usr/share/maven \
   && curl -fsSL http://apache.osuosl.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz \
@@ -12,11 +12,24 @@ RUN mkdir -p /usr/share/maven \
 ENV MAVEN_HOME /usr/share/maven
 
 RUN mkdir -p /usr/src/app /usr/target/
+
 WORKDIR /usr/src/app
 
 ADD ark-common/src/main/native/madeline /usr/src/app/ark-common/src/main/native/madeline
 
+RUN apt-get update -y
+
+RUN apt-get install software-properties-common -y
+
+RUN echo "deb http://old-releases.ubuntu.com/ubuntu zesty main" | tee /etc/apt/sources.list.d/zesty.list
+
+#RUN apt-add-repository -r universe
+
+#RUN add-apt-repository ppa:ubuntu-toolchain-r/test
+
 RUN apt-get update && apt-get install -y build-essential libxml2 libxml2-dev libcurl4 libcurl4-gnutls-dev zlib1g zlib1g-dev libbz2-1.0 libbz2-dev libssl-dev 
+
+RUN gcc -v
 
 RUN cd /usr/src/app/ark-common/src/main/native/madeline && \ 
 	sed -i "s/java-6-openjdk-amd64/java-8-openjdk-amd64/g" Makefile && \
